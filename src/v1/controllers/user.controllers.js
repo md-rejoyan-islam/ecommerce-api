@@ -8,10 +8,10 @@ import checkMongoID from "../../v1/services/checkMongoId.js";
 import fs from "fs";
 fs.promises;
 
-import findData from "../../v1/services/findData.js";
 import deleteImage from "../../helper/deleteImage.js";
 import filterQuery from "../../utils/filterQuery.js";
 import pagination from "../../utils/pagination.js";
+import findUser from "../services/findUser.js";
 
 /**
  *
@@ -107,10 +107,7 @@ export const findUserById = asyncHandler(async (req, res) => {
   checkMongoID(req.params.id);
 
   // validate user
-  const user = await userModel.findById(req.params.id).select("-password -__v");
-
-  // validate user
-  if (!user) throw createError.NotFound("Couldn't find any user data.");
+  const user = await findUser(userModel, { _id: req.params.id });
 
   // response
   successResponse(res, {

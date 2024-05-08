@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 import createError from "http-errors";
 import userModel from "../../models/user.model.js";
 import hashPassword from "../../utils/hashPassword.js";
-import findData from "../../v1/services/findData.js";
+import findData from "../services/findUser.js";
 import { successResponse } from "../../v1/services/responseHandler.js";
 import createJWT from "../../helper/createJWT.js";
 import {
