@@ -1,15 +1,17 @@
 import asyncHandler from "express-async-handler";
 import userModel from "../../models/user.model.js";
-import { createError } from "../../utils/createError.js";
+import createError from "http-errors";
 import { isValidObjectId } from "mongoose";
 import hashPassword from "../../utils/hashPassword.js";
 import { successResponse } from "../../v1/services/responseHandler.js";
-import checkMongoId from "../../v1/services/checkMongoId.js";
+import checkMongoID from "../../v1/services/checkMongoId.js";
 import fs from "fs";
 fs.promises;
 
 import findData from "../../v1/services/findData.js";
 import deleteImage from "../../helper/deleteImage.js";
+import filterQuery from "../../utils/filterQuery.js";
+import pagination from "../../utils/pagination.js";
 
 /**
  *
@@ -31,53 +33,54 @@ import deleteImage from "../../helper/deleteImage.js";
  */
 
 export const getAllUsers = asyncHandler(async (req, res) => {
-  // search query
-  const search = req.query.search || "";
-  const page = Number(req.query.page) || 1;
-  const limit = Number(req.query.limit) || 5;
+  // search query fields
+  const searchFields = ["name", "email", "phone"];
 
-  // filters
-  const searchRegExp = new RegExp(".*" + search + ".*", "i");
-  console.log(2);
-  const filters = {
-    isAdmin: { $ne: true },
-    $or: [
-      { name: { $regex: searchRegExp } },
-      { email: { $regex: searchRegExp } },
-      { phone: { $regex: searchRegExp } },
-    ],
-  };
+  // query filter
+  const {
+    queries: { skip, limit, fields, sortBy },
+    filters,
+  } = filterQuery(req, searchFields);
 
-  // options
-  const options = {
-    password: 0,
-  };
-
-  // validate user
+  // find users data and add links
   const users = await userModel
-    .find(filters, options)
+    .find(filters)
+    .skip(skip)
     .limit(limit)
-    .skip((page - 1) * limit);
+    .select(fields)
+    .select("-password -__v")
+    .sort(sortBy)
+    .then((users) => {
+      return users.map((user) => {
+        delete user._doc.password;
+        delete user._doc.__v;
+        return {
+          ...user._doc,
+          links: {
+            self: `/api/v1/users/${user._id}`,
+          },
+        };
+      });
+    });
 
-  // count documents
-  const count = await userModel.countDocuments();
+  // if no data found
+  if (!users.length) throw createError.NotFound("couldn't find any user data");
 
-  if (!users.length) throw createError(404, "couldn't find any user data");
-
-  // pagination
-  const pagination = {
-    totalPages: Math.ceil(count / limit),
-    currentPage: page,
-    previousPage: page - 1 > 0 ? page - 1 : null,
-    nextPage: page + 1 <= Math.ceil(count / limit) ? page + 1 : null,
-  };
+  // pagination object
+  const paginationObject = await pagination({
+    limit,
+    page: req.query.page,
+    skip,
+    model: userModel,
+    filters,
+  });
 
   // response
   return successResponse(res, {
     statusCode: 200,
     message: "User data fetched successfully",
     payload: {
-      pagination,
+      pagination: paginationObject,
       data: users,
     },
   });
@@ -101,16 +104,21 @@ export const getAllUsers = asyncHandler(async (req, res) => {
 
 export const findUserById = asyncHandler(async (req, res) => {
   // id validation
-  checkMongoId(req.params.id);
+  checkMongoID(req.params.id);
 
   // validate user
-  const user = await findData(userModel, { _id: req.params.id });
+  const user = await userModel.findById(req.params.id).select("-password -__v");
+
+  // validate user
+  if (!user) throw createError.NotFound("Couldn't find any user data.");
 
   // response
-  res.status(200).json({
-    Status: "Success",
-    Message: "Single user",
-    Data: user,
+  successResponse(res, {
+    statusCode: 200,
+    message: "Single user data fetched successfully",
+    payload: {
+      data: user,
+    },
   });
 });
 

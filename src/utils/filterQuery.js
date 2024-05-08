@@ -1,12 +1,12 @@
 /**
- * @search_URL      :      domain? status=in-stock  & email=a@gmail.com & sort=name,age & price[gt]=50 & page=4 & limit=12
+ * @search_URL      :      ?status=in-stock&fields=brand,price&email=a@gmail.com&sort=name,age&price[eq]=50&page=4&limit=1
  */
 
-const filterQuery = (req) => {
+const filterQuery = (req, searchFields) => {
   let filters = { ...req.query };
 
   // sort ,page,limit exclude from filters
-  const excludeFilters = ["sort", "page", "limit"];
+  const excludeFilters = ["sort", "page", "limit", "fields", "search"];
   excludeFilters.forEach((field) => delete filters[field]);
 
   let filterString = JSON.stringify(filters);
@@ -19,16 +19,27 @@ const filterQuery = (req) => {
    *
    * @change_data_format     :    { "price":{"$gt":"50"}, "age":{"$lt":"12"} }
    *
-   * @regex                  :    /\b(gt|gte|lt|lte|eq,neq)\b/g  ==> \b => full block check
+   * @regex                  :    /\b(gt|gte|lt|lte|eq|neq)\b/g  ==> \b => full block check
    */
 
   filterString = filterString.replace(
-    /\b(gt|gte|lt|lte|eq,neq)\b/g,
+    /\b(gt|gte|lt|lte|eq|neq)\b/g,
     (match) => `$${match}`
   );
 
   filters = JSON.parse(filterString);
 
+  // full text search with regular expression
+  if (req.query.search && searchFields.length) {
+    const search = req.query.search;
+
+    const regularExpression = { $regex: search, $options: "i" };
+    filters = {
+      ...filters,
+
+      $or: [...searchFields.map((field) => ({ [field]: regularExpression }))],
+    };
+  }
 
   /***
    *
@@ -72,8 +83,11 @@ const filterQuery = (req) => {
    *
    */
 
+  req.query.page = Number(req.query.page) || 1;
+  req.query.limit = Number(req.query.limit) || 10;
+
   if (req.query.page) {
-    const { page = 1, limit = 10 } = req.query;
+    const { page, limit } = req.query;
     const skip = (page - 1) * Number(limit);
     queries.skip = skip;
     queries.limit = Number(limit);
@@ -82,5 +96,4 @@ const filterQuery = (req) => {
   return { filters, queries };
 };
 
-// export filterQuery
 export default filterQuery;
