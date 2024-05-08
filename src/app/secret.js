@@ -2,6 +2,8 @@ export const port = process.env.SERVER_PORT || 5050;
 
 export const hostname = process.env.HOST_NAME || "127.0.0.1";
 
+export const mongoURL = process.env.LIVE_MONGO_URL || process.env.MONGO_URL;
+
 export const defaultImagePath = process.env.DEFAULT_USER_IMAGE_PATH;
 
 export const jwtVerifyKeySecret = process.env.JWT_VERIFY_KEY;

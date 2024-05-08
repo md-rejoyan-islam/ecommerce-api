@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import { defaultImagePath } from "../app/secret.js";
+import hashPassword from "../utils/hashPassword.js";
+import { isEmail } from "../helper/helper.js";
 
 // user schema
 
@@ -8,8 +10,10 @@ const userSchema = mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
+      required: [true, "Please provide your name"],
       trim: true,
+      maxlength: [50, "Name can not be more than 50 characters"],
+      minlength: [3, "Name can not be less than 3 characters"],
     },
     email: {
       type: String,
@@ -18,8 +22,8 @@ const userSchema = mongoose.Schema(
       unique: [true, "Email already exist"],
       lowercase: true,
       validate: {
-        validator: (v) => {
-          return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
+        validator: (value) => {
+          return isEmail(value);
         },
         message: "Please enter a valid email.",
       },
@@ -32,10 +36,18 @@ const userSchema = mongoose.Schema(
     password: {
       type: String,
       required: true,
-      trim: true,
-      set: (v) => {
-        const salt = bcrypt.genSaltSync(10);
-        return bcrypt.hashSync(v, salt);
+      minlength: [6, "Password must be at least 6 characters"],
+      select: false,
+      set: (value) => {
+        return hashPassword(value);
+      },
+    },
+    gender: {
+      type: String,
+      lowercase: true,
+      enum: {
+        values: ["male", "female"],
+        message: "{VALUE} is invalid for gender",
       },
     },
     isAdmin: {

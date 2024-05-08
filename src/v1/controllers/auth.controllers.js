@@ -31,6 +31,12 @@ import sendAccountVerifyMail from "../../utils/accountVerifyMail.js";
  *
  */
 export const userRegister = asyncHandler(async (req, res) => {
+  if (!req.body.email || !req.body.password) {
+    throw createError(400, "Please provide email and password");
+  }
+
+  const { email } = req.body;
+
   // check if user exist
   const user = await userModel.exists({ email: req.body.email });
 
@@ -44,6 +50,11 @@ export const userRegister = asyncHandler(async (req, res) => {
     jwtRegisterSecretKey,
     jwtRegisterKeyExpire
   );
+
+  //
+  const result = await userModel.create({
+    ...req.body,
+  });
 
   // prepare email data
   const emailData = {
@@ -59,6 +70,9 @@ export const userRegister = asyncHandler(async (req, res) => {
   successResponse(res, {
     statusCode: 201,
     message: `A verification email sent to ${email}, To create account please verify. `,
+    payload: {
+      data: result,
+    },
   });
 });
 

@@ -38,7 +38,7 @@ export const getAllUsers = asyncHandler(async (req, res) => {
 
   // filters
   const searchRegExp = new RegExp(".*" + search + ".*", "i");
-
+  console.log(2);
   const filters = {
     isAdmin: { $ne: true },
     $or: [

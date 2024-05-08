@@ -33,12 +33,11 @@ app.use(cookieParser());
 // static
 app.use("/api/public", express.static("api/public"));
 
-// seeds routes
-app.use("/api/v1/seeds", seedRouter);
-
 /**
  * @description: for version 1
  */
+// seeds routes
+app.use("/api/v1/seeds", seedRouter);
 
 // // product  route
 // app.use("/api/v1/product", productRoute);

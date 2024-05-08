@@ -1,10 +1,14 @@
 import mongoose from "mongoose";
-mongoose.set("strictQuery", false);
-const url = process.env.MONGO_URL;
+import { mongoURL } from "../app/secret.js";
+// mongoose.set("strictQuery", false);
+
 const mongoDBConnection = async (options = {}) => {
   try {
-    const connect = await mongoose.connect(url, options);
-    console.log(`mongoDB connected successfully`.red.bgGreen);
+    const connect = await mongoose.connect(mongoURL, options);
+
+    console.log(
+      `mongoDB connected successfully to ${connect.connection.name}`.red.bgGreen
+    );
     mongoose.connection.on("error", (error) => {
       console.log("mongodb error" + error);
     });
