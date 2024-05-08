@@ -1,0 +1,38 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "keywords": [
+    "api",
+    "express",
+    "rest api",
+    "ecommerce"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --env-file=.env src/server.js ",
+    "start": "node --env-file=.env src/server.js"
+  },
+  "author": "Md. Rejoyan Islam",
+  "license": "ISC",
+  "devDependencies": {
+    "colors": "^1.4.0",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.1.0"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "express-async-handler": "^1.2.0",
+    "express-rate-limit": "^7.2.0",
+    "http-errors": "^2.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.3.4",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.13"
+  }
+}
