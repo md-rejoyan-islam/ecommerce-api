@@ -17,6 +17,7 @@ import userRouter from "../v1/routes/users.routes.js";
 import authRouter from "../v1/routes/auth.routes.js";
 import seedRouter from "../v1/routes/seeds.routes.js";
 import { successResponse } from "../v1/services/responseHandler.js";
+import path from "path";
 
 // express app
 const app = express();
@@ -31,7 +32,7 @@ app.use(morgan("dev"));
 app.use(cookieParser());
 
 // static
-app.use("/api/public", express.static("api/public"));
+app.use("/api/public", express.static(path.resolve("public")));
 
 /**
  * @description: for version 1

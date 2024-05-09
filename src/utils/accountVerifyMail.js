@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import createError from "http-errors";
 import {
   clientURL,
   emailPass,
@@ -33,6 +34,7 @@ const sendAccountVerifyMail = async (emailData) => {
     console.log("Message sent: %s", info.messageId);
   } catch (error) {
     console.log("Message sent failed!");
+    throw createError(500, "Failed to send email");
   }
 };
 

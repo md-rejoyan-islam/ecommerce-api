@@ -1,4 +1,5 @@
 import multer from "multer";
+import { userImageUploadDir } from "../app/secret.js";
 
 // create disk storage
 const storage = multer.diskStorage({
@@ -6,13 +7,13 @@ const storage = multer.diskStorage({
     // image file size
     const fileSize = parseInt(req.headers["content-length"]);
 
-    if (file.fieldname == "category_photo") {
+    if (file.fieldname == "user_photo") {
       if (fileSize > 400000) {
         return cb(new Error("Maximum image size is 400KB"));
       }
 
       // image location
-      cb(null, "api/public/images/categories");
+      cb(null, userImageUploadDir);
     }
     if (file.fieldname == "brand_photo") {
       if (fileSize > 400000) {
@@ -31,6 +32,11 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + "_" + file.originalname);
   },
 });
+
+// user
+export const userMulter = multer({
+  storage: storage,
+}).single("user_photo");
 
 // brand
 export const brandMulter = multer({
@@ -55,15 +61,3 @@ export const productMulter = multer({
 export const categoryMulter = multer({
   storage: storage,
 }).single("category_photo");
-
-// multer storage function
-function multerDiskStorage(location) {
-  return multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, location);
-    },
-    filename: (req, file, cb) => {
-      cb(null, Date.now() + "_" + file.originalname);
-    },
-  });
-}

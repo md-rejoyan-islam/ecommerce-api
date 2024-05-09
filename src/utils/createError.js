@@ -1,4 +1,4 @@
-// create a error
+// create a error   
 export const createError=(status,msg)=>{
     const err=new Error()
     err.message=msg

@@ -14,7 +14,7 @@ import limiter from "../../middlewares/rateLimiter.js";
 const authRouter = express.Router();
 
 authRouter.route("/register").post(userRegister);
-authRouter.route("/verify").get(activateUserAccount);
+authRouter.route("/verify").post(activateUserAccount);
 authRouter.route("/login").post(limiter, userLogin);
 authRouter.route("/refresh").get(refreshToken);
 authRouter.route("/logout").post(logout);

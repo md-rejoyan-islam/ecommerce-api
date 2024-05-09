@@ -11,7 +11,7 @@ fs.promises;
 import deleteImage from "../../helper/deleteImage.js";
 import filterQuery from "../../utils/filterQuery.js";
 import pagination from "../../utils/pagination.js";
-import findUser from "../services/findUser.js";
+import findData from "../services/findData.js";
 
 /**
  *
@@ -107,7 +107,11 @@ export const findUserById = asyncHandler(async (req, res) => {
   checkMongoID(req.params.id);
 
   // validate user
-  const user = await findUser(userModel, { _id: req.params.id });
+  const user = await findData({
+    model: userModel,
+    filter: { _id: req.params.id },
+    options: { password: 0, __v: 0, role: 0 },
+  });
 
   // response
   successResponse(res, {
@@ -133,24 +137,30 @@ export const createUser = asyncHandler(async (req, res) => {
 });
 
 // update user
-export const updateUser = asyncHandler(async (req, res) => {
+export const updateUserById = asyncHandler(async (req, res) => {
   const { email } = req.body;
 
   // id validation
-  if (!isValidObjectId(req.params.id)) {
-    throw createError(400, "Invalid id");
-  }
+
+  checkMongoID(req.params.id);
 
   // validate user
-  const user = await userModel.find({ email });
+  const user = await userModel.findById(req.params.id);
 
   // validate user
   if (!user) {
-    throw createError(400, "No user found");
+    throw createError(404, "Couldn't find any user data.");
   }
 
-  // if password is provided
-  req.body.password && (req.body.password = hashPassword(req.body.password));
+  // // if password is provided
+  // req.body.password && (req.body.password = hashPassword(req.body.password));
+
+  console.log(req.file);
+
+  // image update
+  if (req.file) {
+    req.body.photo = req.file.path;
+  }
 
   // update options
   const options = {
@@ -168,24 +178,44 @@ export const updateUser = asyncHandler(async (req, res) => {
     }
   );
 
+  // delete previous image
+  if (req.file && user.photo) {
+    deleteImage(user.photo);
+  }
+
   // response
-  res.status(200).json({
-    Status: "Success",
-    Message: "User updated",
-    Data: updatedUser,
+  successResponse(res, {
+    statusCode: 200,
+    message: "User data updated successfully",
+    payload: {
+      data: updatedUser,
+    },
   });
+  // res.status(200).json({
+  //   Status: "Success",
+  //   Message: "User updated",
+  //   Data: updatedUser,
+  // });
 });
 
 // delete user
 export const deleteUserById = asyncHandler(async (req, res) => {
   // id validation
-  checkMongoId(req.params.id);
+  checkMongoID(req.params.id);
 
   // find user
-  const user = await findData(userModel, { _id: req.params.id });
+  const user = await findData({
+    model: userModel,
+    filter: { _id: req.params.id },
+  });
+
+  // if admin user
+  if (user[0]?.role === "admin") {
+    throw createError(400, "You can't delete admin user.");
+  }
 
   // image delete
-  const userImagePath = user?.photo;
+  const userImagePath = user[0]?.photo;
 
   userImagePath && deleteImage(userImagePath);
 

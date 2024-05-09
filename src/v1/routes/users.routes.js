@@ -4,10 +4,11 @@ import {
   deleteUserById,
   findUserById,
   getAllUsers,
-  updateUser,
+  updateUserById,
 } from "../controllers/user.controllers.js";
 import tokenVerify from "../../middlewares/tokenVerify.js";
 import { authorization } from "../controllers/authorization.js";
+import { userMulter } from "../../utils/multer.js";
 
 const userRouter = express.Router();
 
@@ -26,7 +27,7 @@ userRouter
   .route("/:id")
   .get(findUserById)
   .delete(deleteUserById)
-  .put(updateUser)
-  .patch(updateUser);
+  .put(userMulter, updateUserById)
+  .patch(userMulter, updateUserById);
 
 export default userRouter;

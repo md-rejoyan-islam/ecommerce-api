@@ -5,8 +5,11 @@ import bcrypt from "bcryptjs";
 import createError from "http-errors";
 import userModel from "../../models/user.model.js";
 import hashPassword from "../../utils/hashPassword.js";
-import findData from "../services/findUser.js";
-import { successResponse } from "../../v1/services/responseHandler.js";
+import findData from "../services/findData.js";
+import {
+  errorResponse,
+  successResponse,
+} from "../../v1/services/responseHandler.js";
 import createJWT from "../../helper/createJWT.js";
 import {
   jwtRegisterKeyExpire,
@@ -41,20 +44,20 @@ export const userRegister = asyncHandler(async (req, res) => {
   const user = await userModel.exists({ email: req.body.email });
 
   if (user) {
-    throw createError(409, "Already have an account with this email.");
+    throw createError.Conflict("Already have an account with this email.");
   }
 
   // create verify token
-  const verifyToken = createJWT(
+  const verifyToken = await createJWT(
     { ...req.body },
     jwtRegisterSecretKey,
     jwtRegisterKeyExpire
   );
 
-  //
-  const result = await userModel.create({
-    ...req.body,
-  });
+  // user register
+  // const result = await userModel.create({
+  //   ...req.body,
+  // });
 
   // prepare email data
   const emailData = {
@@ -64,14 +67,14 @@ export const userRegister = asyncHandler(async (req, res) => {
   };
 
   // send email
-  sendAccountVerifyMail(emailData);
+  // await sendAccountVerifyMail(emailData);
 
   // response send
   successResponse(res, {
     statusCode: 201,
     message: `A verification email sent to ${email}, To create account please verify. `,
     payload: {
-      data: result,
+      verifyToken,
     },
   });
 });
@@ -91,39 +94,49 @@ export const userRegister = asyncHandler(async (req, res) => {
  *
  */
 
-export const activateUserAccount = async (req, res) => {
-  const token = req.params.token;
+export const activateUserAccount = asyncHandler(async (req, res) => {
+  const token = req.body.token;
   // check token
-  if (!token) {
-    throw createError(400, "token not found.");
-  }
+  if (!token) throw createError(404, "token is required.");
 
-  try {
-    // verify token
-    const decoded = jwt.verify(token, jwtVerifyKeySecret);
-
-    // check if user is already verified
-    const user = await userModel.findOne({ email: decoded.email });
-
-    if (user) {
-      errorResponse(res, {
-        statusCode: 400,
-        message: "You have already resister. Please login.",
-      });
+  // verify token
+  const decoded = jwt.verify(token, jwtRegisterSecretKey, (err, decoded) => {
+    if (err) {
+      if (err.name === "TokenExpiredError") {
+        throw createError(400, "Token expired");
+      } else if (err.name === "JsonWebTokenError") {
+        throw createError(400, "Invalid signature");
+      } else if (err.name === "SyntaxError") {
+        throw createError(400, "Invalid token");
+      } else {
+        throw createError(400, err.message);
+      }
     }
+    return decoded;
+  });
 
-    // create user
-    await userModel.create(decoded);
+  // check if user is already verified
+  const user = await userModel.findOne({ email: decoded.email });
 
-    // response send
-    successResponse(res, {
-      statusCode: 201,
-      message: "User account created successfully.",
+  if (user) {
+    return errorResponse(res, {
+      statusCode: 400,
+      message: "You have already resister. Please login.",
     });
-  } catch (error) {
-    next(createError(400, "Expired Token"));
   }
-};
+
+  // create user
+  const result = await userModel.create(decoded);
+
+  // response send
+  successResponse(res, {
+    statusCode: 201,
+    message: "User account created successfully.",
+    payload: {
+      data: result,
+    },
+  });
+});
 
 /**
  *
