@@ -77,5 +77,4 @@ productSchema.pre("validate", function (next) {
   next();
 });
 
-
 export default mongoose.model("Product", productSchema);

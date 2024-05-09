@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { accessTokenSecret, node_env } from "../app/secret.js";
 import userModel from "../models/user.model.js";
 import { clearCookie } from "../helper/cookie.mjs";
+import { errorResponse } from "../v1/services/responseHandler.js";
 
 export const isLoggedIn = asyncHandler(async (req, res, next) => {
   const token = req?.cookies?.accessToken; // direct access token from cookie
@@ -48,10 +49,7 @@ export const isLoggedIn = asyncHandler(async (req, res, next) => {
 });
 
 export const isLoggedOut = asyncHandler(async (req, res, next) => {
-  //   const authHeader = req.headers.authorization || req.headers.Authorization;
-
   const authToken = req?.cookies?.accessToken;
-  //   const token = authHeader?.split(" ")[1] || authToken;
 
   if (authToken) {
     throw createError(400, "User is already logged in");

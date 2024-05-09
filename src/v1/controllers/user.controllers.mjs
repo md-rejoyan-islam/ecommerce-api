@@ -3,8 +3,8 @@ import userModel from "../../models/user.model.js";
 import createError from "http-errors";
 import { isValidObjectId } from "mongoose";
 import hashPassword from "../../utils/hashPassword.js";
-import { successResponse } from "../../v1/services/responseHandler.js";
-import checkMongoID from "../../v1/services/checkMongoId.js";
+import { successResponse } from "../services/responseHandler.js";
+import checkMongoID from "../services/checkMongoId.js";
 import fs from "fs";
 fs.promises;
 

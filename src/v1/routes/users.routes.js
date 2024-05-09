@@ -5,8 +5,8 @@ import {
   findUserById,
   getAllUsers,
   updateUserById,
-} from "../controllers/user.controllers.js";
-import { authorization } from "../controllers/authorization.js";
+} from "../controllers/user.controllers.mjs";
+import { authorization } from "../controllers/authorization.mjs";
 import { userMulter } from "../../middlewares/multer.js";
 import { userMulterForBuffer } from "../../middlewares/multerForBuffer.mjs";
 

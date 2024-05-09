@@ -1,6 +1,6 @@
 import { log } from "console";
-import categoryModel from "../../models/category.model.js";
-import Category from "../../models/category.model.js";
+import categoryModel from "../../models/category.model.mjs";
+import Category from "../../models/category.model.mjs";
 import { createError } from "../../utils/createError.js";
 
 import { unlinkSync } from "fs";

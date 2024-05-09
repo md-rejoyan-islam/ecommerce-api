@@ -5,7 +5,7 @@ import {
   deleteCategory,
   singleCategory,
   updateCategory,
-} from "../controllers/category.controllers.js";
+} from "../controllers/category.controllers.mjs";
 import { categoryMulter } from "../../middlewares/multer.js";
 
 //create router

@@ -18,7 +18,7 @@ const categorySchema = mongoose.Schema(
       unique: true,
     },
     category_photo: {
-      type: String, 
+      type: String,
       trim: true,
       required: true,
     },
@@ -28,11 +28,11 @@ const categorySchema = mongoose.Schema(
     },
     trash: {
       type: Boolean,
-      default: false, 
+      default: false,
     },
     description: {
       type: String,
-      required:true
+      required: true,
     },
   },
   {
@@ -40,11 +40,9 @@ const categorySchema = mongoose.Schema(
   }
 );
 
-
 categorySchema.pre("validate", function (next) {
   this.slug = this.name.split(" ").join("-").toLowerCase().trim();
   next();
 });
 
 export default mongoose.model("Category", categorySchema);
-  

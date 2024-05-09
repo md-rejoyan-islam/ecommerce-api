@@ -5,7 +5,7 @@ import {
   deleteProduct,
   singleProduct,
   updateProduct,
-} from "../controllers/product.controllers.js";
+} from "../controllers/product.controllers.mjs";
 import { productMulter } from "../../middlewares/multer.js";
 
 //create router

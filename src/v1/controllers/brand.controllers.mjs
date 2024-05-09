@@ -1,4 +1,4 @@
-import brandModel from "../../models/brand.model.js";
+import brandModel from "../../models/brand.model.mjs";
 import { createError } from "../../utils/createError.js";
 
 import { unlinkSync } from "fs";

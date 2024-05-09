@@ -5,7 +5,7 @@ import {
   deleteBrand,
   singleBrand,
   updateBrand,
-} from "../controllers/brand.controllers.js";
+} from "../controllers/brand.controllers.mjs";
 import { brandMulter } from "../../middlewares/multer.js";
 
 //create router

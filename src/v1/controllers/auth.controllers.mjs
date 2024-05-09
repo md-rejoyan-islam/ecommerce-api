@@ -6,10 +6,7 @@ import createError from "http-errors";
 import userModel from "../../models/user.model.js";
 import hashPassword from "../../utils/hashPassword.js";
 import findData from "../services/findData.js";
-import {
-  errorResponse,
-  successResponse,
-} from "../../v1/services/responseHandler.js";
+import { errorResponse, successResponse } from "../services/responseHandler.js";
 import createJWT from "../../helper/createJWT.js";
 import {
   accessTokenExpire,
@@ -189,7 +186,7 @@ export const userLogin = asyncHandler(async (req, res) => {
   }
 
   // create  access token
-  const accessToken = createJWT(
+  const accessToken = await createJWT(
     { email, role: loginUser.role },
     accessTokenSecret,
     accessTokenExpire

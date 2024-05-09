@@ -1,5 +1,5 @@
 import express from "express";
-import { seedsUser } from "../controllers/seeds.controllers.js";
+import { seedsUser } from "../controllers/seeds.controllers.mjs";
 
 const seedRouter = express.Router();
 

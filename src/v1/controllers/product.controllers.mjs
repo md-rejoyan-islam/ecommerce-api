@@ -1,5 +1,5 @@
 import { isValidObjectId } from "mongoose";
-import productModel from "../../models/product.model.js";
+import productModel from "../../models/product.model.mjs";
 import { createError } from "../../utils/createError.js";
 
 import { unlinkSync } from "fs";
