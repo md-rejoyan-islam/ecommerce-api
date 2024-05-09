@@ -1,7 +1,9 @@
 import multer from "multer";
-import { userImageUploadDir } from "../secret.js";
-import createError from "http-errors";
-import path from "path";
+import {
+  allowedImageTypes,
+  userImageUploadDir,
+  userMaxImageSize,
+} from "../app/secret.js";
 
 // create disk storage
 const storage = multer.diskStorage({
@@ -9,13 +11,25 @@ const storage = multer.diskStorage({
     // image file size
     const fileSize = parseInt(req.headers["content-length"]);
 
-    if (file.fieldname == "photo") {
-      if (fileSize > 400000) {
-        return cb(createError(400, "Maximum image size is 400KB"));
+    if (file.fieldname == "user_photo") {
+      if (fileSize > userMaxImageSize) {
+        return cb(new Error("Maximum image size is 400KB"));
       }
 
       // image location
       cb(null, userImageUploadDir);
+    }
+    if (file.fieldname == "brand_photo") {
+      if (fileSize > 400000) {
+        return cb(new Error("Maximum image size is 400KB"));
+      }
+      cb(null, "api/public/images/brands");
+    }
+    if (
+      file.fieldname == "product_photo" ||
+      file.fieldname == "product_gallery_photo"
+    ) {
+      cb(null, "api/public/images/products");
     }
   },
   filename: (req, file, cb) => {
@@ -24,13 +38,17 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  // image extension fixed
-  const supportedImageExtension = /(png|jpg|jpeg|webp)/;
-  const fileExtension = path.extname(file.originalname);
-  if (supportedImageExtension.test(fileExtension)) {
+  const fileExtension = file.mimetype.split("/")[1];
+
+  if (allowedImageTypes.includes(fileExtension)) {
     cb(null, true);
   } else {
-    cb(createError("Only PNG/JPG/JPEG/WEBP image accepted"), false);
+    cb(
+      new Error(
+        "Invalid file type. Only jpg, jpeg, png, webp files are allowed"
+      ),
+      false
+    );
   }
 };
 
@@ -38,4 +56,28 @@ const fileFilter = (req, file, cb) => {
 export const userMulter = multer({
   storage: storage,
   fileFilter,
-}).single("photo");
+}).single("user_photo");
+
+// brand
+export const brandMulter = multer({
+  storage: storage,
+}).single("brand_photo");
+
+// product
+export const productMulter = multer({
+  storage: storage,
+}).fields([
+  {
+    name: "product_photo",
+    maxCount: 1,
+  },
+  {
+    name: "product_gallery_photo",
+    maxCount: 10,
+  },
+]);
+
+// product category middleware
+export const categoryMulter = multer({
+  storage: storage,
+}).single("category_photo");

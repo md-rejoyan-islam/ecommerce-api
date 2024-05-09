@@ -20,3 +20,5 @@ export const emailPass = process.env.EMAIL_HOST_PASSWORD;
 export const clientURL = process.env.CLIENT_URL;
 
 export const userImageUploadDir = process.env.USER_IMAGE_UPLOAD_DIR;
+export const userMaxImageSize = process.env.USER_MAX_IMAGE_SIZE;
+export const allowedImageTypes = process.env.ALLOWED_IMAGE_TYPE;

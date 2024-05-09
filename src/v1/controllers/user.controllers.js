@@ -152,20 +152,11 @@ export const updateUserById = asyncHandler(async (req, res) => {
     throw createError(404, "Couldn't find any user data.");
   }
 
-  // // if password is provided
-  // req.body.password && (req.body.password = hashPassword(req.body.password));
-
-  console.log(req.file);
-
-  // image update
-  if (req.file) {
-    req.body.photo = req.file.path;
-  }
-
   // update options
   const options = {
     $set: {
       ...req.body,
+      photo: req.file ? req.file.path : user.photo,
     },
   };
   // update user

@@ -6,7 +6,7 @@ import {
   singleProduct,
   updateProduct,
 } from "../controllers/product.controllers.js";
-import { productMulter } from "../../utils/multer.js";
+import { productMulter } from "../../middlewares/multer.js";
 
 //create router
 const router = express.Router();

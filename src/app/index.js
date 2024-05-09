@@ -32,7 +32,7 @@ app.use(morgan("dev"));
 app.use(cookieParser());
 
 // static
-app.use("/api/public", express.static(path.resolve("public")));
+app.use("/public", express.static(path.resolve("public")));
 
 /**
  * @description: for version 1

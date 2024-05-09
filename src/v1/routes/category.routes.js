@@ -6,7 +6,7 @@ import {
   singleCategory,
   updateCategory,
 } from "../controllers/category.controllers.js";
-import { categoryMulter } from "../../utils/multer.js";
+import { categoryMulter } from "../../middlewares/multer.js";
 
 //create router
 const router = express.Router();

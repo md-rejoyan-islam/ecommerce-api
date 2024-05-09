@@ -6,7 +6,7 @@ import {
   singleBrand,
   updateBrand,
 } from "../controllers/brand.controllers.js";
-import { brandMulter } from "../../utils/multer.js";
+import { brandMulter } from "../../middlewares/multer.js";
 
 //create router
 const router = express.Router();
