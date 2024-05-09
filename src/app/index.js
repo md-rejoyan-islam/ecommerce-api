@@ -7,15 +7,15 @@ import asyncHandler from "express-async-handler";
 import createError from "http-errors";
 
 //import routes
-import productCategoryRoute from "../v1/routes/category.routes.js";
-import productBrandRoute from "../v1/routes/brand.routes.js";
-import productTagRoute from "../v1/routes/tag.routes.js";
-import productRoute from "../v1/routes/product.routes.js";
+import productCategoryRoute from "../v1/routes/category.routes.mjs";
+import productBrandRoute from "../v1/routes/brand.routes.mjs";
+import productTagRoute from "../v1/routes/tag.routes.mjs";
+import productRoute from "../v1/routes/product.routes.mjs";
 import { errorHandler } from "../middlewares/errorHandler.js";
 import corsOptions from "../config/corsSetup.js";
-import userRouter from "../v1/routes/users.routes.js";
-import authRouter from "../v1/routes/auth.routes.js";
-import seedRouter from "../v1/routes/seeds.routes.js";
+import userRouter from "../v1/routes/users.routes.mjs";
+import authRouter from "../v1/routes/auth.routes.mjs";
+import seedRouter from "../v1/routes/seeds.routes.mjs";
 import { successResponse } from "../v1/services/responseHandler.js";
 import path from "path";
 
