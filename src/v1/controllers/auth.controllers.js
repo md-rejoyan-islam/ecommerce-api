@@ -21,6 +21,7 @@ import {
   node_env,
 } from "../../app/secret.js";
 import sendAccountVerifyMail from "../../utils/accountVerifyMail.js";
+import { clearCookie, setCookie } from "../../helper/cookie.mjs";
 
 /**
  *
@@ -200,11 +201,11 @@ export const userLogin = asyncHandler(async (req, res) => {
   // });
 
   // cookie set
-  res.cookie("accessToken", accessToken, {
-    httpOnly: true,
-    maxAge: 1000 * 60 * 60 * 24 * 1, // 7 days
-    secure: node_env === "development" ? false : true, // only https
-    sameSite: "none", // when use cross site
+  setCookie({
+    res,
+    cookieName: "accessToken",
+    cookieValue: accessToken,
+    maxAge: 1000 * 60 * 60 * 24 * 7,
   });
 
   // response send
@@ -236,11 +237,7 @@ export const userLogin = asyncHandler(async (req, res) => {
 
 export const logout = (req, res) => {
   // clear cookies
-  res.clearCookie("accessToken", {
-    sameSite: "none",
-    secure: node_env === "development" ? false : true,
-    httpOnly: true,
-  });
+  clearCookie(res, "accessToken");
 
   // response send
   successResponse(res, {

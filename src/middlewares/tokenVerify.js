@@ -1,35 +1,61 @@
-import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
-import { createError } from "../utils/createError.js";
+import createError from "http-errors";
+import jwt from "jsonwebtoken";
+import { accessTokenSecret, node_env } from "../app/secret.js";
 import userModel from "../models/user.model.js";
+import { clearCookie } from "../helper/cookie.mjs";
 
-const tokenVerify = asyncHandler(async (req, res, next) => {
+export const isLoggedIn = asyncHandler(async (req, res, next) => {
+  const token = req?.cookies?.accessToken; // direct access token from cookie
 
-  // auth  header
-  const authHeader = req.headers.authorization || req.headers.Authorization;
-
-  // cookie token
-  const authToken = req.cookies.accessToken;
-
-  const token = authHeader?.split(" ")[1] || authToken;
-
-  // token  check
-  if (!authToken) {
-    throw createError(401, "Unauthorized, No token");
+  if (!token) {
+    throw createError(
+      401,
+      "Unauthorized, Access token not found. Please login."
+    );
   }
 
-  // token verify
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, decode) => {
+  jwt.verify(token, accessTokenSecret, async (err, decode) => {
     if (err) {
-      return res.status(400).json({
-        message: "Unauthorized, Invalid token",
+      // clear cookie
+      clearCookie(res, "accessToken");
+
+      // response send
+      return errorResponse(res, {
+        statusCode: 400,
+        message: "Unauthorized, Invalid access token.Please login again",
       });
     }
-    const me = await userModel.findOne({ email: decode.email });
+    // find user
+    const loginUser = await userModel.findOne({
+      email: decode.email,
+    });
 
-    req.me = me;
+    // if user not exist
+    if (!loginUser) {
+      // clear cookie
+      clearCookie(res, "accessToken");
+      // send response
+      return errorResponse(res, {
+        statusCode: 400,
+        message: "User not found.",
+      });
+    }
+
+    req.me = loginUser;
     next();
   });
 });
 
-export default tokenVerify;
+export const isLoggedOut = asyncHandler(async (req, res, next) => {
+  //   const authHeader = req.headers.authorization || req.headers.Authorization;
+
+  const authToken = req?.cookies?.accessToken;
+  //   const token = authHeader?.split(" ")[1] || authToken;
+
+  if (authToken) {
+    throw createError(400, "User is already logged in");
+  }
+
+  next();
+});

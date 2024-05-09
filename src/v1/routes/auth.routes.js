@@ -7,7 +7,6 @@ import {
   userLogin,
   userRegister,
 } from "../controllers/auth.controllers.js";
-import tokenVerify from "../../middlewares/tokenVerify.js";
 import limiter from "../../middlewares/rateLimiter.js";
 import {
   userLoginValidator,
@@ -27,7 +26,7 @@ authRouter
   .post(limiter, userLoginValidator, runValidation, userLogin);
 authRouter.route("/refresh").get(refreshToken);
 authRouter.route("/logout").post(logout);
-authRouter.route("/me").get(tokenVerify, me);
+authRouter.route("/me").get(me);
 
 //export
 export default authRouter;
