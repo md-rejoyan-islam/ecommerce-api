@@ -5,8 +5,8 @@ export const userRegisterValidator = [
     .trim()
     .notEmpty()
     .withMessage("Name is required.Please provide a name.")
-    .isLength({ min: 3 })
-    .withMessage("Name must be at least 3 characters long."),
+    .isLength({ min: 3, max: 30 })
+    .withMessage("Name must be at least 3-30 characters long."),
 
   body("email")
     .trim()
@@ -19,20 +19,17 @@ export const userRegisterValidator = [
     .notEmpty()
     .withMessage("Password is required.Please provide a password.")
     .isLength({ min: 6 })
-    .withMessage("Password must be at least 6 characters long."),
+    .withMessage("Password must be at least 6 characters long.")
+    .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{6,}$/)
+    .withMessage(
+      "Password must contain at least one uppercase letter, one lowercase letter, and one number."
+    ),
 
   body("gender")
     .notEmpty()
-    .withMessage("Gender is required.Please provide a gender."),
-
-  //   body("photo")
-  //     .custom((value, { req }) => {
-  //       if (!req.file || !req.file.buffer) {
-  //         throw createHttpError(400, "Image is required");
-  //       }
-  //       return true;
-  //     })
-  //     .withMessage("Image is required"),
+    .withMessage("Gender is required.Please provide a gender.")
+    .isIn(["male", "female"])
+    .withMessage(`Gender must be either male or female.`),
 ];
 
 export const userLoginValidator = [
@@ -123,7 +120,6 @@ export const resetPasswordValidatorByCode = [
     .isLength({ min: 4 })
     .withMessage("Code must be at least 4 characters long."),
 ];
-
 
 export const resetPasswordValidatorByURL = [
   body("password")

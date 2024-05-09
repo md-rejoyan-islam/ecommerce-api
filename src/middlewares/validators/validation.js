@@ -1,6 +1,6 @@
 import { validationResult } from "express-validator";
 import asyncHandler from "express-async-handler";
-import { errorResponse } from "../../services/responseHandler.js";
+import { errorResponse } from "../../v1/services/responseHandler.js";
 
 const runValidation = asyncHandler(async (req, res, next) => {
   const errors = validationResult(req);

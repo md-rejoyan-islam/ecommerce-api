@@ -138,25 +138,24 @@ export const createUser = asyncHandler(async (req, res) => {
 
 // update user
 export const updateUserById = asyncHandler(async (req, res) => {
-  const { email } = req.body;
-
   // id validation
-
   checkMongoID(req.params.id);
 
-  // validate user
-  const user = await userModel.findById(req.params.id);
+  // buffer image
+  // if (req.file) {
+  //   req.body.photo = req.file.buffer.toString("base64");
+  // }
 
-  // validate user
-  if (!user) {
-    throw createError(404, "Couldn't find any user data.");
-  }
+  // some data remove from update
+  ["role", "isAdmin", "isBanned", "_id", "createdAt", "updatedAt"].forEach(
+    (field) => delete req.body[field]
+  );
 
   // update options
   const options = {
     $set: {
       ...req.body,
-      photo: req.file ? req.file.path : user.photo,
+      photo: req.file && req.file.path,
     },
   };
   // update user
@@ -166,12 +165,18 @@ export const updateUserById = asyncHandler(async (req, res) => {
     {
       new: true,
       runValidators: true,
+      context: "query",
     }
   );
 
+  // if user not found
+  if (!updatedUser) {
+    throw createError(404, "Couldn't find any user data.");
+  }
+
   // delete previous image
-  if (req.file && user.photo) {
-    deleteImage(user.photo);
+  if (req.file && updatedUser.photo) {
+    deleteImage(updatedUser.photo);
   }
 
   // response
@@ -182,11 +187,6 @@ export const updateUserById = asyncHandler(async (req, res) => {
       data: updatedUser,
     },
   });
-  // res.status(200).json({
-  //   Status: "Success",
-  //   Message: "User updated",
-  //   Data: updatedUser,
-  // });
 });
 
 // delete user
@@ -194,24 +194,22 @@ export const deleteUserById = asyncHandler(async (req, res) => {
   // id validation
   checkMongoID(req.params.id);
 
-  // find user
-  const user = await findData({
-    model: userModel,
-    filter: { _id: req.params.id },
-  });
-
-  // if admin user
-  if (user[0]?.role === "admin") {
-    throw createError(400, "You can't delete admin user.");
-  }
-
-  // image delete
-  const userImagePath = user[0]?.photo;
-
-  userImagePath && deleteImage(userImagePath);
+  // // if admin user
+  // if (req.me?.role === "admin") {
+  //   throw createError(400, "You can't delete admin user.");
+  // }
 
   // delete user
   const deletedUser = await userModel.findByIdAndDelete(req.params.id);
+
+  if (!deletedUser) {
+    throw createError(404, "Couldn't find any user data.");
+  }
+
+  // // image delete
+  const userImagePath = deletedUser[0]?.photo;
+
+  userImagePath && deleteImage(userImagePath);
 
   // response
   return successResponse(res, {

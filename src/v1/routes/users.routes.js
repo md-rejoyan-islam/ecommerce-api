@@ -9,6 +9,7 @@ import {
 import tokenVerify from "../../middlewares/tokenVerify.js";
 import { authorization } from "../controllers/authorization.js";
 import { userMulter } from "../../middlewares/multer.js";
+import { userMulterForBuffer } from "../../middlewares/multerForBuffer.mjs";
 
 const userRouter = express.Router();
 

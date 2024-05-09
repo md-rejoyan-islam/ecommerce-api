@@ -49,6 +49,7 @@ const userSchema = mongoose.Schema(
         values: ["male", "female"],
         message: "{VALUE} is invalid for gender",
       },
+      required: [true, "Please provide your gender"],
     },
     isAdmin: {
       type: Boolean,
@@ -60,21 +61,11 @@ const userSchema = mongoose.Schema(
     },
     address: {
       type: String,
-      required: [true, "User address is required!"],
-    },
-    phone: {
-      type: String,
-      required: [true, "User phone is required!"],
     },
     role: {
       type: String,
       enum: ["user", "admin", "editor"],
       default: "user",
-      lowercase: true,
-    },
-    gender: {
-      type: String,
-      enum: ["male", "female"],
       lowercase: true,
     },
     active: {
@@ -85,6 +76,11 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    // for buffer image storing in database
+    // photo: {
+    //   type: Buffer,
+    //   contentType: String,
+    // },
     photo: {
       type: String,
       default: defaultImagePath,

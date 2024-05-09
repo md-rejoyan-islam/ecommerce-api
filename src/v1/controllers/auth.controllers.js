@@ -12,10 +12,13 @@ import {
 } from "../../v1/services/responseHandler.js";
 import createJWT from "../../helper/createJWT.js";
 import {
+  accessTokenExpire,
+  accessTokenSecret,
   jwtRegisterKeyExpire,
   jwtRegisterSecretKey,
   jwtVerifyKeyExpire,
   jwtVerifyKeySecret,
+  node_env,
 } from "../../app/secret.js";
 import sendAccountVerifyMail from "../../utils/accountVerifyMail.js";
 
@@ -158,47 +161,56 @@ export const activateUserAccount = asyncHandler(async (req, res) => {
 export const userLogin = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  // field check
-  if (!email || !password) {
-    throw createError(400, "Please provide email and password");
-  }
-
   // user check
-  const loginUser = await userModel.findOne({ email });
+  const loginUser = await userModel
+    .findOne({
+      email,
+    })
+    .select("+password");
+
   if (!loginUser) {
-    res.status(400);
-    throw new Error("User not found");
+    throw createError(400, "User not found.Please register first.");
   }
 
   //  password match
   const isMatch = bcrypt.compareSync(password, loginUser.password);
 
   if (!isMatch) {
-    throw createError(400, "Invalid password");
+    throw createError(400, "Wrong password. Please try again.");
+  }
+
+  // check user is banned
+  if (loginUser.isBanned) {
+    throw createError(
+      403,
+      "Your account is banned. Please contact with admin."
+    );
   }
 
   // create  access token
-  const accessToken = jwt.sign({ email }, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: process.env.ACCESS_TOKEN_EXPIRE,
-  });
+  const accessToken = createJWT(
+    { email, role: loginUser.role },
+    accessTokenSecret,
+    accessTokenExpire
+  );
 
   // create  refresh token
-  const refreshToken = jwt.sign({ email }, process.env.REFRESH_TOKEN_SECRET, {
-    expiresIn: process.env.REFRESH_TOKEN_EXPIRE,
-  });
+  // const refreshToken = jwt.sign({ email }, process.env.REFRESH_TOKEN_SECRET, {
+  //   expiresIn: process.env.REFRESH_TOKEN_EXPIRE,
+  // });
 
   // cookie set
   res.cookie("accessToken", accessToken, {
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 24 * 1, // 7 days
-    secure: false, // only https
-    sameSite: "strict",
+    secure: node_env === "development" ? false : true, // only https
+    sameSite: "none", // when use cross site
   });
 
   // response send
   successResponse(res, {
     statusCode: 200,
-    message: "Successfully Login",
+    message: "Successfully Login.",
     payload: {
       loginUser,
     },
@@ -225,7 +237,9 @@ export const userLogin = asyncHandler(async (req, res) => {
 export const logout = (req, res) => {
   // clear cookies
   res.clearCookie("accessToken", {
-    sameSite: "strict",
+    sameSite: "none",
+    secure: node_env === "development" ? false : true,
+    httpOnly: true,
   });
 
   // response send
