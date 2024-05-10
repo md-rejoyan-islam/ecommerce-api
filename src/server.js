@@ -1,17 +1,22 @@
 import app from "./app/index.js";
 import mongoDBConnection from "./config/db.js";
 import { hostname, port } from "./app/secret.js";
+import { errorLogger, logger } from "./helper/logger.mjs";
 
 // app listen
 app.listen(port, () => {
   mongoDBConnection();
-  console.log(
+  logger.info(
     `server is running on http://localhost:${port} or http://${hostname}:${port}`
-      .bgGreen.red
   );
 });
 
 process.on("unhandledRejection", (error) => {
-  console.log(error.name, error.message);
+  errorLogger.error(error);
+  process.exit(1);
+});
+
+process.on("uncaughtException", (error) => {
+  errorLogger.error(error);
   process.exit(1);
 });
