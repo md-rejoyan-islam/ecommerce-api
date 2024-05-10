@@ -22,6 +22,8 @@ import {
   updateUserByIdService,
   updateUserPasswordByIdService,
 } from "../services/user.services.mjs";
+import createJWT from "../../helper/createJWT.js";
+import { passwordResetKey, passwordResetKeyExpire } from "../../app/secret.js";
 
 /**
  *
@@ -239,4 +241,21 @@ export const updatePasswordById = asyncHandler(async (req, res) => {
       data: updatedUser,
     },
   });
+});
+
+// forgot password
+export const forgotPassword = asyncHandler(async (req, res) => {
+  // email
+  const { email } = req.body;
+
+  const user = await userModel.findOne({ email });
+
+  if (!user) throw createError.NotFound("Couldn't find any user.");
+
+  // create reset token
+  const resetToken = await createJWT(
+    { email },
+    passwordResetKey,
+    passwordResetKeyExpire
+  );
 });

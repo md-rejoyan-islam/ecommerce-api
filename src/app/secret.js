@@ -14,6 +14,9 @@ export const jwtVerifyKeyExpire = process.env.JWT_VERIFY_KEY_EXPIRE;
 export const jwtRegisterSecretKey = process.env.JWT_REGISTER_KEY;
 export const jwtRegisterKeyExpire = process.env.JWT_REGISTER_KEY_EXPIRE;
 
+export const passwordResetKey = process.env.PASSWORD_RESET_KEY;
+export const passwordResetKeyExpire = process.env.PASSWORD_RESET_KEY_EXPIRE;
+
 export const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
 export const accessTokenExpire = process.env.ACCESS_TOKEN_EXPIRE;
 
