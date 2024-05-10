@@ -1,5 +1,5 @@
 import { rateLimit } from "express-rate-limit";
-import { errorResponse } from "../v1/services/responseHandler.js";
+import { errorResponse } from "../v1/services/responseHandler.mjs";
 
 const limiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 15 minutes

@@ -6,15 +6,19 @@ import {
   getAllUsers,
   updateUserById,
 } from "../controllers/user.controllers.mjs";
-import { authorization } from "../controllers/authorization.mjs";
+import { authorization } from "../../middlewares/authorization.mjs";
 import { userMulter } from "../../middlewares/multer.js";
 import { userMulterForBuffer } from "../../middlewares/multerForBuffer.mjs";
+import { isLoggedIn } from "../../middlewares/verify.mjs";
 
 const userRouter = express.Router();
 
 // router.use(tokenVerify);
 
-userRouter.route("/").get(getAllUsers).post(createUser);
+userRouter
+  .route("/")
+  .get(isLoggedIn, authorization("admin"), getAllUsers)
+  .post(createUser);
 
 // userRouter
 //   .route("/:id")
@@ -25,7 +29,7 @@ userRouter.route("/").get(getAllUsers).post(createUser);
 
 userRouter
   .route("/:id")
-  .get(findUserById)
+  .get(isLoggedIn, authorization("admin", "user"), findUserById)
   .delete(deleteUserById)
   .put(userMulter, updateUserById)
   .patch(userMulter, updateUserById);

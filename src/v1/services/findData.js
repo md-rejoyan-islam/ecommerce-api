@@ -7,7 +7,7 @@ const findData = async ({ model, filter, options }) => {
   // validate user
   if (!data.length || !data) {
     throw createError(
-      400,
+      404,
       `couldn't find any ${model.modelName.toLowerCase()} data.`
     );
   }

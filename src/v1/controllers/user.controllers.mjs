@@ -3,7 +3,7 @@ import userModel from "../../models/user.model.js";
 import createError from "http-errors";
 import { isValidObjectId } from "mongoose";
 import hashPassword from "../../utils/hashPassword.js";
-import { successResponse } from "../services/responseHandler.js";
+import { successResponse } from "../services/responseHandler.mjs";
 import checkMongoID from "../services/checkMongoId.js";
 import fs from "fs";
 fs.promises;
@@ -106,12 +106,13 @@ export const findUserById = asyncHandler(async (req, res) => {
   // id validation
   checkMongoID(req.params.id);
 
-  // validate user
-  const user = await findData({
-    model: userModel,
-    filter: { _id: req.params.id },
-    options: { password: 0, __v: 0, role: 0 },
-  });
+  // find user
+  const user = await userModel
+    .findById(req.params.id)
+    .select("-password -__v -role");
+
+  // if user not found
+  if (!user) throw createError(404, "Couldn't find any user data.");
 
   // response
   successResponse(res, {

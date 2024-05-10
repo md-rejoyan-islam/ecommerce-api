@@ -6,7 +6,10 @@ import createError from "http-errors";
 import userModel from "../../models/user.model.js";
 import hashPassword from "../../utils/hashPassword.js";
 import findData from "../services/findData.js";
-import { errorResponse, successResponse } from "../services/responseHandler.js";
+import {
+  errorResponse,
+  successResponse,
+} from "../services/responseHandler.mjs";
 import createJWT from "../../helper/createJWT.js";
 import {
   accessTokenExpire,

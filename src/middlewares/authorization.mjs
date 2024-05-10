@@ -1,12 +1,11 @@
-import e from "express";
-import userModel from "../../models/user.model.js";
 import mongoose from "mongoose";
+import { errorResponse } from "../v1/services/responseHandler.mjs";
 
 export const authorization = (...role) => {
   return async (req, res, next) => {
     if (!role.includes(req?.me?.role)) {
-      return res.status(403).json({
-        Status: "Failed",
+      return errorResponse(res, {
+        statusCode: 403,
         message: "You don't have permission to perform this action",
       });
     }
@@ -22,8 +21,8 @@ export const authorization = (...role) => {
       ) {
         return next();
       }
-      return res.status(403).json({
-        Status: "Failed",
+      return errorResponse(res, {
+        statusCode: 403,
         message: "You don't have permission to perform this action",
       });
     }

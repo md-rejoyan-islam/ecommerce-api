@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import { accessTokenSecret, node_env } from "../app/secret.js";
 import userModel from "../models/user.model.js";
 import { clearCookie } from "../helper/cookie.mjs";
-import { errorResponse } from "../v1/services/responseHandler.js";
+import { errorResponse } from "../v1/services/responseHandler.mjs";
 
 export const isLoggedIn = asyncHandler(async (req, res, next) => {
   const token = req?.cookies?.accessToken; // direct access token from cookie

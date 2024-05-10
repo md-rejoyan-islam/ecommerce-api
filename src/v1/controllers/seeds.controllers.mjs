@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler";
 
 import seedsUsers from "../../../data/seeds.users.js";
-import { successResponse } from "../services/responseHandler.js";
+import { successResponse } from "../services/responseHandler.mjs";
 import userModel from "../../models/user.model.js";
 
 export const seedsUser = asyncHandler(async (req, res, next) => {
