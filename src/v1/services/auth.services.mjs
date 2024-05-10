@@ -110,9 +110,9 @@ export const userLoginService = asyncHandler(async (res, data) => {
 });
 
 // refresh token service
-export const refreshTokenService = asyncHandler(async (email) => {
+export const refreshTokenService = asyncHandler(async (res, email) => {
   // find user
-  const user = await userModel.findOne(res, email);
+  const user = await userModel.findOne({ email });
 
   if (!user) {
     throw createError(404, "Couldn't find any user");

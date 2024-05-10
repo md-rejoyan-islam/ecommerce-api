@@ -1,23 +1,9 @@
-import bcrypt from "bcryptjs";
 import asyncHandler from "express-async-handler";
 import createError from "http-errors";
 import jwt from "jsonwebtoken";
-import {
-  accessTokenExpire,
-  accessTokenSecret,
-  jwtRegisterKeyExpire,
-  jwtRegisterSecretKey,
-  refreshTokenExpire,
-  refreshTokenSecret,
-} from "../../app/secret.js";
-import { clearCookie, setCookie } from "../../helper/cookie.mjs";
-import createJWT from "../../helper/createJWT.js";
-import userModel from "../../models/user.model.mjs";
-import sendAccountVerifyMail from "../../utils/accountVerifyMail.js";
-import {
-  errorResponse,
-  successResponse,
-} from "../services/responseHandler.mjs";
+import { jwtRegisterSecretKey, refreshTokenSecret } from "../../app/secret.js";
+import { clearCookie } from "../../helper/cookie.mjs";
+import { successResponse } from "../services/responseHandler.mjs";
 import {
   activeUserAccountService,
   refreshTokenService,
@@ -38,8 +24,9 @@ import {
  *
  */
 export const userRegister = asyncHandler(async (req, res) => {
+  const { email } = req.body;
   // register service
-  const verifyToken = userRegisterService(req.body);
+  const verifyToken = await userRegisterService(req.body);
 
   // response send
   successResponse(res, {
@@ -67,7 +54,7 @@ export const userRegister = asyncHandler(async (req, res) => {
  */
 
 export const userLogin = asyncHandler(async (req, res) => {
-  const loginUser = userLoginService(res, req.body);
+  const loginUser = await userLoginService(res, req.body);
 
   // response send
   successResponse(res, {
@@ -134,7 +121,7 @@ export const activateUserAccount = asyncHandler(async (req, res) => {
   }
 
   // find user
-  const result = activeUserAccountService(decoded);
+  const result = await activeUserAccountService(decoded);
 
   // response send
   successResponse(res, {
@@ -171,7 +158,7 @@ export const refreshToken = asyncHandler(async (req, res) => {
     throw createError(401, "Invalid token");
   }
 
-  const accessToken = refreshTokenService(res, email);
+  const accessToken = await refreshTokenService(res, email);
 
   // response send
   successResponse(res, {
