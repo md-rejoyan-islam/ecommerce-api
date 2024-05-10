@@ -18,6 +18,7 @@ const createJWT = async (payload, secretKey, expiresIn) => {
       expiresIn,
     });
   } catch (error) {
+    console.log(error);
     console.log("Failed to create JWT");
   }
 };

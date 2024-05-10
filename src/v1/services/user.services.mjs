@@ -5,6 +5,9 @@ import userModel from "../../models/user.model.mjs";
 import deleteImage from "../../helper/deleteImage.js";
 import filterQuery from "../../utils/filterQuery.js";
 import pagination from "../../utils/pagination.js";
+import createJWT from "../../helper/createJWT.js";
+import sendPasswordResetMail from "../../mails/passwordResetMail.js";
+import { passwordResetKey, passwordResetKeyExpire } from "../../app/secret.js";
 
 /**
  * @description get all users service
@@ -227,3 +230,31 @@ export const updateUserPasswordByIdService = asyncHandler(
     return updatedUser;
   }
 );
+
+/**
+ * @description forgot password by email service
+ */
+export const forgotPasswordByEmailService = asyncHandler(async (email) => {
+  const user = await userModel.findOne({ email });
+
+  if (!user) throw createError.NotFound("Couldn't find any user.");
+
+  // create reset token
+  const resetToken = await createJWT(
+    { email },
+    passwordResetKey,
+    passwordResetKeyExpire
+  );
+
+  // prepare email data
+  const emailData = {
+    email,
+    subject: "Password reset Link",
+    resetToken,
+  };
+
+  // send email
+  await sendPasswordResetMail(emailData);
+
+  return resetToken;
+});

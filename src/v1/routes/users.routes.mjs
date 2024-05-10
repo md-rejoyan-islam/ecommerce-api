@@ -4,6 +4,7 @@ import {
   createUser,
   deleteUserById,
   findUserById,
+  forgotPasswordByEmail,
   getAllUsers,
   unbanUserById,
   updatePasswordById,
@@ -85,6 +86,12 @@ const moduleRoutes = [
       authorization("admin", "user"),
     ],
     route: updatePasswordById,
+  },
+  {
+    path: "/forgot-password/:email",
+    method: "get",
+    middleware: [isLoggedIn, authorization("admin", "user")],
+    route: forgotPasswordByEmail,
   },
 ];
 

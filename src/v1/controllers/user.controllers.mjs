@@ -17,6 +17,7 @@ import {
   createUserService,
   deleteUserByIdService,
   findUserByIdService,
+  forgotPasswordByEmailService,
   getAllUsersService,
   unbanUserByIdService,
   updateUserByIdService,
@@ -24,6 +25,7 @@ import {
 } from "../services/user.services.mjs";
 import createJWT from "../../helper/createJWT.js";
 import { passwordResetKey, passwordResetKeyExpire } from "../../app/secret.js";
+import sendPasswordResetMail from "../../mails/passwordResetMail.js";
 
 /**
  *
@@ -244,18 +246,19 @@ export const updatePasswordById = asyncHandler(async (req, res) => {
 });
 
 // forgot password
-export const forgotPassword = asyncHandler(async (req, res) => {
+export const forgotPasswordByEmail = asyncHandler(async (req, res) => {
   // email
-  const { email } = req.body;
+  const { email } = req.params;
 
-  const user = await userModel.findOne({ email });
+  // forgot password reset token
+  const resetToken = await forgotPasswordByEmailService(email);
 
-  if (!user) throw createError.NotFound("Couldn't find any user.");
-
-  // create reset token
-  const resetToken = await createJWT(
-    { email },
-    passwordResetKey,
-    passwordResetKeyExpire
-  );
+  // response send
+  successResponse(res, {
+    statusCode: 200,
+    message: `A password reset email sent to ${email}, To reset password please verify.`,
+    payload: {
+      resetToken,
+    },
+  });
 });
