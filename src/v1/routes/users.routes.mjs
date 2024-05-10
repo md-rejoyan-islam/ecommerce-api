@@ -12,41 +12,69 @@ import { authorization } from "../../middlewares/authorization.mjs";
 import { userMulter } from "../../middlewares/multer.js";
 import { userMulterForBuffer } from "../../middlewares/multerForBuffer.mjs";
 import { isLoggedIn } from "../../middlewares/verify.mjs";
+import { userRegisterValidator } from "../../middlewares/validators/file/user.validator.js";
+import runValidation from "../../middlewares/validators/validation.js";
 
 const userRouter = express.Router();
 
-// router.use(tokenVerify);
+const moduleRoutes = [
+  {
+    path: "/",
+    method: "get",
+    middleware: [isLoggedIn, authorization("admin")],
+    route: getAllUsers,
+  },
+  {
+    path: "/",
+    method: "post",
+    middleware: [
+      isLoggedIn,
+      authorization("admin"),
+      userRegisterValidator,
+      runValidation,
+    ],
+    route: createUser,
+  },
+  {
+    path: "/:id",
+    method: "get",
+    middleware: [isLoggedIn, authorization("admin", "user")],
+    route: findUserById,
+  },
+  {
+    path: "/:id",
+    method: "delete",
+    middleware: [isLoggedIn, authorization("admin", "user")],
+    route: deleteUserById,
+  },
+  {
+    path: "/:id",
+    method: "put",
+    middleware: [userMulter],
+    route: updateUserById,
+  },
+  {
+    path: "/:id",
+    method: "patch",
+    middleware: [userMulter],
+    route: updateUserById,
+  },
+  {
+    path: "/ban-user/:id",
+    method: "patch",
+    middleware: [isLoggedIn, authorization("admin")],
+    route: banUserById,
+  },
+  {
+    path: "/unban-user/:id",
+    method: "patch",
+    middleware: [isLoggedIn, authorization("admin")],
+    route: unbanUserById,
+  },
+];
 
-userRouter
-  .route("/")
-  .get(isLoggedIn, authorization("admin"), getAllUsers)
-  .post(createUser);
-
-// userRouter
-//   .route("/:id")
-//   .get(authorization("admin", "user"), findUserById)
-//   .delete(authorization("admin", "user"), deleteUser)
-//   .put(authorization("admin", "user"), updateUser)
-//   .patch(authorization("admin", "user"), updateUser);
-
-userRouter
-  .route("/:id")
-  .get(isLoggedIn, authorization("admin", "user"), findUserById)
-  .delete(deleteUserById)
-  .put(userMulter, updateUserById)
-  .patch(userMulter, updateUserById);
-
-userRouter.patch(
-  "/ban-user/:id",
-  isLoggedIn,
-  authorization("admin"),
-  banUserById
-);
-userRouter.patch(
-  "/unban-user/:id",
-  isLoggedIn,
-  authorization("admin"),
-  unbanUserById
-);
+moduleRoutes.forEach((route) => {
+  userRouter[route.method](route.path, route.middleware, route.route);
+});
 
 export default userRouter;
