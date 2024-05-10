@@ -20,6 +20,7 @@ import {
   getAllUsersService,
   unbanUserByIdService,
   updateUserByIdService,
+  updateUserPasswordByIdService,
 } from "../services/user.services.mjs";
 
 /**
@@ -205,6 +206,35 @@ export const unbanUserById = asyncHandler(async (req, res) => {
   successResponse(res, {
     statusCode: 200,
     message: "User unbanned successfully",
+    payload: {
+      data: updatedUser,
+    },
+  });
+});
+
+// update password
+export const updatePasswordById = asyncHandler(async (req, res) => {
+  // id validation
+  checkMongoID(req.params.id);
+
+  // update option
+  const options = {
+    oldPassword: req.body.oldPassword,
+    $set: {
+      password: req.body.newPassword,
+    },
+  };
+
+  // update password
+  const updatedUser = await updateUserPasswordByIdService(
+    req.params.id,
+    options
+  );
+
+  // response
+  successResponse(res, {
+    statusCode: 200,
+    message: "Password updated successfully",
     payload: {
       data: updatedUser,
     },

@@ -6,13 +6,17 @@ import {
   findUserById,
   getAllUsers,
   unbanUserById,
+  updatePasswordById,
   updateUserById,
 } from "../controllers/user.controllers.mjs";
 import { authorization } from "../../middlewares/authorization.mjs";
 import { userMulter } from "../../middlewares/multer.js";
 import { userMulterForBuffer } from "../../middlewares/multerForBuffer.mjs";
 import { isLoggedIn } from "../../middlewares/verify.mjs";
-import { userRegisterValidator } from "../../middlewares/validators/file/user.validator.js";
+import {
+  userPasswordUpdateValidator,
+  userRegisterValidator,
+} from "../../middlewares/validators/file/user.validator.js";
 import runValidation from "../../middlewares/validators/validation.js";
 
 const userRouter = express.Router();
@@ -70,6 +74,17 @@ const moduleRoutes = [
     method: "patch",
     middleware: [isLoggedIn, authorization("admin")],
     route: unbanUserById,
+  },
+  {
+    path: "/update-password/:id",
+    method: "patch",
+    middleware: [
+      isLoggedIn,
+      userPasswordUpdateValidator,
+      runValidation,
+      authorization("admin", "user"),
+    ],
+    route: updatePasswordById,
   },
 ];
 

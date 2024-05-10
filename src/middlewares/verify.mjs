@@ -51,9 +51,42 @@ export const isLoggedIn = asyncHandler(async (req, res, next) => {
 export const isLoggedOut = asyncHandler(async (req, res, next) => {
   const authToken = req?.cookies?.accessToken;
 
+  // check auth token
   if (authToken) {
-    throw createError(400, "User is already logged in");
-  }
+    jwt.verify(authToken, accessTokenSecret, async (err, decode) => {
+      if (err) {
+        // clear cookie
+        clearCookie(res, "accessToken");
 
-  next();
+        // response send
+        return errorResponse(res, {
+          statusCode: 400,
+          message: "Unauthorized, Invalid access token.Please login again",
+        });
+      }
+      // find user
+      const loginUser = await userModel.findOne({
+        email: decode.email,
+      });
+
+      // if user not exist
+      if (!loginUser) {
+        // clear cookie
+        clearCookie(res, "accessToken");
+        // response send
+        return errorResponse(res, {
+          statusCode: 400,
+          message: "Unauthorized, User not found.Please login again",
+        });
+      }
+
+      // response send
+      return errorResponse(res, {
+        statusCode: 400,
+        message: "User is already logged in",
+      });
+    });
+  } else {
+    next();
+  }
 });

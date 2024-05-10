@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
 import createError from "http-errors";
+import bcrypt from "bcryptjs";
 import userModel from "../../models/user.model.mjs";
 import deleteImage from "../../helper/deleteImage.js";
 import filterQuery from "../../utils/filterQuery.js";
@@ -194,3 +195,35 @@ export const updateUserByIdService = asyncHandler(async (id, options) => {
 
   return updatedUser;
 });
+
+/**
+ * @description update user password by id service
+ */
+export const updateUserPasswordByIdService = asyncHandler(
+  async (id, options) => {
+    // find user
+    const user = await userModel.findById(id).select("+password");
+
+    // if user not found
+    if (!user) {
+      throw createError(404, "Couldn't find any user data.");
+    }
+
+    // password match
+    const isMatch = bcrypt.compareSync(options.oldPassword, user.password);
+
+    // if not match
+    if (!isMatch) {
+      throw createError(400, "Old password is wrong. ");
+    }
+
+    // update user
+    const updatedUser = await userModel.findByIdAndUpdate(id, options, {
+      new: true,
+      runValidators: true,
+      context: "query",
+    });
+
+    return updatedUser;
+  }
+);

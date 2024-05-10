@@ -1,4 +1,5 @@
 import { body } from "express-validator";
+import createError from "http-errors";
 
 export const userRegisterValidator = [
   body("name")
@@ -47,6 +48,32 @@ export const userLoginValidator = [
     .withMessage("Password must be at least 6 characters long."),
 ];
 
+export const userPasswordUpdateValidator = [
+  body("oldPassword").notEmpty().withMessage("Old password is required"),
+
+  body("newPassword")
+    .notEmpty()
+    .withMessage("New password is required")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters long.")
+    .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{6,}$/)
+    .withMessage(
+      "Password must contain at least one uppercase letter, one lowercase letter, and one number."
+    ),
+
+  body("confirmPassword")
+    .notEmpty()
+    .withMessage("Confirm password is required")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters long")
+    .custom((value, { req }) => {
+      if (value !== req.body.newPassword) {
+        throw createError(400, "Password does not match");
+      }
+      return true;
+    }),
+];
+
 export const userVerifyCodeValidator = [
   body("code")
     .notEmpty()
@@ -62,28 +89,6 @@ export const userResendCodeValidator = [
     .withMessage("Email is required.Please provide a email.")
     .isEmail()
     .withMessage("Please provide a valid email."),
-];
-
-export const userPasswordUpdateValidator = [
-  body("oldPassword").notEmpty().withMessage("Old password is required"),
-
-  body("newPassword")
-    .notEmpty()
-    .withMessage("New password is required")
-    .isLength({ min: 6 })
-    .withMessage("Password must be at least 6 characters long."),
-
-  body("confirmPassword")
-    .notEmpty()
-    .withMessage("Confirm password is required")
-    .isLength({ min: 6 })
-    .withMessage("Password must be at least 6 characters long")
-    .custom((value, { req }) => {
-      if (value !== req.body.newPassword) {
-        throw createHttpError(400, "Password does not match");
-      }
-      return true;
-    }),
 ];
 
 export const userResetPasswordValidator = [
