@@ -31,7 +31,7 @@ authRouter.route("/activate").post(activateUserAccount);
 authRouter
   .route("/login")
   .post(limiter, isLoggedOut, userLoginValidator, runValidation, userLogin);
-authRouter.route("/refresh").get(refreshToken);
+authRouter.route("/refresh-token").get(refreshToken);
 authRouter.route("/logout").post(isLoggedIn, logout);
 authRouter.route("/me").get(me);
 

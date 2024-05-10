@@ -6,6 +6,7 @@ import {
   findUserById,
   forgotPasswordByEmail,
   getAllUsers,
+  resetPassword,
   unbanUserById,
   updatePasswordById,
   updateUserById,
@@ -15,8 +16,10 @@ import { userMulter } from "../../middlewares/multer.js";
 import { userMulterForBuffer } from "../../middlewares/multerForBuffer.mjs";
 import { isLoggedIn } from "../../middlewares/verify.mjs";
 import {
+  resetPasswordValidatorByCode,
   userPasswordUpdateValidator,
   userRegisterValidator,
+  userResetPasswordValidator,
 } from "../../middlewares/validators/file/user.validator.js";
 import runValidation from "../../middlewares/validators/validation.js";
 
@@ -39,30 +42,6 @@ const moduleRoutes = [
       runValidation,
     ],
     route: createUser,
-  },
-  {
-    path: "/:id",
-    method: "get",
-    middleware: [isLoggedIn, authorization("admin", "user")],
-    route: findUserById,
-  },
-  {
-    path: "/:id",
-    method: "delete",
-    middleware: [isLoggedIn, authorization("admin", "user")],
-    route: deleteUserById,
-  },
-  {
-    path: "/:id",
-    method: "put",
-    middleware: [userMulter],
-    route: updateUserById,
-  },
-  {
-    path: "/:id",
-    method: "patch",
-    middleware: [userMulter],
-    route: updateUserById,
   },
   {
     path: "/ban-user/:id",
@@ -92,6 +71,41 @@ const moduleRoutes = [
     method: "get",
     middleware: [isLoggedIn, authorization("admin", "user")],
     route: forgotPasswordByEmail,
+  },
+  {
+    path: "/reset-password",
+    method: "patch",
+    middleware: [
+      isLoggedIn,
+      userResetPasswordValidator,
+      runValidation,
+      authorization("admin", "user"),
+    ],
+    route: resetPassword,
+  },
+  {
+    path: "/:id",
+    method: "get",
+    middleware: [isLoggedIn, authorization("admin", "user")],
+    route: findUserById,
+  },
+  {
+    path: "/:id",
+    method: "delete",
+    middleware: [isLoggedIn, authorization("admin", "user")],
+    route: deleteUserById,
+  },
+  {
+    path: "/:id",
+    method: "put",
+    middleware: [userMulter],
+    route: updateUserById,
+  },
+  {
+    path: "/:id",
+    method: "patch",
+    middleware: [userMulter],
+    route: updateUserById,
   },
 ];
 

@@ -19,6 +19,7 @@ import {
   findUserByIdService,
   forgotPasswordByEmailService,
   getAllUsersService,
+  resetPasswordService,
   unbanUserByIdService,
   updateUserByIdService,
   updateUserPasswordByIdService,
@@ -259,6 +260,24 @@ export const forgotPasswordByEmail = asyncHandler(async (req, res) => {
     message: `A password reset email sent to ${email}, To reset password please verify.`,
     payload: {
       resetToken,
+    },
+  });
+});
+
+// reset password
+export const resetPassword = asyncHandler(async (req, res) => {
+  // reset token
+  const { resetToken } = req.body;
+
+  // update password
+  const updatedUser = await resetPasswordService(resetToken, req.body);
+
+  // response
+  successResponse(res, {
+    statusCode: 200,
+    message: "Password reset successfully",
+    payload: {
+      data: updatedUser,
     },
   });
 });

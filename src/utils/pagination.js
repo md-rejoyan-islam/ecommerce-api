@@ -3,7 +3,7 @@ const pagination = async ({ limit, skip, page, model, filters }) => {
   const filterItems = await model.countDocuments(filters);
 
   // total data count without filter
-  const totalItems = await model.countDocuments();
+  const totalItems = await model.countDocuments();  
 
   return {
     limit,

@@ -44,6 +44,7 @@ export const isLoggedIn = asyncHandler(async (req, res, next) => {
     }
 
     req.me = loginUser;
+
     next();
   });
 });

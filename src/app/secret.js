@@ -20,6 +20,9 @@ export const passwordResetKeyExpire = process.env.PASSWORD_RESET_KEY_EXPIRE;
 export const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
 export const accessTokenExpire = process.env.ACCESS_TOKEN_EXPIRE;
 
+export const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
+export const refreshTokenExpire = process.env.REFRESH_TOKEN_EXPIRE;
+
 export const smtpHost = process.env.SMTP_HOST;
 export const smtpPort = process.env.SMTP_PORT;
 export const emailUser = process.env.EMAIL_HOST_USER;

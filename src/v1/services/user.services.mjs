@@ -8,6 +8,7 @@ import pagination from "../../utils/pagination.js";
 import createJWT from "../../helper/createJWT.js";
 import sendPasswordResetMail from "../../mails/passwordResetMail.js";
 import { passwordResetKey, passwordResetKeyExpire } from "../../app/secret.js";
+import jwt from "jsonwebtoken";
 
 /**
  * @description get all users service
@@ -257,4 +258,34 @@ export const forgotPasswordByEmailService = asyncHandler(async (email) => {
   await sendPasswordResetMail(emailData);
 
   return resetToken;
+});
+
+/**
+ * @description reset password service
+ */
+
+export const resetPasswordService = asyncHandler(async (resetToken, data) => {
+  // check reset token
+  const { email } = jwt.verify(resetToken, passwordResetKey);
+
+  if (!email) {
+    throw createError(400, "Invalid or expired token");
+  }
+
+  // check user
+  const user = await userModel.findOne({
+    email,
+  });
+  if (!user) {
+    throw createError.NotFound("Couldn't find user with this email");
+  }
+
+  // update password
+  user.password = data.newPassword;
+  await user.save();
+
+  // password delete from data
+  delete user._doc.password;
+
+  return user;
 });
