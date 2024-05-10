@@ -12,6 +12,12 @@ import deleteImage from "../../helper/deleteImage.js";
 import filterQuery from "../../utils/filterQuery.js";
 import pagination from "../../utils/pagination.js";
 import findData from "../services/findData.js";
+import {
+  banUserByIdService,
+  deleteUserByIdService,
+  findUserByIdService,
+  unbanUserByIdService,
+} from "../services/user.services.mjs";
 
 /**
  *
@@ -107,12 +113,7 @@ export const findUserById = asyncHandler(async (req, res) => {
   checkMongoID(req.params.id);
 
   // find user
-  const user = await userModel
-    .findById(req.params.id)
-    .select("-password -__v -role");
-
-  // if user not found
-  if (!user) throw createError(404, "Couldn't find any user data.");
+  const user = await findUserByIdService(req.params.id);
 
   // response
   successResponse(res, {
@@ -195,22 +196,8 @@ export const deleteUserById = asyncHandler(async (req, res) => {
   // id validation
   checkMongoID(req.params.id);
 
-  // // if admin user
-  // if (req.me?.role === "admin") {
-  //   throw createError(400, "You can't delete admin user.");
-  // }
-
   // delete user
-  const deletedUser = await userModel.findByIdAndDelete(req.params.id);
-
-  if (!deletedUser) {
-    throw createError(404, "Couldn't find any user data.");
-  }
-
-  // // image delete
-  const userImagePath = deletedUser[0]?.photo;
-
-  userImagePath && deleteImage(userImagePath);
+  const deletedUser = await deleteUserByIdService(req.params.id);
 
   // response
   return successResponse(res, {
@@ -227,39 +214,8 @@ export const banUserById = asyncHandler(async (req, res) => {
   // id validation
   checkMongoID(req.params.id);
 
-  // find user
-  const user = await userModel.findById(req.params.id);
-
-  // if user not found
-  if (!user) {
-    throw createError(404, "Couldn't find any user data.");
-  }
-
-  // if admin user
-  if (user.role === "admin") {
-    throw createError(400, "You can't ban admin user.");
-  }
-
-  // check if user already banned
-  if (user.isBanned) {
-    throw createError(400, "User is already banned.");
-  }
-
   // update user
-  const updatedUser = await userModel.findOneAndUpdate(
-    {
-      _id: req.params.id,
-      role: {
-        $ne: "admin",
-      },
-    },
-    { isBanned: true },
-    {
-      new: true,
-      runValidators: true,
-      context: "query",
-    }
-  );
+  const updatedUser = await banUserByIdService(req.params.id);
 
   // response
   successResponse(res, {
@@ -276,31 +232,10 @@ export const unbanUserById = asyncHandler(async (req, res) => {
   // id validation
   checkMongoID(req.params.id);
 
-  // find user
-  const user = await userModel.findById(req.params.id);
-
-  // if user not found
-  if (!user) {
-    throw createError(404, "Couldn't find any user data.");
-  }
-
-  // check if user already unbanned
-  if (!user.isBanned) {
-    throw createError(400, "User is already unbanned.");
-  }
-
   // update user
-  const updatedUser = await userModel.findByIdAndUpdate(
-    req.params.id,
-    { isBanned: false },
-    {
-      new: true,
-      runValidators: true,
-      context: "query",
-    }
-  );
+  const updatedUser = await unbanUserByIdService(req.params.id);
 
-  // response
+  // response send
   successResponse(res, {
     statusCode: 200,
     message: "User unbanned successfully",

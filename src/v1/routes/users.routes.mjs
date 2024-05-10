@@ -36,9 +36,14 @@ userRouter
   .put(userMulter, updateUserById)
   .patch(userMulter, updateUserById);
 
-userRouter.patch("/ban/:id", isLoggedIn, authorization("admin"), banUserById);
 userRouter.patch(
-  "/unban/:id",
+  "/ban-user/:id",
+  isLoggedIn,
+  authorization("admin"),
+  banUserById
+);
+userRouter.patch(
+  "/unban-user/:id",
   isLoggedIn,
   authorization("admin"),
   unbanUserById
