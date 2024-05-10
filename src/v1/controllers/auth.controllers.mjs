@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 // import { createError } from "../utils/createError.js";
 import createError from "http-errors";
-import userModel from "../../models/user.model.js";
+import userModel from "../../models/user.model.mjs";
 import hashPassword from "../../utils/hashPassword.js";
 import findData from "../services/findData.js";
 import {
@@ -38,10 +38,6 @@ import { clearCookie, setCookie } from "../../helper/cookie.mjs";
  *
  */
 export const userRegister = asyncHandler(async (req, res) => {
-  if (!req.body.email || !req.body.password) {
-    throw createError(400, "Please provide email and password");
-  }
-
   const { email } = req.body;
 
   // check if user exist
@@ -58,11 +54,6 @@ export const userRegister = asyncHandler(async (req, res) => {
     jwtRegisterKeyExpire
   );
 
-  // user register
-  // const result = await userModel.create({
-  //   ...req.body,
-  // });
-
   // prepare email data
   const emailData = {
     email,
@@ -71,7 +62,7 @@ export const userRegister = asyncHandler(async (req, res) => {
   };
 
   // send email
-  // await sendAccountVerifyMail(emailData);
+  await sendAccountVerifyMail(emailData);
 
   // response send
   successResponse(res, {

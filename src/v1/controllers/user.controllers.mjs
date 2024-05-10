@@ -1,5 +1,5 @@
 import asyncHandler from "express-async-handler";
-import userModel from "../../models/user.model.js";
+import userModel from "../../models/user.model.mjs";
 import createError from "http-errors";
 import { isValidObjectId } from "mongoose";
 import hashPassword from "../../utils/hashPassword.js";
@@ -218,6 +218,94 @@ export const deleteUserById = asyncHandler(async (req, res) => {
     message: "User deleted successfully",
     payload: {
       data: deletedUser,
+    },
+  });
+});
+
+// ban user by id
+export const banUserById = asyncHandler(async (req, res) => {
+  // id validation
+  checkMongoID(req.params.id);
+
+  // find user
+  const user = await userModel.findById(req.params.id);
+
+  // if user not found
+  if (!user) {
+    throw createError(404, "Couldn't find any user data.");
+  }
+
+  // if admin user
+  if (user.role === "admin") {
+    throw createError(400, "You can't ban admin user.");
+  }
+
+  // check if user already banned
+  if (user.isBanned) {
+    throw createError(400, "User is already banned.");
+  }
+
+  // update user
+  const updatedUser = await userModel.findOneAndUpdate(
+    {
+      _id: req.params.id,
+      role: {
+        $ne: "admin",
+      },
+    },
+    { isBanned: true },
+    {
+      new: true,
+      runValidators: true,
+      context: "query",
+    }
+  );
+
+  // response
+  successResponse(res, {
+    statusCode: 200,
+    message: "User banned successfully",
+    payload: {
+      data: updatedUser,
+    },
+  });
+});
+
+// unban user by id
+export const unbanUserById = asyncHandler(async (req, res) => {
+  // id validation
+  checkMongoID(req.params.id);
+
+  // find user
+  const user = await userModel.findById(req.params.id);
+
+  // if user not found
+  if (!user) {
+    throw createError(404, "Couldn't find any user data.");
+  }
+
+  // check if user already unbanned
+  if (!user.isBanned) {
+    throw createError(400, "User is already unbanned.");
+  }
+
+  // update user
+  const updatedUser = await userModel.findByIdAndUpdate(
+    req.params.id,
+    { isBanned: false },
+    {
+      new: true,
+      runValidators: true,
+      context: "query",
+    }
+  );
+
+  // response
+  successResponse(res, {
+    statusCode: 200,
+    message: "User unbanned successfully",
+    payload: {
+      data: updatedUser,
     },
   });
 });

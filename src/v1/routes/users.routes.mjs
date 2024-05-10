@@ -1,9 +1,11 @@
 import express from "express";
 import {
+  banUserById,
   createUser,
   deleteUserById,
   findUserById,
   getAllUsers,
+  unbanUserById,
   updateUserById,
 } from "../controllers/user.controllers.mjs";
 import { authorization } from "../../middlewares/authorization.mjs";
@@ -33,5 +35,13 @@ userRouter
   .delete(deleteUserById)
   .put(userMulter, updateUserById)
   .patch(userMulter, updateUserById);
+
+userRouter.patch("/ban/:id", isLoggedIn, authorization("admin"), banUserById);
+userRouter.patch(
+  "/unban/:id",
+  isLoggedIn,
+  authorization("admin"),
+  unbanUserById
+);
 
 export default userRouter;
