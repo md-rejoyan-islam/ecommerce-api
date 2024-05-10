@@ -208,6 +208,9 @@ export const userLogin = asyncHandler(async (req, res) => {
     maxAge: 1000 * 60 * 60 * 24 * 7,
   });
 
+  // password field remove
+  delete loginUser._doc.password;
+
   // response send
   successResponse(res, {
     statusCode: 200,
