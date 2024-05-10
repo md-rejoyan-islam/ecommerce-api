@@ -1,10 +1,16 @@
-import { log } from "console";
+import asyncHandler from "express-async-handler";
 import categoryModel from "../../models/category.model.mjs";
 import Category from "../../models/category.model.mjs";
 import { createError } from "../../utils/createError.js";
 
 import { unlinkSync } from "fs";
 import { isValidObjectId } from "mongoose";
+import {
+  createCategoryService,
+  getAllCategoryService,
+} from "../services/category.service.mjs";
+import { successResponse } from "../services/responseHandler.mjs";
+import { log } from "console";
 
 /**
  *
@@ -23,25 +29,18 @@ import { isValidObjectId } from "mongoose";
  *
  */
 
-export const allCategories = async (req, res, next) => {
-  try {
-    // get all category data
-    const result = await Category.find();
+export const getAllCategories = asyncHandler(async (_, res) => {
+  const categories = await getAllCategoryService();
 
-    // category data not found
-    if (!result.length)
-      throw createError(404, "Couldn't find any category data.");
-
-    // respond send with data
-    res.status(200).json({
-      Status: "Success",
-      Message: "All Categories Data",
-      Data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  // respond send with data
+  successResponse(res, {
+    statusCode: 200,
+    message: "Category data fetched successfully",
+    payload: {
+      data: categories,
+    },
+  });
+});
 
 /**
  *
@@ -60,43 +59,18 @@ export const allCategories = async (req, res, next) => {
  * @apiError          ( Forbidden 403)  Forbidden Only admins can access the data
  *
  */
-export const addCategory = async (req, res, next) => {
-  try {
-    const { body, file } = req;
+export const createCategory = asyncHandler(async (req, res) => {
+  const category = await createCategoryService(req);
 
-    // all field validation
-    if (!body.name || !body.description) {
-      // if image uploaded then delete image
-      file && unlinkSync(`api/public/images/categories/${file?.filename}`);
-
-      // throw error
-      throw createError(400, "All fields are required.");
-    }
-
-    // name validation
-    const beforeData = await categoryModel.findOne({ name: body.name });
-
-    if (beforeData) {
-      file && unlinkSync(`api/public/images/categories/${file?.filename}`);
-      throw createError(400, "Category name already exists.");
-    }
-
-    // create new category
-    const result = await categoryModel.create({
-      ...body,
-      category_photo: req?.file?.filename,
-    });
-
-    // response with result
-    res.status(201).json({
-      Status: "Success",
-      Message: "Added a new Category",
-      Data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  // response with result
+  successResponse(res, {
+    statusCode: 201,
+    message: "Category created successfully",
+    payload: {
+      data: category,
+    },
+  });
+});
 
 /**
  *

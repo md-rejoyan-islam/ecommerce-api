@@ -18,6 +18,7 @@ import authRouter from "../v1/routes/auth.routes.mjs";
 import seedRouter from "../v1/routes/seeds.routes.mjs";
 import { successResponse } from "../v1/services/responseHandler.mjs";
 import path from "path";
+import categoryRouter from "../v1/routes/category.routes.mjs";
 
 // express app
 const app = express();
@@ -43,8 +44,8 @@ app.use("/api/v1/seeds", seedRouter);
 // // product  route
 // app.use("/api/v1/product", productRoute);
 
-// // product category route
-// app.use("/api/v1/category", productCategoryRoute);
+// product category route
+app.use("/api/v1/categories", categoryRouter);
 
 // // product brand route
 // app.use("/api/v1/brand", productBrandRoute);

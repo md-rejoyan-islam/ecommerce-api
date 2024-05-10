@@ -92,7 +92,7 @@ export const userLoginService = asyncHandler(async (res, data) => {
     res,
     cookieName: "accessToken",
     cookieValue: accessToken,
-    maxAge: 1000 * 60 * 1, // 1 min
+    maxAge: 1000 * 60 * 60 * 24 * 15, // 15 days
   });
 
   // refresh token set to cookie
@@ -100,7 +100,7 @@ export const userLoginService = asyncHandler(async (res, data) => {
     res,
     cookieName: "refreshToken",
     cookieValue: refreshToken,
-    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+    maxAge: 1000 * 60 * 60 * 24 * 70, // 70 days
   });
 
   // password field remove

@@ -7,7 +7,7 @@ const categorySchema = mongoose.Schema(
       type: String,
       trim: true,
       required: true,
-      unique: [true, "name must be unique"],
+      unique: [true, "Category already exist."],
       minLength: [1, "Name must be at least 3 characters"],
       maxLength: [30, "Name is too large"],
     },
@@ -16,23 +16,25 @@ const categorySchema = mongoose.Schema(
       required: true,
       trim: true,
       unique: true,
+      lowercase: true,
     },
-    category_photo: {
+    image: {
+      type: String,
+      trim: true,
+      required: [true, "Category image is required."],
+    },
+    description: {
       type: String,
       trim: true,
       required: true,
     },
+    parent: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+    },
     status: {
       type: Boolean,
       default: null,
-    },
-    trash: {
-      type: Boolean,
-      default: false,
-    },
-    description: {
-      type: String,
-      required: true,
     },
   },
   {

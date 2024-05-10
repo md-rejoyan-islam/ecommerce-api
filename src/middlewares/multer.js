@@ -19,11 +19,11 @@ const storage = multer.diskStorage({
       // image location
       cb(null, userImageUploadDir);
     }
-    if (file.fieldname == "brand_photo") {
+    if (file.fieldname == "category_image") {
       if (fileSize > 400000) {
         return cb(new Error("Maximum image size is 400KB"));
       }
-      cb(null, "api/public/images/brands");
+      cb(null, "public/images/categories");
     }
     if (
       file.fieldname == "product_photo" ||
@@ -80,4 +80,5 @@ export const productMulter = multer({
 // product category middleware
 export const categoryMulter = multer({
   storage: storage,
-}).single("category_photo");
+  fileFilter,
+}).single("category_image");
