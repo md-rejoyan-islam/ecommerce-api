@@ -33,7 +33,7 @@ authRouter
   .post(limiter, isLoggedOut, userLoginValidator, runValidation, userLogin);
 authRouter.route("/refresh-token").get(refreshToken);
 authRouter.route("/logout").post(isLoggedIn, logout);
-authRouter.route("/me").get(me);
+authRouter.route("/me").get(isLoggedIn, me);
 
 //export
 export default authRouter;

@@ -1,29 +1,29 @@
-import asyncHandler from "express-async-handler";
-import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-// import { createError } from "../utils/createError.js";
+import asyncHandler from "express-async-handler";
 import createError from "http-errors";
-import userModel from "../../models/user.model.mjs";
-import hashPassword from "../../utils/hashPassword.js";
-import findData from "../services/findData.js";
-import {
-  errorResponse,
-  successResponse,
-} from "../services/responseHandler.mjs";
-import createJWT from "../../helper/createJWT.js";
+import jwt from "jsonwebtoken";
 import {
   accessTokenExpire,
   accessTokenSecret,
   jwtRegisterKeyExpire,
   jwtRegisterSecretKey,
-  jwtVerifyKeyExpire,
-  jwtVerifyKeySecret,
-  node_env,
   refreshTokenExpire,
   refreshTokenSecret,
 } from "../../app/secret.js";
-import sendAccountVerifyMail from "../../utils/accountVerifyMail.js";
 import { clearCookie, setCookie } from "../../helper/cookie.mjs";
+import createJWT from "../../helper/createJWT.js";
+import userModel from "../../models/user.model.mjs";
+import sendAccountVerifyMail from "../../utils/accountVerifyMail.js";
+import {
+  errorResponse,
+  successResponse,
+} from "../services/responseHandler.mjs";
+import {
+  activeUserAccountService,
+  refreshTokenService,
+  userLoginService,
+  userRegisterService,
+} from "../services/auth.services.mjs";
 
 /**
  *
@@ -33,38 +33,13 @@ import { clearCookie, setCookie } from "../../helper/cookie.mjs";
  * @apiRoute          /api/v1/auth/register
  * @apiAccess         Public
  *
- * @apiSuccess        { success : true , message, date }
+ * @apiSuccess        { success : true , message, data : {} }
  * @apiFailed         { success : false, error : { status : code , message} }
- *
- * @apiError          ( Not Found 404 )   No Brand data found
  *
  */
 export const userRegister = asyncHandler(async (req, res) => {
-  const { email } = req.body;
-
-  // check if user exist
-  const user = await userModel.exists({ email: req.body.email });
-
-  if (user) {
-    throw createError.Conflict("Already have an account with this email.");
-  }
-
-  // create verify token
-  const verifyToken = await createJWT(
-    { ...req.body },
-    jwtRegisterSecretKey,
-    jwtRegisterKeyExpire
-  );
-
-  // prepare email data
-  const emailData = {
-    email,
-    subject: "Account Activation Link",
-    verifyToken,
-  };
-
-  // send email
-  await sendAccountVerifyMail(emailData);
+  // register service
+  const verifyToken = userRegisterService(req.body);
 
   // response send
   successResponse(res, {
@@ -75,6 +50,61 @@ export const userRegister = asyncHandler(async (req, res) => {
     },
   });
 });
+
+/**
+ *
+ * @apiDescription    User Login
+ * @apiMethod         POST
+ *
+ * @apiBody           { email, password }
+ *
+ * @apiRoute          /api/v1/auth/login
+ * @apiAccess         Public
+ *
+ * @apiSuccess        { success : true , message, data:{} }
+ * @apiFailed         { success : false, error : { status : code , message} }
+ *
+ */
+
+export const userLogin = asyncHandler(async (req, res) => {
+  const loginUser = userLoginService(res, req.body);
+
+  // response send
+  successResponse(res, {
+    statusCode: 200,
+    message: "Successfully Login.",
+    payload: {
+      loginUser,
+    },
+  });
+});
+
+/**
+ *
+ * @apiDescription    User Logout
+ * @apiMethod         POST
+ *
+ * @apiCookies        AccessToken, RefreshToken
+ *
+ * @apiRoute          /api/v1/auth/logout
+ * @apiAccess         Login User
+ *
+ * @apiSuccess        { success : true , message, data:{} }
+ * @apiFailed         { success : false, error : { status : code , message} }
+ *
+ */
+
+export const logout = (_, res) => {
+  // clear cookies
+  clearCookie(res, "accessToken");
+  clearCookie(res, "refreshToken");
+
+  // response send
+  successResponse(res, {
+    statusCode: 200,
+    message: "Successfully Logout.",
+  });
+};
 
 /**
  *
@@ -92,38 +122,19 @@ export const userRegister = asyncHandler(async (req, res) => {
  */
 
 export const activateUserAccount = asyncHandler(async (req, res) => {
-  const token = req.body.token;
+  const { token } = req.body;
   // check token
   if (!token) throw createError(404, "token is required.");
 
   // verify token
-  const decoded = jwt.verify(token, jwtRegisterSecretKey, (err, decoded) => {
-    if (err) {
-      if (err.name === "TokenExpiredError") {
-        throw createError(400, "Token expired");
-      } else if (err.name === "JsonWebTokenError") {
-        throw createError(400, "Invalid signature");
-      } else if (err.name === "SyntaxError") {
-        throw createError(400, "Invalid token");
-      } else {
-        throw createError(400, err.message);
-      }
-    }
-    return decoded;
-  });
+  const decoded = jwt.verify(token, jwtRegisterSecretKey);
 
-  // check if user is already verified
-  const user = await userModel.findOne({ email: decoded.email });
-
-  if (user) {
-    return errorResponse(res, {
-      statusCode: 400,
-      message: "You have already resister. Please login.",
-    });
+  if (!decoded) {
+    throw createError(401, "Invalid token");
   }
 
-  // create user
-  const result = await userModel.create(decoded);
+  // find user
+  const result = activeUserAccountService(decoded);
 
   // response send
   successResponse(res, {
@@ -136,123 +147,15 @@ export const activateUserAccount = asyncHandler(async (req, res) => {
 });
 
 /**
+ * @apiDescription    Refresh Token
+ * @apiMethod         GET
  *
- * @apiDescription    User Login
- * @apiMethod         POST
+ * @apiRoute          /api/v1/auth/refresh-token
  *
- * @apiBody           { email, password }
- *
- * @apiRoute          /api/v1/auth/login
- * @apiAccess         Public
- *
- * @apiSuccess        { success : true , message, date }
+ * @apiSuccess        { success : true , message, data:{} }
  * @apiFailed         { success : false, error : { status : code , message} }
  *
- * @apiError          ( Not Found 400 )   User not found.
- *
  */
-
-export const userLogin = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
-
-  // user check
-  const loginUser = await userModel
-    .findOne({
-      email,
-    })
-    .select("+password");
-
-  if (!loginUser) {
-    throw createError(400, "User not found.Please register first.");
-  }
-
-  //  password match
-  const isMatch = bcrypt.compareSync(password, loginUser.password);
-
-  if (!isMatch) {
-    throw createError(400, "Wrong password. Please try again.");
-  }
-
-  // check user is banned
-  if (loginUser.isBanned) {
-    throw createError(
-      403,
-      "Your account is banned. Please contact with admin."
-    );
-  }
-
-  // create  access token
-  const accessToken = await createJWT(
-    { email, role: loginUser.role },
-    accessTokenSecret,
-    accessTokenExpire
-  );
-
-  // create  refresh token
-  const refreshToken = await createJWT(
-    { email },
-    refreshTokenSecret,
-    refreshTokenExpire
-  );
-
-  // access token set to cookie
-  setCookie({
-    res,
-    cookieName: "accessToken",
-    cookieValue: accessToken,
-    maxAge: 1000 * 60 * 1, // 1 min
-  });
-
-  // refresh token set to cookie
-  setCookie({
-    res,
-    cookieName: "refreshToken",
-    cookieValue: refreshToken,
-    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-  });
-
-  // password field remove
-  delete loginUser._doc.password;
-
-  // response send
-  successResponse(res, {
-    statusCode: 200,
-    message: "Successfully Login.",
-    payload: {
-      loginUser,
-    },
-  });
-});
-
-/**
- *
- * @apiDescription    User Logout
- * @apiMethod         POST
- *
- * @apiCookies        AccessToken
- *
- * @apiRoute          /api/v1/auth/logout
- * @apiAccess         Login User
- *
- * @apiSuccess        { success : true , message, date }
- * @apiFailed         { success : false, error : { status : code , message} }
- *
- * @apiError          ( unauthorized 401 )   Unauthorized Only authenticated users can access the data
- *
- */
-
-export const logout = (req, res) => {
-  // clear cookies
-  clearCookie(res, "accessToken");
-
-  // response send
-  successResponse(res, {
-    statusCode: 200,
-    message: "Successfully Logout.",
-  });
-};
-
-// refresh token request
 
 export const refreshToken = asyncHandler(async (req, res) => {
   const { refreshToken } = req.cookies;
@@ -261,33 +164,14 @@ export const refreshToken = asyncHandler(async (req, res) => {
     throw createError(401, "Refresh token not found");
   }
 
+  // verify token
   const { email } = jwt.verify(refreshToken, refreshTokenSecret);
 
   if (!email) {
     throw createError(401, "Invalid token");
   }
 
-  // find user
-  const user = userModel.findOne({ email });
-
-  if (!user) {
-    throw createError(404, "Couldn't find any user");
-  }
-
-  // create access token
-  const accessToken = await createJWT(
-    { email },
-    accessTokenSecret,
-    accessTokenExpire
-  );
-
-  // access token set to cookie
-  setCookie({
-    res,
-    cookieName: "accessToken",
-    cookieValue: accessToken,
-    maxAge: 1000 * 60 * 1, // 1 min
-  });
+  const accessToken = refreshTokenService(res, email);
 
   // response send
   successResponse(res, {
@@ -307,10 +191,8 @@ export const refreshToken = asyncHandler(async (req, res) => {
  * @apiRoute          /api/v1/auth/me
  * @apiAccess         Login User
  *
- * @apiSuccess        { success : true , message, date }
+ * @apiSuccess        { success : true , message, data:{} }
  * @apiFailed         { success : false, error : { status : code , message} }
- *
- * @apiError          ( unauthorized 401 )   Unauthorized Only authenticated users can access the data
  *
  */
 
@@ -322,7 +204,7 @@ export const me = asyncHandler(async (req, res) => {
   // response send
   successResponse(res, {
     statusCode: 200,
-    message: "Login user",
+    message: "Login user data.",
     payload: {
       data: req.me,
     },

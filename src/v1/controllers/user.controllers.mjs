@@ -1,17 +1,9 @@
 import asyncHandler from "express-async-handler";
-import userModel from "../../models/user.model.mjs";
-import createError from "http-errors";
-import { isValidObjectId } from "mongoose";
-import hashPassword from "../../utils/hashPassword.js";
-import { successResponse } from "../services/responseHandler.mjs";
-import checkMongoID from "../services/checkMongoId.js";
 import fs from "fs";
 fs.promises;
-
+import checkMongoID from "../services/checkMongoId.js";
+import { successResponse } from "../services/responseHandler.mjs";
 import deleteImage from "../../helper/deleteImage.js";
-import filterQuery from "../../utils/filterQuery.js";
-import pagination from "../../utils/pagination.js";
-import findData from "../services/findData.js";
 import {
   banUserByIdService,
   createUserService,
@@ -24,9 +16,6 @@ import {
   updateUserByIdService,
   updateUserPasswordByIdService,
 } from "../services/user.services.mjs";
-import createJWT from "../../helper/createJWT.js";
-import { passwordResetKey, passwordResetKeyExpire } from "../../app/secret.js";
-import sendPasswordResetMail from "../../mails/passwordResetMail.js";
 
 /**
  *

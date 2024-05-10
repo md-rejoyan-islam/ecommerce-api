@@ -44,19 +44,19 @@ const moduleRoutes = [
     route: createUser,
   },
   {
-    path: "/ban-user/:id",
+    path: "/ban-user/:id([0-9a-fA-F]{24})",
     method: "patch",
     middleware: [isLoggedIn, authorization("admin")],
     route: banUserById,
   },
   {
-    path: "/unban-user/:id",
+    path: "/unban-user/:id([0-9a-fA-F]{24})",
     method: "patch",
     middleware: [isLoggedIn, authorization("admin")],
     route: unbanUserById,
   },
   {
-    path: "/update-password/:id",
+    path: "/update-password/:id([0-9a-fA-F]{24})",
     method: "patch",
     middleware: [
       isLoggedIn,
@@ -84,25 +84,25 @@ const moduleRoutes = [
     route: resetPassword,
   },
   {
-    path: "/:id",
+    path: "/:id([0-9a-fA-F]{24})",
     method: "get",
     middleware: [isLoggedIn, authorization("admin", "user")],
     route: findUserById,
   },
   {
-    path: "/:id",
+    path: "/:id([0-9a-fA-F]{24})",
     method: "delete",
     middleware: [isLoggedIn, authorization("admin", "user")],
     route: deleteUserById,
   },
   {
-    path: "/:id",
+    path: "/:id([0-9a-fA-F]{24})",
     method: "put",
     middleware: [userMulter],
     route: updateUserById,
   },
   {
-    path: "/:id",
+    path: "/:id([0-9a-fA-F]{24})",
     method: "patch",
     middleware: [userMulter],
     route: updateUserById,
