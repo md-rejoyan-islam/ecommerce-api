@@ -1,11 +1,12 @@
 import brandModel from "../../models/brand.model.mjs";
-import { createError } from "../../utils/createError.js";
+import createError from "http-errors";
 
-import { unlinkSync } from "fs";
 import { isValidObjectId } from "mongoose";
 
 import asyncHandler from "express-async-handler";
 import { successResponse } from "../services/responseHandler.mjs";
+import deleteImage from "../../helper/deleteImage.js";
+import checkMongoID from "../services/checkMongoId.js";
 
 /**
  *
@@ -57,37 +58,34 @@ export const getAllBrand = asyncHandler(async (req, res) => {
  *
  */
 
-export const addBrand = asyncHandler(async (req, res) => {
+export const createBrand = asyncHandler(async (req, res) => {
   const { body, file } = req;
 
-  // all field validation
-  if (!body.name || !body.description) {
-    // if image uploaded then delete image
-    file && unlinkSync(`api/public/images/brands/${file?.filename}`);
-
-    // throw error
-    throw createError(400, "All fields are required.");
-  }
+  const { name, description, slug } = req.body;
 
   // name validation
-  const beforeData = await brandModel.findOne({ name: body.name });
+  const beforeData = await brandModel.findOne({ name });
 
   if (beforeData) {
-    file && unlinkSync(`api/public/images/brands/${file?.filename}`);
+    deleteImage(`/public/images/brands/${file.filename}`);
     throw createError(400, "Brand name already exists.");
   }
 
   // create new brand
   const result = await brandModel.create({
-    ...body,
-    brand_photo: req?.file?.filename,
+    name,
+    description,
+    slug,
+    image: req?.file?.filename,
   });
 
   // response with result
-  res.status(201).json({
-    Status: "Success",
-    Message: "Added a new brand",
-    Data: result,
+  successResponse(res, {
+    statusCode: 201,
+    message: "Brand data created successfully",
+    payload: {
+      data: result,
+    },
   });
 });
 
@@ -110,47 +108,21 @@ export const addBrand = asyncHandler(async (req, res) => {
  * @apiError          ( Not Found 404 )      brand Data not found
  *
  */
-export const singleBrand = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-
-  // id validation
-  if (!isValidObjectId(id)) throw createError(400, "Invalid brand id.");
+export const getBrandBySlug = asyncHandler(async (req, res) => {
+  const { slug } = req.params;
 
   // data validation
-  const beforeData = await brandModel.findById(id);
-  if (!beforeData) throw createError(404, "Brand not found.");
-
-  // find single brand
-  const result = await brandModel.findById(id);
+  const result = await brandModel.findOne({ slug });
+  if (!result) throw createError(404, "Couldn't find any brand data.");
 
   // response with result
-  res.status(201).json({
-    Status: "Success",
-    Message: "Single brand product",
-    Data: result,
+  successResponse(res, {
+    statusCode: 200,
+    message: "Brand data fetch successfully.",
+    payload: {
+      data: result,
+    },
   });
-  // try {
-  //   const { id } = req.params;
-
-  //   // id validation
-  //   if (!isValidObjectId(id)) throw createError(400, "Invalid brand id.");
-
-  //   // data validation
-  //   const beforeData = await brandModel.findById(id);
-  //   if (!beforeData) throw createError(404, "Brand not found.");
-
-  //   // find single brand
-  //   const result = await brandModel.findById(id);
-
-  //   // response with result
-  //   res.status(201).json({
-  //     Status: "Success",
-  //     Message: "Single brand product",
-  //     Data: result,
-  //   });
-  // } catch (error) {
-  //   next(error);
-  // }
 });
 
 /**
@@ -174,27 +146,25 @@ export const singleBrand = asyncHandler(async (req, res) => {
  * @apiError          ( Not Found 404 )       Brand Data not found
  *
  */
-export const deleteBrand = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-
+export const deleteBrandById = asyncHandler(async (req, res) => {
   // id validation
-  if (!isValidObjectId(id)) throw createError(400, "Invalid brand id.");
-
-  // data validation
-  const beforeData = await brandModel.findById(id);
-  if (!beforeData) throw createError(404, "Brand not found.");
+  checkMongoID(req.params.id);
 
   // brand delete
-  const result = await brandModel.findByIdAndDelete(id);
+  const result = await brandModel.findByIdAndDelete(req.params.id);
+
+  // if brand data not found
+  if (!result) throw createError(404, "Couldn't find any brand data.");
 
   // delete image
+  deleteImage(`/public/images/brands/${result?.brand_photo}`);
 
-  unlinkSync(`api/public/images/brands/${result?.brand_photo}`);
-
-  res.status(201).json({
-    Status: "Success",
-    Message: "Successfully deleted",
-    Data: result,
+  successResponse(res, {
+    statusCode: 200,
+    message: "Brand data delete successfully.",
+    payload: {
+      data: result,
+    },
   });
 });
 
@@ -219,20 +189,17 @@ export const deleteBrand = asyncHandler(async (req, res) => {
  * @apiError          ( Not Found 404 )      brand Data not found
  *
  */
-export const updateBrand = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-
+export const updateBrandById = asyncHandler(async (req, res) => {
   // id validation
-  if (!isValidObjectId(id)) throw createError(400, "Invalid brand id.");
+  checkMongoID(req.params.id);
 
   // data validation
-  const beforeData = await brandModel.findById(id);
-  if (!beforeData) throw createError(404, "Brand not found.");
-  console.log(req.body);
   const options = {
     $set: {
-      ...req.body,
-      brand_photo: req?.file?.filename,
+      name: req.body.name,
+      slug: req.body.slug,
+      description: req.body.description,
+      image: req.file && req?.file?.filename,
     },
   };
   const result = await brandModel.findByIdAndUpdate(id, options, {
@@ -240,14 +207,18 @@ export const updateBrand = asyncHandler(async (req, res) => {
     runValidators: true,
   });
 
-  // before image delete
-  req?.file?.filename &&
-    unlinkSync(`api/public/images/brands/${beforeData?.brand_photo}`);
+  // if brand data not found
+  if (!result) throw createError(404, "Couldn't find any brand data.");
 
-  res.status(201).json({
-    Status: "Success",
-    Message: "Successfully Updated",
-    Data: result,
+  // before image delete
+  req?.file?.filename && deleteImage(`/public/images/brands/${result?.image}`);
+
+  successResponse(res, {
+    statusCode: 200,
+    message: "Successfully update.",
+    payload: {
+      data: result,
+    },
   });
 });
 
@@ -275,7 +246,7 @@ export const updateBrand = asyncHandler(async (req, res) => {
 
 export const bulkDeleteBrand = asyncHandler(async (req, res) => {
   // has ids or not
-  if (req.body.ids.length === 0) throw customError(400, "Please Provide ids.");
+  if (req.body.ids.length === 0) throw customError(404, "Please Provide ids.");
 
   //   id validation
   req.body.ids.forEach((id) => {

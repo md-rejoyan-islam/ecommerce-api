@@ -1,7 +1,7 @@
 import { isValidObjectId } from "mongoose";
 import tagModel from "../../models/tag.model.js";
 import Tag from "../../models/tag.model.js";
-import { createError } from "../../utils/createError.js";
+import createError from "http-errors";
 
 /**
  *

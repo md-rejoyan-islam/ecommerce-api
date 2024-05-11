@@ -1,7 +1,4 @@
 import asyncHandler from "express-async-handler";
-import categoryModel from "../../models/category.model.mjs";
-import Category from "../../models/category.model.mjs";
-import { createError } from "../../utils/createError.js";
 
 import { unlinkSync } from "fs";
 import { isValidObjectId } from "mongoose";

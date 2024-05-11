@@ -1,24 +1,29 @@
 import express from "express";
-import {
-  addBrand,
-  allBrand,
-  deleteBrand,
-  singleBrand,
-  updateBrand,
-} from "../controllers/brand.controllers.mjs";
+
 import { brandMulter } from "../../middlewares/multer.js";
+import {
+  createBrand,
+  deleteBrandById,
+  getAllBrand,
+  getBrandBySlug,
+  updateBrandById,
+} from "../controllers/brand.controllers.mjs";
+import { brandCreateValidator } from "../../middlewares/validators/file/brand.validator.js";
+import runValidation from "../../middlewares/validators/validation.js";
 
 //create router
-const router = express.Router();
+const brandRouter = express.Router();
 
-router.route("/").get(allBrand).post(brandMulter, addBrand);
+brandRouter
+  .route("/")
+  .get(getAllBrand)
+  .post(brandMulter, brandCreateValidator, runValidation, createBrand);
 
-router
-  .route("/:id")
-  .get(singleBrand)
-  .delete(deleteBrand)
-  .put(brandMulter, updateBrand)
-  .patch(brandMulter, updateBrand);
+brandRouter.route("/:slug").get(getBrandBySlug);
+brandRouter
+  .route("/:id([0-9a-fA-F]{24})")
+  .delete(deleteBrandById)
+  .patch(brandMulter, updateBrandById);
 
 //export
-export default router;
+export default brandRouter;

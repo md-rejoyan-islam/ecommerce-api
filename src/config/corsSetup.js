@@ -1,4 +1,4 @@
-import { createError } from "../utils/createError.js";
+import createError from "http-errors";
 
 // whitelist is an array of url's that are allowed to access the api
 var whitelist = ["http://localhost:3000", "http://localhost:3001"];
@@ -14,7 +14,6 @@ var corsOptions = {
   },
   optionsSuccessStatus: 200,
   credentials: true,
-  
 };
 
 // export the corsOptions object

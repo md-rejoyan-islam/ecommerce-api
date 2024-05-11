@@ -1,6 +1,6 @@
 import { isValidObjectId } from "mongoose";
 import productModel from "../../models/product.model.mjs";
-import { createError } from "../../utils/createError.js";
+import createError from "http-errors";
 
 import { unlinkSync } from "fs";
 import asyncHandler from "express-async-handler";
