@@ -3,9 +3,8 @@ import productModel from "../../models/product.model.mjs";
 import { createError } from "../../utils/createError.js";
 
 import { unlinkSync } from "fs";
-import { log } from "console";
-import { isStringObject } from "util/types";
-import { isArray, isString } from "util";
+import asyncHandler from "express-async-handler";
+import { successResponse } from "../services/responseHandler.mjs";
 
 /**
  *
@@ -23,24 +22,21 @@ import { isArray, isString } from "util";
  * @apiError          ( Not Found 404 )   No Brand data found
  *
  */
-export const allProduct = async (req, res, next) => {
-  try {
-    const result = await productModel.find();
+export const allProduct = asyncHandler(async (req, res) => {
+  const result = await productModel.find().lean();
 
-    // category data not found
-    if (!result.length)
-      throw createError(404, "Couldn't find any product data.");
+  // category data not found
+  if (!result.length) throw createError(404, "Couldn't find any product data.");
 
-    // response send with data
-    res.status(200).json({
-      Status: "Success",
-      Message: "All Products data",
-      Data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  // response send with data
+  successResponse(res, {
+    statusCode: 200,
+    message: "Product data fetched successfully",
+    payload: {
+      data: result,
+    },
+  });
+});
 
 /**
  *

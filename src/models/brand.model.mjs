@@ -7,47 +7,42 @@ const brandSchema = mongoose.Schema(
       type: String,
       trim: true,
       required: true,
-      unique: [true, "name must be unique"],
-      minLength: [1, "Name must be at least 3 characters"],
-      maxLength: [30, "Name is too large"],
+      unique: [true, " Brand name must be unique"],
+      minLength: [1, "Brand name must be at least 3 characters"],
+      maxLength: [30, "Brand name is too large"],
     },
     slug: {
       type: String,
       required: true,
       trim: true,
-      unique: true,
+      unique: [true, "Slug must be unique"],
     },
-    brand_photo: {
+    image: {
+      type: String,
+      required: [true, "Brand image is required."],
+    },
+    description: {
       type: String,
       trim: true,
-      required: true,
+      required: [true, "Description is required."],
     },
-    description: String,
     status: {
-      type: Boolean,
-      default: false,
-    },
-    trash: {
-      type: Boolean,
-      default: false,
+      type: String,
+      default: "active",
+      enum: {
+        values: ["active", "inactive"],
+        message: "{VALUE} is invalid for status",
+      },
     },
   },
   {
     timestamps: true,
   }
-); 
+);
 
 brandSchema.pre("validate", function (next) {
   this.slug = this.name.split(" ").join("-").toLowerCase().trim();
   next();
 });
-// brandSchema.pre("save", function (next) {
-//   this.slug = this.name.split(" ").join("-").toLowerCase().trim();
-//   next();
-// });
-
-
 
 export default mongoose.model("Brand", brandSchema);
-
- 

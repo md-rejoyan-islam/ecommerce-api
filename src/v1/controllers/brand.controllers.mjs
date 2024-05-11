@@ -5,6 +5,7 @@ import { unlinkSync } from "fs";
 import { isValidObjectId } from "mongoose";
 
 import asyncHandler from "express-async-handler";
+import { successResponse } from "../services/responseHandler.mjs";
 
 /**
  *
@@ -22,17 +23,19 @@ import asyncHandler from "express-async-handler";
  * @apiError          ( Not Found 404 )   No Brand data found
  *
  */
-export const allBrand = asyncHandler(async (req, res) => {
-  const result = await brandModel.find();
+export const getAllBrand = asyncHandler(async (req, res) => {
+  const result = await brandModel.find().lean();
 
   // if result is empty
   if (!result.length) throw createError(404, "Couldn't find any brand data.");
 
-  // response with result
-  res.status(200).json({
-    Status: "Success",
-    Message: "All brands data",
-    Data: result,
+  // response send
+  successResponse(res, {
+    statusCode: 200,
+    message: "All brands data fetch successfully.",
+    payload: {
+      data: result,
+    },
   });
 });
 

@@ -96,11 +96,8 @@ export const createCategory = asyncHandler(async (req, res) => {
  *
  */
 export const getCategoryById = asyncHandler(async (req, res) => {
-  // id validation
-  checkMongoID(req.params.id);
-
   // data validation
-  const category = await getCategoryByIdService(req.params.id);
+  const category = await getCategoryByIdService(req.params.slug);
 
   // response send with json data
   successResponse(res, {
@@ -177,7 +174,9 @@ export const updateCategoryById = asyncHandler(async (req, res, next) => {
 
   const options = {
     $set: {
-      ...req.body,
+      name: req.body.name,
+      description: req.body.description,
+      parent: req.body.parent,
       image: req?.file?.filename,
       slug: req.body.name && req.body.name.toLowerCase().split(" ").join("-"),
     },
