@@ -1,4 +1,13 @@
 import express from "express";
+import { authorization } from "../../middlewares/authorization.mjs";
+import { userMulter } from "../../middlewares/multer.js";
+import {
+  userPasswordUpdateValidator,
+  userRegisterValidator,
+  userResetPasswordValidator
+} from "../../middlewares/validators/file/user.validator.js";
+import runValidation from "../../middlewares/validators/validation.js";
+import { isLoggedIn } from "../../middlewares/verify.mjs";
 import {
   banUserById,
   createUser,
@@ -11,17 +20,6 @@ import {
   updatePasswordById,
   updateUserById,
 } from "../controllers/user.controllers.mjs";
-import { authorization } from "../../middlewares/authorization.mjs";
-import { userMulter } from "../../middlewares/multer.js";
-import { userMulterForBuffer } from "../../middlewares/multerForBuffer.mjs";
-import { isLoggedIn } from "../../middlewares/verify.mjs";
-import {
-  resetPasswordValidatorByCode,
-  userPasswordUpdateValidator,
-  userRegisterValidator,
-  userResetPasswordValidator,
-} from "../../middlewares/validators/file/user.validator.js";
-import runValidation from "../../middlewares/validators/validation.js";
 
 const userRouter = express.Router();
 

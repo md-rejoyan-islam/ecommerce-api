@@ -1,15 +1,15 @@
 import express from "express";
-import {
-  createCategory,
-  deleteCategory,
-  getAllCategories,
-  singleCategory,
-  updateCategory,
-} from "../controllers/category.controllers.mjs";
 import { categoryMulter } from "../../middlewares/multer.js";
 import { isLoggedIn } from "../../middlewares/verify.mjs";
 import { categoryCreateValidator } from "../../middlewares/validators/file/category.validator.js";
 import runValidation from "../../middlewares/validators/validation.js";
+import {
+  createCategory,
+  deleteCategoryById,
+  getAllCategories,
+  getCategoryById,
+  updateCategoryById,
+} from "../controllers/category.controllers.mjs";
 
 //create router
 const categoryRouter = express.Router();
@@ -26,11 +26,10 @@ categoryRouter
   );
 
 categoryRouter
-  .route("/:id")
-  .get(singleCategory)
-  .delete(deleteCategory)
-  .patch(categoryMulter, updateCategory)
-  .put(categoryMulter, updateCategory);
+  .route("/:id([0-9a-fA-F]{24})")
+  .get(getCategoryById)
+  .delete(deleteCategoryById)
+  .patch(categoryMulter, updateCategoryById);
 
 //export
 export default categoryRouter;

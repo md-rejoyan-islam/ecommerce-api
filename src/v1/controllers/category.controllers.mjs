@@ -11,6 +11,7 @@ import {
 } from "../services/category.service.mjs";
 import { successResponse } from "../services/responseHandler.mjs";
 import { log } from "console";
+import checkMongoID from "../services/checkMongoId.js";
 
 /**
  *
@@ -91,30 +92,23 @@ export const createCategory = asyncHandler(async (req, res) => {
  * @apiError          ( Not Found 404 )      Category Data not found
  *
  */
-export const singleCategory = async (req, res, next) => {
-  try {
-    const { id } = req.params;
+export const getCategoryById = asyncHandler(async (req, res) => {
+  // id validation
+  checkMongoID(req.params.id);
 
-    // id validation
-    if (!isValidObjectId(id)) throw createError(400, "Invalid category id.");
+  // data validation
+  const category = await categoryModel.findById(req.params.id);
+  if (!category) throw createError(404, "Couldn't find any category data.");
 
-    // data validation
-    const beforeData = await categoryModel.findById(id);
-    if (!beforeData) throw createError(404, "Couldn't find any category data.");
-
-    // category data find by id
-    const result = await Category.findById(id);
-
-    // response send with json data
-    res.status(201).json({
-      Status: "Success",
-      Message: "Single category product",
-      Data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  // response send with json data
+  successResponse(res, {
+    statusCode: 200,
+    message: "Category data fetched successfully",
+    payload: {
+      data: category,
+    },
+  });
+});
 
 /**
  *
@@ -137,30 +131,24 @@ export const singleCategory = async (req, res, next) => {
  * @apiError          ( Not Found 404 )       Category Data not found
  *
  */
-export const deleteCategory = async (req, res, next) => {
-  try {
-    const { id } = req.params;
+export const deleteCategoryById = asyncHandler(async (req, res) => {
+  // id validation
+  checkMongoID(req.params.id);
 
-    // id validation
-    if (!isValidObjectId(id)) throw createError(400, "Invalid category id.");
+  // find and delete data
+  const result = await categoryModel.findByIdAndDelete(req.params.id);
 
-    // data validation
-    const beforeData = await categoryModel.findById(id);
-    if (!beforeData) throw createError(404, "Couldn't find any category data.");
+  if (!result) throw createError(404, "Couldn't find any category data.");
 
-    // find by id
-    const result = await categoryModel.findByIdAndDelete(id);
-
-    // response send with data
-    res.status(201).json({
-      Status: "Success",
-      Message: "Deleted a category",
-      Data: result,
-    });
-  } catch (error) {
-    next(createError(error.message, 400));
-  }
-};
+  // response send with data
+  successResponse(res, {
+    statusCode: 200,
+    message: "Category data deleted successfully",
+    payload: {
+      data: result,
+    },
+  });
+});
 
 /**
  *
@@ -183,34 +171,34 @@ export const deleteCategory = async (req, res, next) => {
  * @apiError          ( Not Found 404 )      Category Data not found
  *
  */
-export const updateCategory = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    // id validation
-    if (!isValidObjectId(id)) throw createError(400, "Invalid category id.");
+export const updateCategoryById = asyncHandler(async (req, res, next) => {
+  // id validation
+  checkMongoID(req.params.id);
 
-    // data validation
-    const beforeData = await categoryModel.findById(id);
-    if (!beforeData) throw createError(404, "Couldn't find any category data.");
-    const options = {
-      $set: {
-        ...req.body,
-        category_photo_photo: req?.file?.filename,
-      },
-    };
-    const result = await Category.findByIdAndUpdate(id, options, {
-      new: true,
-      runValidators: true,
-    });
-    res.status(201).json({
-      Status: "Success",
-      Message: "Successfully Updated",
-      Data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  const options = {
+    $set: {
+      ...req.body,
+      image: req?.file?.filename,
+      slug: req.body.name && req.body.name.toLowerCase().split(" ").join("-"),
+    },
+  };
+  const result = await categoryModel.findByIdAndUpdate(req.params.id, options, {
+    new: true,
+    runValidators: true,
+    context: "query",
+  });
+
+  if (!result) throw createError(404, "Couldn't find any category data.");
+
+  // response send with data
+  successResponse(res, {
+    statusCode: 200,
+    message: "Category data updated successfully",
+    payload: {
+      data: result,
+    },
+  });
+});
 
 /**
  *
@@ -234,39 +222,36 @@ export const updateCategory = async (req, res, next) => {
  *
  */
 
-export const bulkDeleteCategory = async (req, res, next) => {
-  try {
-    // has ids or not
-    if (req.body.ids.length === 0)
-      throw customError(400, "Please Provide ids.");
+export const bulkDeleteCategory = asyncHandler(async (req, res, next) => {
+  // has ids or not
+  if (req.body.ids.length === 0) throw customError(400, "Please Provide ids.");
 
-    //   id validation
-    req.body.ids.forEach((id) => {
-      if (!isValidObjectId(id))
-        throw customError(400, `${id} is not a valid id.`);
-    });
+  //   id validation
+  req.body.ids.forEach((id) => {
+    if (!isValidObjectId(brand.id))
+      throw customError(400, `${brand.id} is not a valid id.`);
+  });
 
-    // check data is present or not
-    await Promise.all(
-      req.body.ids.map(async (id) => {
-        const result = await Brand.findById(id);
-        if (!result)
-          throw customError(404, `Couldn't find Brand Data with id = ${id}`);
-      })
-    );
+  // check data is present or not
+  await Promise.all(
+    req.body.ids.map(async (id) => {
+      const result = await Brand.findById(id);
+      if (!result)
+        throw customError(404, `Couldn't find Brand Data with id = ${id}`);
+    })
+  );
 
-    const result = await bulkDeleteBrandService(req.body.ids);
+  const result = await bulkDeleteBrandService(req.body.ids);
 
-    //  respond send with data
-    res.status(200).json({
-      Status: "Success",
-      Message: "Successfully Deleted Data.",
-      Data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  //  respond send with data
+  successResponse(res, {
+    statusCode: 200,
+    message: "Category data deleted successfully",
+    payload: {
+      data: result,
+    },
+  });
+});
 
 /**
  *
@@ -289,39 +274,37 @@ export const bulkDeleteCategory = async (req, res, next) => {
  *
  */
 
-export const bulkUpdateCategory = async (req, res, next) => {
-  try {
-    // has ids or not
-    if (req.body.brands.length === 0)
-      throw customError(400, "Please Provide brands");
+export const bulkUpdateCategory = asyncHandler(async (req, res, next) => {
+  // has ids or not
+  if (req.body.brands.length === 0)
+    throw customError(400, "Please Provide brands");
 
-    //   id validation
-    req.body.brands.forEach((brand) => {
-      if (!isValidObjectId(brand.id))
-        throw customError(400, `${brand.id} is not a valid id.`);
-    });
+  //   id validation
+  req.body.brands.forEach((brand) => {
+    if (!isValidObjectId(brand.id))
+      throw customError(400, `${brand.id} is not a valid id.`);
+  });
 
-    // check data is present or not
-    await Promise.all(
-      req.body.brands.map(async (brand) => {
-        const result = await Brand.findById(brand.id);
-        if (!result)
-          throw customError(
-            404,
-            `Couldn't find Brand Data with id = ${brand.id}`
-          );
-      })
-    );
+  // check data is present or not
+  await Promise.all(
+    req.body.brands.map(async (brand) => {
+      const result = await Brand.findById(brand.id);
+      if (!result)
+        throw customError(
+          404,
+          `Couldn't find Brand Data with id = ${brand.id}`
+        );
+    })
+  );
 
-    const result = await bulkUpdateBrandService(req.body.brands);
+  const result = await bulkUpdateBrandService(req.body.brands);
 
-    //  respond send with data
-    res.status(200).json({
-      Status: "Success",
-      Message: "Successfully Updated Data.",
-      Data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  //  respond send with data
+  successResponse(res, {
+    statusCode: 200,
+    message: "Category data updated successfully",
+    payload: {
+      data: result,
+    },
+  });
+});
