@@ -16,6 +16,7 @@ import seedRouter from "../v1/routes/seeds.routes.mjs";
 import userRouter from "../v1/routes/users.routes.mjs";
 import { successResponse } from "../v1/services/responseHandler.mjs";
 import tagRouter from "../v1/routes/tag.routes.mjs";
+import productRouter from "../v1/routes/product.routes.mjs";
 
 // express app
 const app = express();
@@ -39,7 +40,7 @@ app.use("/public", express.static(path.resolve("public")));
 app.use("/api/v1/seeds", seedRouter);
 
 // // product  route
-// app.use("/api/v1/product", productRoute);
+app.use("/api/v1/products", productRouter);
 
 // product category route
 app.use("/api/v1/categories", categoryRouter);

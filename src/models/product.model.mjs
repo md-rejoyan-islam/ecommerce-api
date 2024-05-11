@@ -31,30 +31,59 @@ const productSchema = mongoose.Schema(
       required: [true, "Brand is required"],
     },
     description: {
-      short_desc: {
+      short: {
         type: String,
         required: [true, "Short description is required"],
         trim: true,
       },
-      long_desc: {
+      long: {
         type: String,
         trim: true,
         required: [true, "Long description is required"],
       },
     },
     price: {
-      regular_price: {
+      regular: {
         type: Number,
         required: [true, "Regular price is required"],
+        validate: {
+          validator: (value) => value > 0,
+          message: (props) =>
+            `${props.value} is not a valid price! Price must be greater than 0`, // props.value is the value of the field
+        },
       },
-      sale_price: {
+      sale: {
         type: Number,
+        validate: {
+          validator: (value) => value > 0,
+          message: (props) =>
+            `${props.value} is not a valid price! Price must be greater than 0`, // props.value is the value of the field
+        },
       },
     },
-
-    stock: {
+    quantity: {
       type: Number,
-      required: [true, "Stock number is required"],
+      required: [true, "Quantity is required"],
+      validate: {
+        validator: (value) => value > 0,
+        message: (props) =>
+          `${props.value} is not a valid quantity! Quantity must be greater than 0`, // props.value is the value of the field
+      },
+    },
+    sold: {
+      type: Number,
+      default: 0,
+    },
+    shipping: {
+      type: {
+        type: String,
+        enum: ["free", "paid"],
+        default: "free",
+      },
+      fee: {
+        type: Number,
+        default: 0,
+      },
     },
     categories: {
       type: [mongoose.Schema.Types.ObjectId],

@@ -1,23 +1,24 @@
 import express from "express";
-import {
-  addProduct,
-  allProduct,
-  deleteProduct,
-  singleProduct,
-  updateProduct,
-} from "../controllers/product.controllers.mjs";
+
 import { productMulter } from "../../middlewares/multer.js";
+import {
+  createProduct,
+  deleteProductById,
+  getAllProduct,
+  getProductBySlug,
+  updateProductById,
+} from "../controllers/product.controllers.mjs";
 
 //create router
-const router = express.Router();
+const productRouter = express.Router();
 
-router.route("/").get(allProduct).post(productMulter, addProduct);
+productRouter.route("/").get(getAllProduct).post(productMulter, createProduct);
 
-router
-  .route("/:id")
-  .get(singleProduct)
-  .delete(deleteProduct)
-  .patch(productMulter, updateProduct);
+productRouter.route("/:slug").get(getProductBySlug);
+productRouter
+  .route("/:id([0-9a-fA-F]{24})")
+  .delete(deleteProductById)
+  .patch(productMulter, updateProductById);
 
 //export
-export default router;
+export default productRouter;

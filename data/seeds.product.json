@@ -1,0 +1,227 @@
+[
+  {
+    "name": "T-shirt",
+    "title": "Nice T-shirt",
+    "slug": "t-shirt",
+    "description": {
+      "short": "Comfortable T-shirt",
+      "long": "Comfortable T-shirt made of cotton fabric with a round neck and short sleeves. Perfect for summer days."
+    },
+    "price": {
+      "regular": 10.0,
+      "sale": 8.0
+    },
+    "brand": "Nike",
+    "tags": ["clothing", "summer", "cotton"],
+    "category": "clothing",
+    "images": [],
+    "quantity": 10,
+    "sold": 1,
+    "rating": 2.5,
+    "shipping": {
+      "type": "free",
+      "fee": 5.0
+    },
+    "status": "active"
+  },
+  {
+    "name": "Shorts",
+    "title": "Nice Shorts",
+    "slug": "shorts",
+    "description": {
+      "short": "Comfortable Shorts",
+      "long": "Comfortable shorts made of cotton fabric with an elastic waistband and side pockets. Perfect for summer days."
+    },
+    "price": {
+      "regular": 15.0,
+      "sale": 12.0
+    },
+    "brand": "Nike",
+    "tags": ["clothing", "summer", "cotton"],
+    "category": "clothing",
+    "images": [],
+    "quantity": 10,
+    "sold": 1,
+    "rating": 3.5,
+    "shipping": {
+      "type": "free",
+      "fee": 5.0
+    },
+    "status": "active"
+  },
+  {
+    "name": "Sneakers",
+    "title": "Nice Sneakers",
+    "slug": "sneakers",
+    "description": {
+      "short": "Comfortable Sneakers",
+      "long": "Comfortable sneakers made of leather with a lace-up fastening and a rubber sole. Perfect for casual wear."
+    },
+    "price": {
+      "regular": 50.0,
+      "sale": 40.0
+    },
+    "brand": "Nike",
+    "tags": ["shoes", "casual", "leather"],
+    "category": "shoes",
+    "images": [],
+    "quantity": 10,
+    "sold": 1,
+    "rating": 4.5,
+    "shipping": {
+      "type": "free",
+      "fee": 5.0
+    },
+    "status": "active"
+  },
+  {
+    "name": "Sunglasses",
+    "title": "Nice Sunglasses",
+    "slug": "sunglasses",
+    "description": {
+      "short": "Stylish Sunglasses",
+      "long": "Stylish sunglasses with a metal frame and tinted lenses. Perfect for sunny days."
+    },
+    "price": {
+      "regular": 20.0,
+      "sale": 15.0
+    },
+    "brand": "Ray-Ban",
+    "tags": ["accessories", "sunglasses", "metal"],
+    "category": "accessories",
+    "images": [],
+    "quantity": 10,
+    "sold": 1,
+    "rating": 5.0,
+    "shipping": {
+      "type": "free",
+      "fee": 5.0
+    },
+    "status": "active"
+  },
+  {
+    "name": "Backpack",
+    "title": "Nice Backpack",
+    "slug": "backpack",
+    "description": {
+      "short": "Stylish Backpack",
+      "long": "Stylish backpack made of canvas with adjustable shoulder straps and multiple compartments. Perfect for everyday use."
+    },
+    "price": {
+      "regular": 30.0,
+      "sale": 25.0
+    },
+    "brand": "Herschel",
+    "tags": ["accessories", "backpack", "canvas"],
+    "category": "accessories",
+    "images": [],
+    "quantity": 10,
+    "sold": 1,
+    "rating": 4.0,
+    "shipping": {
+      "type": "free",
+      "fee": 5.0
+    },
+    "status": "active"
+  },
+  {
+    "name": "Watch",
+    "title": "Nice Watch",
+    "slug": "watch",
+    "description": {
+      "short": "Stylish Watch",
+      "long": "Stylish watch with a stainless steel case and a leather strap. Perfect for everyday wear."
+    },
+    "price": {
+      "regular": 40.0,
+      "sale": 35.0
+    },
+    "brand": "Fossil",
+    "tags": ["accessories", "watch", "leather"],
+    "category": "accessories",
+    "images": [],
+    "quantity": 10,
+    "sold": 1,
+    "rating": 4.5,
+    "shipping": {
+      "type": "free",
+      "fee": 5.0
+    },
+    "status": "active"
+  },
+  {
+    "name": "HP Laptop",
+    "title": "HP Laptop",
+    "slug": "hp-laptop",
+    "description": {
+      "short": "HP Laptop",
+      "long": "HP Laptop with 8GB RAM, 256GB SSD, and Intel Core i5 processor. Perfect for work and entertainment."
+    },
+    "price": {
+      "regular": 800.0,
+      "sale": 750.0
+    },
+    "brand": "HP",
+    "tags": ["electronics", "laptop", "intel"],
+    "category": "electronics",
+    "images": [],
+    "quantity": 10,
+    "sold": 1,
+    "rating": 4.0,
+    "shipping": {
+      "type": "free",
+      "fee": 5.0
+    },
+    "status": "active"
+  },
+  {
+    "name": "Apple iPhone",
+    "title": "Apple iPhone",
+    "slug": "apple-iphone",
+    "description": {
+      "short": "Apple iPhone",
+      "long": "Apple iPhone with 128GB storage, 6.1-inch display, and A14 Bionic chip. Perfect for communication and entertainment."
+    },
+    "price": {
+      "regular": 1000.0,
+      "sale": 950.0
+    },
+    "brand": "Apple",
+    "tags": ["electronics", "smartphone", "apple"],
+    "category": "electronics",
+    "images": [],
+    "quantity": 10,
+    "sold": 1,
+    "rating": 4.5,
+    "shipping": {
+      "type": "free",
+      "fee": 5.0
+    },
+    "status": "active"
+  },
+  {
+    "name": "Samsung TV",
+    "title": "Samsung TV",
+    "slug": "samsung-tv",
+    "description": {
+      "short": "Samsung TV",
+      "long": "Samsung TV with 55-inch 4K UHD display, HDR, and smart features. Perfect for watching movies and TV shows."
+    },
+    "price": {
+      "regular": 500.0,
+      "sale": 450.0
+    },
+    "brand": "Samsung",
+    "tags": ["electronics", "tv", "samsung"],
+    "category": "electronics",
+    "images": [],
+    "quantity": 10,
+    "sold": 1,
+    "rating": 5.0,
+    "shipping": {
+      "type": "free",
+      "fee": 5.0
+    },
+    "status": "active"
+  }
+]

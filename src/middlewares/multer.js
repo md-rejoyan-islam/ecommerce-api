@@ -31,11 +31,8 @@ const storage = multer.diskStorage({
       }
       cb(null, "public/images/brands");
     }
-    if (
-      file.fieldname == "product_photo" ||
-      file.fieldname == "product_gallery_photo"
-    ) {
-      cb(null, "api/public/images/products");
+    if (file.fieldname == "product_images") {
+      cb(null, "/public/images/products");
     }
   },
   filename: (req, file, cb) => {
@@ -60,32 +57,24 @@ const fileFilter = (req, file, cb) => {
 
 // user
 export const userMulter = multer({
-  storage: storage,
+  storage,
   fileFilter,
 }).single("user_photo");
 
 // brand
 export const brandMulter = multer({
-  storage: storage,
+  storage,
   fileFilter,
 }).single("brand_image");
 
 // product
 export const productMulter = multer({
-  storage: storage,
-}).fields([
-  {
-    name: "product_photo",
-    maxCount: 1,
-  },
-  {
-    name: "product_gallery_photo",
-    maxCount: 10,
-  },
-]);
+  storage,
+  fileFilter,
+}).array("product_images", 10);
 
 // product category middleware
 export const categoryMulter = multer({
-  storage: storage,
+  storage,
   fileFilter,
 }).single("category_image");

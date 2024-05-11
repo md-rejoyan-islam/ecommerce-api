@@ -5,6 +5,8 @@ import createError from "http-errors";
 import { unlinkSync } from "fs";
 import asyncHandler from "express-async-handler";
 import { successResponse } from "../services/responseHandler.mjs";
+import checkMongoID from "../services/checkMongoId.mjs";
+import deleteImage from "../../helper/deleteImage.mjs";
 
 /**
  *
@@ -22,7 +24,7 @@ import { successResponse } from "../services/responseHandler.mjs";
  * @apiError          ( Not Found 404 )   No Brand data found
  *
  */
-export const allProduct = asyncHandler(async (req, res) => {
+export const getAllProduct = asyncHandler(async (_, res) => {
   const result = await productModel.find().lean();
 
   // category data not found
@@ -55,7 +57,7 @@ export const allProduct = asyncHandler(async (req, res) => {
  * @apiError          ( Forbidden 403)  Forbidden Only admins can access the data
  *
  */
-export const addProduct = async (req, res, next) => {
+export const createProduct = async (req, res, next) => {
   try {
     const {
       name,
@@ -172,28 +174,19 @@ export const addProduct = async (req, res, next) => {
  * @apiError          ( Not Found 404 )      Category Data not found
  *
  */
-export const singleProduct = async (req, res, next) => {
-  try {
-    const { id } = req.params;
+export const getProductBySlug = asyncHandler(async (req, res) => {
+  // data validation
+  const result = await productModel.findOne({ slug: req.params.slug });
+  if (!result) throw createError(404, "Couldn't find any product data.");
 
-    // id validation
-    if (!isValidObjectId(id)) throw createError(400, "Invalid product id.");
-
-    // data validation
-    const beforeData = await productModel.findById(id);
-    if (!beforeData) throw createError(404, "Couldn't find any product data.");
-
-    // category data find by id
-    const result = await productModel.findById(id);
-    res.status(201).json({
-      Status: "Success",
-      Message: "Single Product ",
-      Data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  successResponse(res, {
+    statusCode: 200,
+    message: "Product data fetched successfully.",
+    payload: {
+      data: result,
+    },
+  });
+});
 
 /**
  *
@@ -216,38 +209,29 @@ export const singleProduct = async (req, res, next) => {
  * @apiError          ( Not Found 404 )       Category Data not found
  *
  */
-export const deleteProduct = async (req, res, next) => {
-  try {
-    const { id } = req.params;
+export const deleteProductById = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
 
-    // id validation
-    if (!isValidObjectId(id)) throw createError(400, "Invalid product id.");
+  // id validation
+  checkMongoID(id);
 
-    // data validation
-    const beforeData = await productModel.findById(id);
-    if (!beforeData) throw createError(404, "Couldn't find any product data.");
+  // find by id and delete
+  const result = await productModel.findByIdAndDelete(id);
+  if (!result) throw createError(404, "Couldn't find any product data.");
 
-    // find by id and delete
-    const result = await productModel.findByIdAndDelete(id);
+  // delete images
+  result.images.forEach((filename) => {
+    deleteImage(`/public/images/products/${filename}`);
+  });
 
-    // images delete
-    if (result) {
-      // product photo delete
-      unlinkSync(`api/public/images/products/${beforeData?.product_photo}`);
-      // gallery photo delete
-      beforeData?.product_gallery_photo.forEach((filename) => {
-        unlinkSync(`api/public/images/products/${filename}`);
-      });
-    }
-    res.status(201).json({
-      Status: "Success",
-      Message: "Successfully deleted",
-      Data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  successResponse(res, {
+    statusCode: 200,
+    message: "Product data deleted successfully.",
+    payload: {
+      data: result,
+    },
+  });
+});
 
 /**
  *
@@ -270,7 +254,7 @@ export const deleteProduct = async (req, res, next) => {
  * @apiError          ( Not Found 404 )      Category Data not found
  *
  */
-export const updateProduct = async (req, res, next) => {
+export const updateProductById = async (req, res, next) => {
   try {
     const { id } = req.params;
     // id validation
