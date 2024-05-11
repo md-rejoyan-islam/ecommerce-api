@@ -37,3 +37,33 @@ export const createCategoryService = asyncHandler(async (req) => {
 
   return category;
 });
+
+// get category by id service
+export const getCategoryByIdService = asyncHandler(async (id) => {
+  const category = await categoryModel.findById(id);
+  if (!category) throw createError(404, "Couldn't find any category data.");
+  return category;
+});
+
+//delete category by id service
+export const deleteCategoryByIdService = asyncHandler(async (id) => {
+  // find and delete data
+  const result = await categoryModel.findByIdAndDelete(id);
+
+  if (!result) throw createError(404, "Couldn't find any category data.");
+
+  return result;
+});
+
+// update category by id service
+export const updateCategoryByIdService = asyncHandler(async (id, options) => {
+  const result = await categoryModel.findByIdAndUpdate(id, options, {
+    new: true,
+    runValidators: true,
+    context: "query",
+  });
+
+  if (!result) throw createError(404, "Couldn't find any category data.");
+
+  return result;
+});

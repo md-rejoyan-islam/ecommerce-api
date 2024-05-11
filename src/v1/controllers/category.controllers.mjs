@@ -7,7 +7,10 @@ import { unlinkSync } from "fs";
 import { isValidObjectId } from "mongoose";
 import {
   createCategoryService,
+  deleteCategoryByIdService,
   getAllCategoryService,
+  getCategoryByIdService,
+  updateCategoryByIdService,
 } from "../services/category.service.mjs";
 import { successResponse } from "../services/responseHandler.mjs";
 import { log } from "console";
@@ -97,8 +100,7 @@ export const getCategoryById = asyncHandler(async (req, res) => {
   checkMongoID(req.params.id);
 
   // data validation
-  const category = await categoryModel.findById(req.params.id);
-  if (!category) throw createError(404, "Couldn't find any category data.");
+  const category = await getCategoryByIdService(req.params.id);
 
   // response send with json data
   successResponse(res, {
@@ -136,9 +138,7 @@ export const deleteCategoryById = asyncHandler(async (req, res) => {
   checkMongoID(req.params.id);
 
   // find and delete data
-  const result = await categoryModel.findByIdAndDelete(req.params.id);
-
-  if (!result) throw createError(404, "Couldn't find any category data.");
+  const result = await deleteCategoryByIdService(req.params.id);
 
   // response send with data
   successResponse(res, {
@@ -182,13 +182,7 @@ export const updateCategoryById = asyncHandler(async (req, res, next) => {
       slug: req.body.name && req.body.name.toLowerCase().split(" ").join("-"),
     },
   };
-  const result = await categoryModel.findByIdAndUpdate(req.params.id, options, {
-    new: true,
-    runValidators: true,
-    context: "query",
-  });
-
-  if (!result) throw createError(404, "Couldn't find any category data.");
+  const result = await updateCategoryByIdService(req.params.id, options);
 
   // response send with data
   successResponse(res, {
