@@ -3,7 +3,7 @@ import fs from "fs";
 fs.promises;
 import checkMongoID from "../services/checkMongoId.js";
 import { successResponse } from "../services/responseHandler.mjs";
-import deleteImage from "../../helper/deleteImage.js";
+import deleteImage from "../../helper/deleteImage.mjs";
 import {
   banUserByIdService,
   createUserService,

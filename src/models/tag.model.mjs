@@ -6,31 +6,22 @@ const tagSchema = mongoose.Schema(
     name: {
       type: String,
       trim: true,
-      required: true,
-      unique: [true, "name must be unique"],
-      minLength: [1, "Name must be at least 3 characters"],
-      maxLength: [30, "Name is too large"],
+      required: [true, "Tag name is required."],
+      unique: [true, "Tag name must be unique"],
+      minLength: [1, "Tag Name must be at least 3 characters"],
+      maxLength: [30, "Tag Name is too large"],
     },
     slug: {
       type: String,
-      required: true,
+      required: [true, "Slug is required."],
       trim: true,
-      unique: true,
-    },
-    status: {
-      type: Boolean,
-      default: null,
-    },
-    trash: {
-      type: Boolean,
-      default: false,
+      unique: [true, "Tag slug can be unique."],
     },
   },
   {
     timestamps: true,
   }
 );
-
 
 tagSchema.pre("validate", function (next) {
   this.slug = this.name.split(" ").join("-").toLowerCase().trim();

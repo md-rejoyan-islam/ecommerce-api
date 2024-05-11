@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler";
 import createError from "http-errors";
 import categoryModel from "../../models/category.model.mjs";
-import deleteImage from "../../helper/deleteImage.js";
+import deleteImage from "../../helper/deleteImage.mjs";
 
 // get all category service
 export const getAllCategoryService = asyncHandler(async () => {

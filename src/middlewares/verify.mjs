@@ -24,7 +24,7 @@ export const isLoggedIn = asyncHandler(async (req, res, next) => {
       // response send
       return errorResponse(res, {
         statusCode: 400,
-        message: "Unauthorized, Invalid access token.Please login again",
+        message: "Unauthorized, Invalid access token.Please login again.",
       });
     }
     // find user
@@ -39,7 +39,7 @@ export const isLoggedIn = asyncHandler(async (req, res, next) => {
       // send response
       return errorResponse(res, {
         statusCode: 400,
-        message: "User not found.",
+        message: "Unauthorized, Please login .",
       });
     }
 

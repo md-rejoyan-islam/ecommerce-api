@@ -2,7 +2,7 @@ import asyncHandler from "express-async-handler";
 import createError from "http-errors";
 import bcrypt from "bcryptjs";
 import userModel from "../../models/user.model.mjs";
-import deleteImage from "../../helper/deleteImage.js";
+import deleteImage from "../../helper/deleteImage.mjs";
 import filterQuery from "../../utils/filterQuery.js";
 import pagination from "../../utils/pagination.js";
 import createJWT from "../../helper/createJWT.js";

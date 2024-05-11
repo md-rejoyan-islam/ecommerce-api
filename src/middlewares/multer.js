@@ -25,6 +25,12 @@ const storage = multer.diskStorage({
       }
       cb(null, "public/images/categories");
     }
+    if (file.fieldname == "brand_image") {
+      if (fileSize > 400000) {
+        return cb(new Error("Maximum image size is 400KB"));
+      }
+      cb(null, "public/images/brands");
+    }
     if (
       file.fieldname == "product_photo" ||
       file.fieldname == "product_gallery_photo"
@@ -61,7 +67,8 @@ export const userMulter = multer({
 // brand
 export const brandMulter = multer({
   storage: storage,
-}).single("brand_photo");
+  fileFilter,
+}).single("brand_image");
 
 // product
 export const productMulter = multer({
