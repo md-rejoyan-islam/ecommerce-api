@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler";
 import fs from "fs";
 fs.promises;
-import checkMongoID from "../services/checkMongoId.js";
+import checkMongoID from "../services/checkMongoId.mjs";
 import { successResponse } from "../services/responseHandler.mjs";
 import deleteImage from "../../helper/deleteImage.mjs";
 import {

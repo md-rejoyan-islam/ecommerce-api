@@ -36,7 +36,7 @@ export const createTagService = async (name, slug) => {
 export const getTagBySlugService = async (slug) => {
   // data validation
   const result = await tagModel.findOne({ slug }).lean();
-  if (!result) throw createError(404, "Couldn't find ant tag ");
+  if (!result) throw createError(404, "Couldn't find ant tag data.");
 
   return result;
 };
@@ -52,12 +52,12 @@ export const deleteTagServiceById = async (id) => {
 
 // update tag service by id
 export const updateTagServiceById = async (id, options) => {
-  const result = await Tag.findByIdAndUpdate(id, options, {
+  const result = await tagModel.findByIdAndUpdate(id, options, {
     new: true,
     runValidators: true,
     context: "query",
   });
-  if (!result) throw createError(404, "Couldn't find ant tag ");
+  if (!result) throw createError(404, "Couldn't find ant tag data. ");
 
   return result;
 };

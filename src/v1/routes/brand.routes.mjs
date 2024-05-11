@@ -9,7 +9,7 @@ import {
   updateBrandById,
 } from "../controllers/brand.controllers.mjs";
 import { brandCreateValidator } from "../../middlewares/validators/file/brand.validator.js";
-import runValidation from "../../middlewares/validators/validation.js";
+import runValidation from "../../middlewares/validators/validation.mjs";
 
 //create router
 const brandRouter = express.Router();

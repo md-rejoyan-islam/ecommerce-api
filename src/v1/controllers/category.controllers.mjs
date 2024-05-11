@@ -11,7 +11,7 @@ import {
 } from "../services/category.service.mjs";
 import { successResponse } from "../services/responseHandler.mjs";
 import { log } from "console";
-import checkMongoID from "../services/checkMongoId.js";
+import checkMongoID from "../services/checkMongoId.mjs";
 
 /**
  *

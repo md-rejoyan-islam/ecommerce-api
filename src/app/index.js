@@ -15,6 +15,7 @@ import categoryRouter from "../v1/routes/category.routes.mjs";
 import seedRouter from "../v1/routes/seeds.routes.mjs";
 import userRouter from "../v1/routes/users.routes.mjs";
 import { successResponse } from "../v1/services/responseHandler.mjs";
+import tagRouter from "../v1/routes/tag.routes.mjs";
 
 // express app
 const app = express();
@@ -44,10 +45,10 @@ app.use("/api/v1/seeds", seedRouter);
 app.use("/api/v1/categories", categoryRouter);
 
 // // product brand route
-app.use("/api/v1/brand", brandRouter);
+app.use("/api/v1/brands", brandRouter);
 
 // // product tag route
-// app.use("/api/v1/tag", productTagRoute);
+app.use("/api/v1/tags", tagRouter);
 
 // auth route
 app.use("/api/v1/auth", authRouter);

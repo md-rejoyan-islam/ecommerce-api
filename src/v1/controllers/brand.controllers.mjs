@@ -6,7 +6,7 @@ import { isValidObjectId } from "mongoose";
 import asyncHandler from "express-async-handler";
 import { successResponse } from "../services/responseHandler.mjs";
 import deleteImage from "../../helper/deleteImage.mjs";
-import checkMongoID from "../services/checkMongoId.js";
+import checkMongoID from "../services/checkMongoId.mjs";
 import {
   deleteBrandServiceById,
   getAllBrandService,

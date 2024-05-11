@@ -4,9 +4,9 @@ import { userMulter } from "../../middlewares/multer.js";
 import {
   userPasswordUpdateValidator,
   userRegisterValidator,
-  userResetPasswordValidator
+  userResetPasswordValidator,
 } from "../../middlewares/validators/file/user.validator.js";
-import runValidation from "../../middlewares/validators/validation.js";
+import runValidation from "../../middlewares/validators/validation.mjs";
 import { isLoggedIn } from "../../middlewares/verify.mjs";
 import {
   banUserById,

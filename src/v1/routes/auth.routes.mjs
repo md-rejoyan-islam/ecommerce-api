@@ -12,7 +12,7 @@ import {
   userLoginValidator,
   userRegisterValidator,
 } from "../../middlewares/validators/file/user.validator.js";
-import runValidation from "../../middlewares/validators/validation.js";
+import runValidation from "../../middlewares/validators/validation.mjs";
 import { isLoggedIn, isLoggedOut } from "../../middlewares/verify.mjs";
 
 //create router

@@ -6,8 +6,8 @@ import {
   getTagBySlug,
   updateTagById,
 } from "../controllers/tag.controllers.mjs";
-import { tagCreateValidator } from "../../middlewares/validators/file/tag.validator";
-import runValidation from "../../middlewares/validators/validation";
+import { tagCreateValidator } from "../../middlewares/validators/file/tag.validator.mjs";
+import runValidation from "../../middlewares/validators/validation.mjs";
 
 //create router
 const tagRouter = express.Router();

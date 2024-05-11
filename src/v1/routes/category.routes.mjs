@@ -5,7 +5,7 @@ import {
   categoryCreateValidator,
   categoryUpdateValidator,
 } from "../../middlewares/validators/file/category.validator.js";
-import runValidation from "../../middlewares/validators/validation.js";
+import runValidation from "../../middlewares/validators/validation.mjs";
 import {
   createCategory,
   deleteCategoryById,
