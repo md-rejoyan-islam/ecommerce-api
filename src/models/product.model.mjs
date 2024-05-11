@@ -64,6 +64,10 @@ const productSchema = mongoose.Schema(
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Tag",
     },
+    rating: {
+      type: Number,
+      default: 0,
+    },
 
     images: [
       {
