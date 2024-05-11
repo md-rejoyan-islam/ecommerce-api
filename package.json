@@ -18,7 +18,6 @@
   "author": "Md. Rejoyan Islam",
   "license": "ISC",
   "devDependencies": {
-    "colors": "^1.4.0",
     "morgan": "^1.10.0",
     "nodemon": "^3.1.0"
   },

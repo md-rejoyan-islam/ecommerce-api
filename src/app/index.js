@@ -1,24 +1,20 @@
-import express from "express";
-import cors from "cors";
-import morgan from "morgan";
-import colors from "colors";
 import cookieParser from "cookie-parser";
+import cors from "cors";
+import express from "express";
 import asyncHandler from "express-async-handler";
 import createError from "http-errors";
+import morgan from "morgan";
 
 //import routes
-import productCategoryRoute from "../v1/routes/category.routes.mjs";
-import productBrandRoute from "../v1/routes/brand.routes.mjs";
-import productTagRoute from "../v1/routes/tag.routes.mjs";
-import productRoute from "../v1/routes/product.routes.mjs";
-import { errorHandler } from "../middlewares/errorHandler.js";
-import corsOptions from "../config/corsSetup.js";
-import userRouter from "../v1/routes/users.routes.mjs";
-import authRouter from "../v1/routes/auth.routes.mjs";
-import seedRouter from "../v1/routes/seeds.routes.mjs";
-import { successResponse } from "../v1/services/responseHandler.mjs";
 import path from "path";
+import corsOptions from "../config/corsSetup.js";
+import { errorHandler } from "../middlewares/errorHandler.js";
+import authRouter from "../v1/routes/auth.routes.mjs";
+import brandRouter from "../v1/routes/brand.routes.mjs";
 import categoryRouter from "../v1/routes/category.routes.mjs";
+import seedRouter from "../v1/routes/seeds.routes.mjs";
+import userRouter from "../v1/routes/users.routes.mjs";
+import { successResponse } from "../v1/services/responseHandler.mjs";
 
 // express app
 const app = express();
@@ -48,7 +44,7 @@ app.use("/api/v1/seeds", seedRouter);
 app.use("/api/v1/categories", categoryRouter);
 
 // // product brand route
-// app.use("/api/v1/brand", productBrandRoute);
+app.use("/api/v1/brand", brandRouter);
 
 // // product tag route
 // app.use("/api/v1/tag", productTagRoute);
