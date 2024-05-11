@@ -176,7 +176,7 @@ export const createProduct = async (req, res, next) => {
  */
 export const getProductBySlug = asyncHandler(async (req, res) => {
   // data validation
-  const result = await productModel.findOne({ slug: req.params.slug });
+  const result = await productModel.findOne({ slug: req.params.slug }).lean();
   if (!result) throw createError(404, "Couldn't find any product data.");
 
   successResponse(res, {
@@ -216,7 +216,7 @@ export const deleteProductById = asyncHandler(async (req, res, next) => {
   checkMongoID(id);
 
   // find by id and delete
-  const result = await productModel.findByIdAndDelete(id);
+  const result = await productModel.findByIdAndDelete(id).lean();
   if (!result) throw createError(404, "Couldn't find any product data.");
 
   // delete images
@@ -254,43 +254,36 @@ export const deleteProductById = asyncHandler(async (req, res, next) => {
  * @apiError          ( Not Found 404 )      Category Data not found
  *
  */
-export const updateProductById = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    // id validation
-    if (!isValidObjectId(id)) throw createError(400, "Invalid product id.");
+export const updateProductById = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  // id validation
+  checkMongoID(id);
 
-    // data validation
-    const beforeData = await productModel.findById(id);
-    if (!beforeData) throw createError(404, "Couldn't find any product data.");
+  const options = {
+    $set: {
+      ...req.body,
+      images:
+        req?.files["product_photo"] && req?.files["product_photo"][0]?.filename,
+    },
+  };
 
-    console.log(req.body);
+  const result = await productModel.findByIdAndUpdate(id, options, {
+    new: true,
+    runValidators: true,
+    context: "query",
+  });
+  if (!result) throw createError(404, "Couldn't find any product data.");
 
-    const options = {
-      $set: {
-        ...req.body,
-        product_photo:
-          req?.files["product_photo"] &&
-          req?.files["product_photo"][0]?.filename,
-      },
-    };
-
-    const result = await productModel.findByIdAndUpdate(id, options, {
-      new: true,
-      runValidators: true,
-    });
-
-    if (req.files["product_photo"] && req.files["product_photo"][0]?.filename) {
-      // product photo delete
-      unlinkSync(`api/public/images/products/${beforeData?.product_photo}`);
-    }
-    res.status(201).json({
-      Status: "Success",
-      Message: "Successfully Updated",
-      Data: result,
-    });
-  } catch (error) {
-    console.log(error);
-    next(error);
+  if (req.files["product_photo"] && req.files["product_photo"][0]?.filename) {
+    // product photo delete
+    unlinkSync(`api/public/images/products/${beforeData?.product_photo}`);
   }
-};
+
+  successResponse(res, {
+    statusCode: 200,
+    message: "Product data updated successfully.",
+    payload: {
+      data: result,
+    },
+  });
+});
