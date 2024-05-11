@@ -1,7 +1,11 @@
 import { isValidObjectId } from "mongoose";
-import tagModel from "../../models/tag.model.js";
-import Tag from "../../models/tag.model.js";
+
+import Tag from "../../models/tag.model.mjs";
 import createError from "http-errors";
+import asyncHandler from "express-async-handler";
+import tagModel from "../../models/tag.model.mjs";
+import { successResponse } from "../services/responseHandler.mjs";
+import checkMongoID from "../services/checkMongoId";
 
 /**
  *
@@ -19,22 +23,21 @@ import createError from "http-errors";
  * @apiError          ( Not Found 404 )   No tag data found
  *
  */
-export const allTag = async (req, res, next) => {
-  try {
-    const result = await Tag.find();
-    // if result is empty
-    if (!result.length) throw createError(404, "Couldn't find any tag data.");
+export const getAllTag = asyncHandler(async (req, res, next) => {
+  const result = await tagModel.find().lean();
 
-    // response with result
-    res.status(200).json({
-      Status: "Success",
-      Message: "All tags data",
-      Data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  // if result is empty
+  if (!result.length) throw createError(404, "Couldn't find any tag data.");
+
+  // response with result
+  successResponse(res, {
+    statusCode: 200,
+    message: "Tag data fetched successfully.",
+    payload: {
+      result,
+    },
+  });
+});
 
 /**
  *
@@ -53,38 +56,31 @@ export const allTag = async (req, res, next) => {
  * @apiError          ( Forbidden 403)  Forbidden Only admins can access the data
  *
  */
-export const addTag = async (req, res, next) => {
-  try {
-    const { body, file } = req;
+export const createTag = asyncHandler(async (req, res) => {
+  const { name, slug } = req.body;
 
-    // all field validation
-    if (!body.name) {
-      // throw error
-      throw createError(400, "All fields are required.");
-    }
+  // name validation
+  const beforeData = await tagModel.findOne({ name }).lean();
 
-    // name validation
-    const beforeData = await tagModel.findOne({ name: body.name });
-
-    if (beforeData) {
-      throw createError(400, "Tag name already exists.");
-    }
-
-    // create new tag
-    const result = await tagModel.create({
-      ...body,
-    });
-
-    // response with result
-    res.status(201).json({
-      Status: "Success",
-      Message: "Added a new Tag",
-      Data: result,
-    });
-  } catch (error) {
-    next(error);
+  if (beforeData) {
+    throw createError(400, "Tag name already exists.");
   }
-};
+
+  // create new tag
+  const result = await tagModel.create({
+    name,
+    slug: name && name.toLowerCase().split(" ").join("-"),
+  });
+
+  // response with result
+  successResponse(res, {
+    statusCode: 201,
+    message: "Tag created successfully.",
+    payload: {
+      result,
+    },
+  });
+});
 
 /**
  *
@@ -105,29 +101,24 @@ export const addTag = async (req, res, next) => {
  * @apiError          ( Not Found 404 )      tag Data not found
  *
  */
-export const singleTag = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    // id validation
-    if (!isValidObjectId(id)) throw createError(400, "Invalid tag id.");
+export const getTagBySlug = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  // id validation
+  checkMongoID(id);
 
-    // data validation
-    const beforeData = await tagModel.findById(id);
-    if (!beforeData) throw createError(404, "Couldn't find ant tag ");
+  // data validation
+  const result = await tagModel.findById(id).lean();
+  if (!result) throw createError(404, "Couldn't find ant tag ");
 
-    // find by id
-    const result = await Tag.findById(id);
-
-    // response send with data
-    res.status(201).json({
-      Status: "Success",
-      Message: "Single Tag product",
-      Data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  // response send with data
+  successResponse(res, {
+    statusCode: 200,
+    message: "Tag data fetched successfully.",
+    payload: {
+      result,
+    },
+  });
+});
 
 /**
  *
@@ -150,30 +141,25 @@ export const singleTag = async (req, res, next) => {
  * @apiError          ( Not Found 404 )       tag Data not found
  *
  */
-export const deleteTag = async (req, res, next) => {
-  try {
-    const { id } = req.params;
+export const deleteTagById = asyncHandler(async (req, res) => {
+  const { id } = req.params;
 
-    // id validation
-    if (!isValidObjectId(id)) throw createError(400, "Invalid tag id.");
+  // id validation
+  checkMongoID(id);
 
-    // data validation
-    const beforeData = await tagModel.findById(id);
-    if (!beforeData) throw createError(404, "Couldn't find ant tag ");
+  // find by id and delete
+  const result = await tagModel.findByIdAndDelete(id);
+  if (!result) throw createError(404, "Couldn't find any tag data.");
 
-    // find by id and delete
-    const result = await Tag.findByIdAndDelete(id);
-
-    // response send
-    res.status(201).json({
-      Status: "Success",
-      Message: "Successfully deleted",
-      Data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  // response send
+  successResponse(res, {
+    statusCode: 200,
+    message: "Tag data deleted successfully.",
+    payload: {
+      result,
+    },
+  });
+});
 
 /**
  *
@@ -196,34 +182,32 @@ export const deleteTag = async (req, res, next) => {
  * @apiError          ( Not Found 404 )      tag Data not found
  *
  */
-export const updateTag = async (req, res, next) => {
-  try {
-    const { id } = req.params;
+export const updateTag = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
 
-    // id validation
-    if (!isValidObjectId(id)) throw createError(400, "Invalid tag id.");
+  // id validation
+  checkMongoID(id);
 
-    // data validation
-    const beforeData = await tagModel.findById(id);
-    if (!beforeData) throw createError(404, "Couldn't find ant tag ");
-    const options = {
-      $set: {
-        ...req.body,
-      },
-    };
-    const result = await Tag.findByIdAndUpdate(id, options, {
-      new: true,
-      runValidators: true,
-    });
-    res.status(201).json({
-      Status: "Success",
-      Message: "Successfully Updated",
-      Data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  const options = {
+    $set: {
+      name: req.body.name,
+      slug: req.body.name && req.body.name.toLowerCase().split(" ").join("-"),
+    },
+  };
+  const result = await Tag.findByIdAndUpdate(id, options, {
+    new: true,
+    runValidators: true,
+    context: "query",
+  });
+  if (!result) throw createError(404, "Couldn't find ant tag ");
+  successResponse(res, {
+    statusCode: 200,
+    message: "Tag data updated successfully.",
+    payload: {
+      result,
+    },
+  });
+});
 
 /**
  *
@@ -247,39 +231,36 @@ export const updateTag = async (req, res, next) => {
  *
  */
 
-export const bulkDeleteTag = async (req, res, next) => {
-  try {
-    // has ids or not
-    if (req.body.ids.length === 0)
-      throw customError(400, "Please Provide ids.");
+export const bulkDeleteTag = asyncHandler(async (req, res, next) => {
+  // has ids or not
+  if (req.body.ids.length === 0) throw customError(400, "Please Provide ids.");
 
-    //   id validation
-    req.body.ids.forEach((id) => {
-      if (!isValidObjectId(id))
-        throw customError(400, `${id} is not a valid id.`);
-    });
+  //   id validation
+  req.body.ids.forEach((id) => {
+    if (!isValidObjectId(id))
+      throw customError(400, `${id} is not a valid id.`);
+  });
 
-    // check data is present or not
-    await Promise.all(
-      req.body.ids.map(async (id) => {
-        const result = await Brand.findById(id);
-        if (!result)
-          throw customError(404, `Couldn't find Brand Data with id = ${id}`);
-      })
-    );
+  // check data is present or not
+  await Promise.all(
+    req.body.ids.map(async (id) => {
+      const result = await Brand.findById(id);
+      if (!result)
+        throw customError(404, `Couldn't find Brand Data with id = ${id}`);
+    })
+  );
 
-    const result = await bulkDeleteBrandService(req.body.ids);
+  const result = await bulkDeleteBrandService(req.body.ids);
 
-    //  respond send with data
-    res.status(200).json({
-      Status: "Success",
-      Message: "Successfully Deleted Data.",
-      Data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  //  respond send with data
+  successResponse(res, {
+    statusCode: 200,
+    message: "Successfully Deleted Data.",
+    payload: {
+      result,
+    },
+  });
+});
 
 /**
  *
