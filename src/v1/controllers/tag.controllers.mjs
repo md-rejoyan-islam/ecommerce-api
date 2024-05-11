@@ -1,11 +1,16 @@
 import { isValidObjectId } from "mongoose";
-
-import Tag from "../../models/tag.model.mjs";
 import createError from "http-errors";
 import asyncHandler from "express-async-handler";
 import tagModel from "../../models/tag.model.mjs";
 import { successResponse } from "../services/responseHandler.mjs";
 import checkMongoID from "../services/checkMongoId";
+import {
+  createTagService,
+  deleteTagServiceById,
+  getAllTagService,
+  getTagBySlugService,
+  updateTagServiceById,
+} from "../services/tag.service.mjs";
 
 /**
  *
@@ -24,10 +29,7 @@ import checkMongoID from "../services/checkMongoId";
  *
  */
 export const getAllTag = asyncHandler(async (req, res, next) => {
-  const result = await tagModel.find().lean();
-
-  // if result is empty
-  if (!result.length) throw createError(404, "Couldn't find any tag data.");
+  const result = await getAllTagService();
 
   // response with result
   successResponse(res, {
@@ -59,18 +61,8 @@ export const getAllTag = asyncHandler(async (req, res, next) => {
 export const createTag = asyncHandler(async (req, res) => {
   const { name, slug } = req.body;
 
-  // name validation
-  const beforeData = await tagModel.findOne({ name }).lean();
-
-  if (beforeData) {
-    throw createError(400, "Tag name already exists.");
-  }
-
   // create new tag
-  const result = await tagModel.create({
-    name,
-    slug: name && name.toLowerCase().split(" ").join("-"),
-  });
+  const result = await createTagService(name, slug);
 
   // response with result
   successResponse(res, {
@@ -102,13 +94,10 @@ export const createTag = asyncHandler(async (req, res) => {
  *
  */
 export const getTagBySlug = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  // id validation
-  checkMongoID(id);
+  const { slug } = req.params;
 
   // data validation
-  const result = await tagModel.findById(id).lean();
-  if (!result) throw createError(404, "Couldn't find ant tag ");
+  const result = await getTagBySlugService(slug);
 
   // response send with data
   successResponse(res, {
@@ -148,8 +137,7 @@ export const deleteTagById = asyncHandler(async (req, res) => {
   checkMongoID(id);
 
   // find by id and delete
-  const result = await tagModel.findByIdAndDelete(id);
-  if (!result) throw createError(404, "Couldn't find any tag data.");
+  const result = await deleteTagServiceById(id);
 
   // response send
   successResponse(res, {
@@ -182,7 +170,7 @@ export const deleteTagById = asyncHandler(async (req, res) => {
  * @apiError          ( Not Found 404 )      tag Data not found
  *
  */
-export const updateTag = asyncHandler(async (req, res, next) => {
+export const updateTagById = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
 
   // id validation
@@ -194,12 +182,9 @@ export const updateTag = asyncHandler(async (req, res, next) => {
       slug: req.body.name && req.body.name.toLowerCase().split(" ").join("-"),
     },
   };
-  const result = await Tag.findByIdAndUpdate(id, options, {
-    new: true,
-    runValidators: true,
-    context: "query",
-  });
-  if (!result) throw createError(404, "Couldn't find ant tag ");
+  const result = await updateTagServiceById(id, options);
+
+  // response send
   successResponse(res, {
     statusCode: 200,
     message: "Tag data updated successfully.",
