@@ -7,7 +7,6 @@ const productSchema = mongoose.Schema(
       type: String,
       trim: true,
       required: true,
-      unique: [true, "name must be unique"],
       minLength: [1, "Name must be at least 3 characters"],
       maxLength: [30, "Name is too large"],
     },
@@ -15,7 +14,6 @@ const productSchema = mongoose.Schema(
       type: String,
       trim: true,
       required: true,
-      unique: true,
       minLength: [1, "Title must be at least 3 characters"],
       maxLength: [30, "Title is too large"],
     },
@@ -23,7 +21,7 @@ const productSchema = mongoose.Schema(
       type: String,
       required: [true, "Slug is required"],
       trim: true,
-      unique: true,
+      unique: [true, "Slug must be unique"],
     },
     brand: {
       type: mongoose.Schema.Types.ObjectId,
@@ -85,8 +83,8 @@ const productSchema = mongoose.Schema(
         default: 0,
       },
     },
-    categories: {
-      type: [mongoose.Schema.Types.ObjectId],
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
     },
     tags: {

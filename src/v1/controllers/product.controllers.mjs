@@ -1,4 +1,4 @@
-import { isValidObjectId } from "mongoose";
+import mongoose, { isValidObjectId } from "mongoose";
 import productModel from "../../models/product.model.mjs";
 import createError from "http-errors";
 
@@ -7,6 +7,11 @@ import asyncHandler from "express-async-handler";
 import { successResponse } from "../services/responseHandler.mjs";
 import checkMongoID from "../services/checkMongoId.mjs";
 import deleteImage from "../../helper/deleteImage.mjs";
+import { log } from "console";
+import brandModel from "../../models/brand.model.mjs";
+import categoryModel from "../../models/category.model.mjs";
+import tagModel from "../../models/tag.model.mjs";
+import { ok } from "assert";
 
 /**
  *
@@ -57,103 +62,44 @@ export const getAllProduct = asyncHandler(async (_, res) => {
  * @apiError          ( Forbidden 403)  Forbidden Only admins can access the data
  *
  */
-export const createProduct = async (req, res, next) => {
-  try {
-    const {
-      name,
-      long_desc,
-      short_desc,
-      regular_price,
-      sale_price,
-      categories,
-      brand,
-      tags,
-    } = req.body;
+export const createProduct = asyncHandler(async (req, res, next) => {
+  const { brand, category, tags } = req.body;
 
-    // all field validation
-    if (
-      !name ||
-      !long_desc ||
-      !short_desc ||
-      !regular_price ||
-      !sale_price ||
-      !brand ||
-      !tags ||
-      !categories
-    ) {
-      // throw error
-      throw createError(400, "All fields are required.");
+  // brand id check &  data is exist or not
+  if (!isValidObjectId(brand)) throw createError(400, "Brand id is not valid.");
+  const brandData = await brandModel.findById(brand);
+  if (!brandData) throw createError(404, "Brand data not found.");
+
+  // categories id check &  data is exist or not
+  if (!isValidObjectId(category))
+    throw createError(400, "Category id is not valid.");
+  const categoryData = await categoryModel.findById(category);
+  if (!categoryData) throw createError(404, "Category data not found.");
+
+  // tags id check &  data is exist or not
+  for (let tag of tags) {
+    if (!isValidObjectId(tag)) {
+      throw createError(400, "Tag id is not valid.");
     }
-
-    // name validation
-    const beforeData = await productModel.findOne({ name });
-
-    // if found any error
-    let error = {
-      status: false,
-      msg: "",
-    };
-
-    // name validation
-    if (beforeData && !error.status) {
-      error.status = true;
-      error.msg = "Product name already exists.";
-    }
-
-    // product image validation
-    if (req.files.product_photo[0].size > 400000 && !error.status) {
-      error.status = true;
-      error.msg = "Maximum image size is 400KB";
-    }
-
-    // product gallery image validation
-    !error.status &&
-      req.files.product_gallery_photo.find((photo) => {
-        if (photo.size > 400000) {
-          error.status = true;
-          error.msg = "Maximum image size is 400KB";
-        }
-      });
-
-    // error show
-    if (error.status) {
-      // product photo delete
-      unlinkSync(
-        `api/public/images/products/${req.files.product_photo[0]?.filename}`
-      );
-      // gallery photo delete
-      req.files.product_gallery_photo.forEach((photo) => {
-        unlinkSync(`api/public/images/products/${photo?.filename}`);
-      });
-      throw createError(400, error.msg);
-    }
-    // product-photo
-    const photo = req.files["product_photo"][0].filename;
-
-    const gallery = [];
-    [...req.files["product_gallery_photo"]].forEach((item) =>
-      gallery.push(item.filename)
-    );
-
-    const result = await productModel.create({
-      ...req.body,
-      tags: tags.indexOf('"') !== -1 ? JSON.parse(tags) : tags,
-      categories:
-        categories.indexOf('"') !== -1 ? JSON.parse(categories) : categories,
-      product_photo: photo,
-      product_gallery_photo: gallery,
-    });
-
-    // response send with data
-    res.status(201).json({
-      Status: "Success",
-      Message: "Added new product",
-      Data: result,
-    });
-  } catch (error) {
-    next(error);
+    // data is exist or not
+    const result = await tagModel.findById(tag).lean();
+    if (!result) throw createError(404, "Tag data not found.");
   }
-};
+
+  // create product
+  const result = await productModel.create({
+    ...req.body,
+  });
+
+  // response send with data
+  successResponse(res, {
+    statusCode: 201,
+    message: "Product data created successfully.",
+    payload: {
+      data: result,
+    },
+  });
+});
 
 /**
  *
