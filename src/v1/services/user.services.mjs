@@ -7,7 +7,7 @@ import filterQuery from "../../utils/filterQuery.js";
 import pagination from "../../utils/pagination.js";
 import createJWT from "../../helper/createJWT.js";
 import sendPasswordResetMail from "../../mails/passwordResetMail.mjs";
-import { passwordResetKey, passwordResetKeyExpire } from "../../app/secret.js";
+import { passwordResetKey, passwordResetKeyExpire } from "../../app/secret.mjs";
 import jwt from "jsonwebtoken";
 
 /**

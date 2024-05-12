@@ -1,6 +1,6 @@
 import app from "./app/index.js";
 import mongoDBConnection from "./config/db.js";
-import { hostname, port } from "./app/secret.js";
+import { hostname, port } from "./app/secret.mjs";
 import { errorLogger, logger } from "./helper/logger.mjs";
 
 // app listen

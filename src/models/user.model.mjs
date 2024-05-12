@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
-import { defaultImagePath } from "../app/secret.js";
+import { defaultImagePath } from "../app/secret.mjs";
 import hashPassword from "../utils/hashPassword.js";
 import { isEmail } from "../helper/helper.js";
 

@@ -1,4 +1,4 @@
-import { node_env } from "../app/secret.js";
+import { node_env } from "../app/secret.mjs";
 
 // clear cookie
 export const clearCookie = (res, cookieName) => {

@@ -10,7 +10,7 @@ import {
   jwtRegisterSecretKey,
   refreshTokenExpire,
   refreshTokenSecret,
-} from "../../app/secret.js";
+} from "../../app/secret.mjs";
 import sendAccountVerifyMail from "../../mails/accountVerifyMail.mjs";
 import { setCookie } from "../../helper/cookie.mjs";
 

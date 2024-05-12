@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { mongoURL } from "../app/secret.js";
+import { mongoURL } from "../app/secret.mjs";
 import { logger, errorLogger } from "../helper/logger.mjs";
 
 const mongoDBConnection = async (options = {}) => {

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { defaultCatImagePath } from "../app/secret.mjs";
 
 // create user schema
 const categorySchema = mongoose.Schema(
@@ -21,7 +22,7 @@ const categorySchema = mongoose.Schema(
     image: {
       type: String,
       trim: true,
-      required: [true, "Category image is required."],
+      default: defaultCatImagePath,
     },
     description: {
       type: String,

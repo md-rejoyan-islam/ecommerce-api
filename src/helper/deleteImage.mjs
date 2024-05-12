@@ -1,6 +1,6 @@
 import fs from "fs/promises";
 import asyncHandler from "express-async-handler";
-import { defaultImagePath } from "../app/secret.js";
+import { defaultImagePath } from "../app/secret.mjs";
 
 const deleteImage = asyncHandler(async (imagePath) => {
   try {

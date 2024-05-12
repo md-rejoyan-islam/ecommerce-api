@@ -3,7 +3,7 @@ import {
   allowedImageTypes,
   userImageUploadDir,
   userMaxImageSize,
-} from "../app/secret.js";
+} from "../app/secret.mjs";
 
 // create disk storage
 const storage = multer.memoryStorage();

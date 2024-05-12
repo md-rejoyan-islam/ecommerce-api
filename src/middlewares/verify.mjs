@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler";
 import createError from "http-errors";
 import jwt from "jsonwebtoken";
-import { accessTokenSecret, node_env } from "../app/secret.js";
+import { accessTokenSecret, node_env } from "../app/secret.mjs";
 import userModel from "../models/user.model.mjs";
 import { clearCookie } from "../helper/cookie.mjs";
 import { errorResponse } from "../v1/services/responseHandler.mjs";

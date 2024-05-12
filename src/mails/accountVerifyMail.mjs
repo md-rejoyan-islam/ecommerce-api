@@ -6,7 +6,7 @@ import {
   emailUser,
   smtpHost,
   smtpPort,
-} from "../app/secret.js";
+} from "../app/secret.mjs";
 
 const transport = nodemailer.createTransport({
   host: smtpHost, // host name

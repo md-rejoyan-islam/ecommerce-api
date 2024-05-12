@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { defaultBrandImagePath } from "../app/secret.mjs";
 
 // create user schema
 const brandSchema = mongoose.Schema(
@@ -19,7 +20,7 @@ const brandSchema = mongoose.Schema(
     },
     image: {
       type: String,
-      required: [true, "Brand image is required."],
+      default: defaultBrandImagePath,
     },
     description: {
       type: String,

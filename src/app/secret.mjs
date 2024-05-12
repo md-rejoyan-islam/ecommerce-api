@@ -7,6 +7,8 @@ export const node_env = process.env.NODE_ENV || "development";
 export const mongoURL = process.env.LIVE_MONGO_URL || process.env.MONGO_URL;
 
 export const defaultImagePath = process.env.DEFAULT_USER_IMAGE_PATH;
+export const defaultCatImagePath = process.env.DEFAULT_CATEGORY_IMAGE_PATH;
+export const defaultBrandImagePath = process.env.DEFAULT_BRAND_IMAGE_PATH;
 
 export const jwtVerifyKeySecret = process.env.JWT_VERIFY_KEY;
 export const jwtVerifyKeyExpire = process.env.JWT_VERIFY_KEY_EXPIRE;
