@@ -6,10 +6,6 @@ export const node_env = process.env.NODE_ENV || "development";
 
 export const mongoURL = process.env.LIVE_MONGO_URL || process.env.MONGO_URL;
 
-export const defaultImagePath = process.env.DEFAULT_USER_IMAGE_PATH;
-export const defaultCatImagePath = process.env.DEFAULT_CATEGORY_IMAGE_PATH;
-export const defaultBrandImagePath = process.env.DEFAULT_BRAND_IMAGE_PATH;
-
 export const jwtVerifyKeySecret = process.env.JWT_VERIFY_KEY;
 export const jwtVerifyKeyExpire = process.env.JWT_VERIFY_KEY_EXPIRE;
 
@@ -32,9 +28,15 @@ export const emailPass = process.env.EMAIL_HOST_PASSWORD;
 
 export const clientURL = process.env.CLIENT_URL;
 
-export const userImageUploadDir = process.env.USER_IMAGE_UPLOAD_DIR;
-export const userMaxImageSize = process.env.USER_MAX_IMAGE_SIZE;
-export const allowedImageTypes = process.env.ALLOWED_IMAGE_TYPE;
+export const allowedImageTypes = ["jpg", "jpeg", "png", "webp"];
+export const userImageUploadDir = "public/images/users";
+export const userMaxImageSize = 400000;
+export const defaultImagePath = "public/images/default/default_user.png";
+export const categoryImageUploadDir = "public/images/categories";
+export const defaultCatImagePath = "public/images/default/default_category.png";
+export const defaultBrandImagePath = "public/images/default/default_brand.png";
+export const brandImageUploadDir = "public/images/brands";
+export const productImageUploadDir = "public/images/products";
 
 export const cloudinary_cloud_name = process.env.CLOUDINARY_CLOUD_NAME;
 export const cloudinary_api_key = process.env.CLOUDINARY_API_KEY;
