@@ -11,7 +11,12 @@ import { log } from "console";
 import brandModel from "../../models/brand.model.mjs";
 import categoryModel from "../../models/category.model.mjs";
 import tagModel from "../../models/tag.model.mjs";
-import { ok } from "assert";
+import {
+  createProductService,
+  deleteProductService,
+  getAllProductService,
+  getProductBySlugService,
+} from "../services/product.service.mjs";
 
 /**
  *
@@ -30,10 +35,7 @@ import { ok } from "assert";
  *
  */
 export const getAllProduct = asyncHandler(async (_, res) => {
-  const result = await productModel.find().lean();
-
-  // category data not found
-  if (!result.length) throw createError(404, "Couldn't find any product data.");
+  const result = await getAllProductService();
 
   // response send with data
   successResponse(res, {
@@ -62,43 +64,33 @@ export const getAllProduct = asyncHandler(async (_, res) => {
  * @apiError          ( Forbidden 403)  Forbidden Only admins can access the data
  *
  */
+
 export const createProduct = asyncHandler(async (req, res, next) => {
-  const { brand, category, tags } = req.body;
+  // product images
+  const images = req?.files?.map(
+    (file) => file.fieldname === "product_images" && file.filename
+  );
 
-  // brand id check &  data is exist or not
-  if (!isValidObjectId(brand)) throw createError(400, "Brand id is not valid.");
-  const brandData = await brandModel.findById(brand);
-  if (!brandData) throw createError(404, "Brand data not found.");
+  try {
+    // create product
+    const result = await createProductService(req, images);
 
-  // categories id check &  data is exist or not
-  if (!isValidObjectId(category))
-    throw createError(400, "Category id is not valid.");
-  const categoryData = await categoryModel.findById(category);
-  if (!categoryData) throw createError(404, "Category data not found.");
-
-  // tags id check &  data is exist or not
-  for (let tag of tags) {
-    if (!isValidObjectId(tag)) {
-      throw createError(400, "Tag id is not valid.");
+    // response send with data
+    successResponse(res, {
+      statusCode: 201,
+      message: "Product data created successfully.",
+      payload: {
+        data: result,
+      },
+    });
+  } catch (error) {
+    // delete images
+    for (let image of images) {
+      deleteImage(`public/images/products/${image}`);
     }
-    // data is exist or not
-    const result = await tagModel.findById(tag).lean();
-    if (!result) throw createError(404, "Tag data not found.");
+
+    throw error;
   }
-
-  // create product
-  const result = await productModel.create({
-    ...req.body,
-  });
-
-  // response send with data
-  successResponse(res, {
-    statusCode: 201,
-    message: "Product data created successfully.",
-    payload: {
-      data: result,
-    },
-  });
 });
 
 /**
@@ -122,8 +114,7 @@ export const createProduct = asyncHandler(async (req, res, next) => {
  */
 export const getProductBySlug = asyncHandler(async (req, res) => {
   // data validation
-  const result = await productModel.findOne({ slug: req.params.slug }).lean();
-  if (!result) throw createError(404, "Couldn't find any product data.");
+  const result = await getProductBySlugService(req.params.slug);
 
   successResponse(res, {
     statusCode: 200,
@@ -162,13 +153,7 @@ export const deleteProductById = asyncHandler(async (req, res, next) => {
   checkMongoID(id);
 
   // find by id and delete
-  const result = await productModel.findByIdAndDelete(id).lean();
-  if (!result) throw createError(404, "Couldn't find any product data.");
-
-  // delete images
-  result.images.forEach((filename) => {
-    deleteImage(`/public/images/products/${filename}`);
-  });
+  const result = await deleteProductService(id);
 
   successResponse(res, {
     statusCode: 200,

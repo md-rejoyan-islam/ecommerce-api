@@ -11,9 +11,10 @@ const deleteImage = asyncHandler(async (imagePath) => {
     }
     await fs.access(imagePath);
     await fs.unlink(imagePath);
-    console.log("user image was deleted.");
+    console.log("image was deleted.");
   } catch (error) {
-    console.log("failed to delete user image.");
+    console.log(error);
+    console.log("failed to delete  image.");
   }
 });
 

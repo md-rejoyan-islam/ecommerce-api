@@ -32,7 +32,7 @@ const storage = multer.diskStorage({
       cb(null, "public/images/brands");
     }
     if (file.fieldname == "product_images") {
-      cb(null, "/public/images/products");
+      cb(null, "public/images/products");
     }
   },
   filename: (req, file, cb) => {
