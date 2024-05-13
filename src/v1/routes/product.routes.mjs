@@ -6,9 +6,12 @@ import {
   deleteProductBySlug,
   getAllProduct,
   getProductBySlug,
-  updateProductById,
+  updateProductBySlug,
 } from "../controllers/product.controllers.mjs";
-import { productCreateValidator } from "../../middlewares/validators/file/product.validator.js";
+import {
+  productCreateValidator,
+  productUpdateValidator,
+} from "../../middlewares/validators/file/product.validator.js";
 import runValidation from "../../middlewares/validators/validation.mjs";
 
 //create router
@@ -19,11 +22,16 @@ productRouter
   .get(getAllProduct)
   .post(productMulter, productCreateValidator, runValidation, createProduct);
 
-productRouter.route("/:slug").get(getProductBySlug).delete(deleteProductBySlug);
 productRouter
-  .route("/:id([0-9a-fA-F]{24})")
-
-  .patch(productMulter, updateProductById);
+  .route("/:slug")
+  .get(getProductBySlug)
+  .delete(deleteProductBySlug)
+  .patch(
+    productMulter,
+    productUpdateValidator,
+    runValidation,
+    updateProductBySlug
+  );
 
 //export
 export default productRouter;

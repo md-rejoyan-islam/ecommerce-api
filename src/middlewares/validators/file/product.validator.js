@@ -107,3 +107,79 @@ export const productCreateValidator = [
       return true;
     }),
 ];
+export const productUpdateValidator = [
+  body("name")
+    .optional()
+    .trim()
+    .isString()
+    .withMessage("Name must be a string.")
+    .isLength({ min: 3 })
+    .withMessage("Name must be at least 3 characters long."),
+  body("slug").optional(),
+  body("title")
+    .optional()
+    .isString()
+    .withMessage("Title is required.Please provide a title.")
+    .isLength({ min: 10 })
+    .withMessage("Title must be at least 10 characters long."),
+  body("brand").optional().isMongoId().withMessage("Brand id is not valid."),
+  body("category")
+    .optional()
+    .isMongoId()
+    .withMessage("Category id is not valid."),
+  body("tags")
+    .optional()
+    .isArray()
+    .withMessage("Tags must be an array.")
+    .custom((tags) => {
+      // id check
+      for (let tag of tags) {
+        if (!isValidObjectId(tag)) {
+          throw new Error(`${tag} is not a valid tag id.`);
+        }
+      }
+      return true;
+    }),
+
+  body("description").optional().isObject(),
+  body("description.short")
+    .optional()
+    .isLength({ min: 15 })
+    .withMessage("Short description must be at least 15 characters long."),
+  body("description.long")
+    .optional()
+    .isLength({ min: 30 })
+    .withMessage("Long description must be at least 30 characters long."),
+  body("quantity")
+    .optional()
+    .isNumeric()
+    .withMessage("Quantity must be a number."),
+  body("sold").optional().isNumeric().withMessage("Sold must be a number."),
+  body("rating").optional().isNumeric().withMessage("Rating must be a number."),
+  body("price").optional().isObject(),
+  body("price.regular")
+    .optional()
+    .isNumeric()
+    .withMessage("Regular price must be a number."),
+  body("price.sale")
+    .optional()
+    .isNumeric()
+    .withMessage("Sale price must be a number."),
+  body("shipping").optional().isObject(),
+  body("shipping.type")
+    .optional()
+    .isString()
+    .withMessage("Shipping type must be a string."),
+  body("shipping.fee")
+    .optional()
+    .isNumeric()
+    .withMessage("Shipping fee must be a number.")
+    .custom((value, { req }) => {
+      if (req.body.shipping.type === "free" && !value) {
+        console.log(2);
+        req.body.shipping.fee = 0;
+      }
+      return true;
+    }),
+  body("product_images").optional(),
+];

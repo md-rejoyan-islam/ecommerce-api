@@ -189,30 +189,49 @@ export const deleteProductBySlug = asyncHandler(async (req, res, next) => {
  * @apiError          ( Not Found 404 )      Category Data not found
  *
  */
-export const updateProductById = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  // id validation
-  checkMongoID(id);
+export const updateProductBySlug = asyncHandler(async (req, res) => {
+  // product images
+  const images = req?.files?.map(
+    (file) => file.fieldname === "product_images" && file.filename
+  );
+
+  // before update product data
+  const product = await productModel.findOne({ slug: req.params.slug });
 
   const options = {
     $set: {
       ...req.body,
-      images:
-        req?.files["product_photo"] && req?.files["product_photo"][0]?.filename,
+      price: {
+        regular: req.body?.price?.regular || product.price.regular,
+        sale: req.body?.price?.sale || product.price.sale,
+      },
+      shipping: {
+        type: req.body?.shipping?.type || product?.shipping?.type,
+        fee: req.body?.shipping?.fee || product?.shipping?.fee,
+      },
+      description: {
+        short: req.body?.description?.short || product.description.short,
+        long: req.body?.description?.long || product.description.long,
+      },
+      images: images?.length ? images : product.images ? product.images : "",
     },
   };
 
-  const result = await productModel.findByIdAndUpdate(id, options, {
-    new: true,
-    runValidators: true,
-    context: "query",
-  });
+  const result = await productModel.findOneAndUpdate(
+    { slug: req.params.slug },
+    options,
+    {
+      new: true,
+      runValidators: true,
+      context: "query",
+    }
+  );
   if (!result) throw createError(404, "Couldn't find any product data.");
 
-  if (req.files["product_photo"] && req.files["product_photo"][0]?.filename) {
-    // product photo delete
-    unlinkSync(`api/public/images/products/${beforeData?.product_photo}`);
-  }
+  // delete product photo
+  // if (images.length) {
+  //   deleteImage(`public/images/products/${result.images}`);
+  // }
 
   successResponse(res, {
     statusCode: 200,
