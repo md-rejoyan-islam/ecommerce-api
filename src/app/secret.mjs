@@ -35,3 +35,7 @@ export const clientURL = process.env.CLIENT_URL;
 export const userImageUploadDir = process.env.USER_IMAGE_UPLOAD_DIR;
 export const userMaxImageSize = process.env.USER_MAX_IMAGE_SIZE;
 export const allowedImageTypes = process.env.ALLOWED_IMAGE_TYPE;
+
+export const cloudinary_cloud_name = process.env.CLOUDINARY_CLOUD_NAME;
+export const cloudinary_api_key = process.env.CLOUDINARY_API_KEY;
+export const cloudinary_api_secret = process.env.CLOUDINARY_API_SECRET;
