@@ -1,6 +1,6 @@
 import express from "express";
 
-import { brandMulter } from "../../middlewares/multer.js";
+import { brandMulter } from "../../middlewares/multer.mjs";
 import {
   createBrand,
   deleteBrandById,
@@ -8,7 +8,7 @@ import {
   getBrandBySlug,
   updateBrandById,
 } from "../controllers/brand.controllers.mjs";
-import { brandCreateValidator } from "../../middlewares/validators/file/brand.validator.js";
+import { brandCreateValidator } from "../../middlewares/validators/file/brand.validator.mjs";
 import runValidation from "../../middlewares/validators/validation.mjs";
 
 //create router

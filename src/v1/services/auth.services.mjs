@@ -2,7 +2,7 @@ import asyncHandler from "express-async-handler";
 import createError from "http-errors";
 import bcrypt from "bcryptjs";
 import userModel from "../../models/user.model.mjs";
-import createJWT from "../../helper/createJWT.js";
+import createJWT from "../../helper/createJWT.mjs";
 import {
   accessTokenExpire,
   accessTokenSecret,

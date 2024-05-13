@@ -7,7 +7,7 @@ import {
   userLogin,
   userRegister,
 } from "../controllers/auth.controllers.mjs";
-import limiter from "../../middlewares/rateLimiter.js";
+import limiter from "../../middlewares/rateLimiter.mjs";
 import {
   userLoginValidator,
   userRegisterValidator,

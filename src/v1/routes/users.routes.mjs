@@ -1,6 +1,6 @@
 import express from "express";
 import { authorization } from "../../middlewares/authorization.mjs";
-import { userMulter } from "../../middlewares/multer.js";
+import { userMulter } from "../../middlewares/multer.mjs";
 import {
   userPasswordUpdateValidator,
   userRegisterValidator,

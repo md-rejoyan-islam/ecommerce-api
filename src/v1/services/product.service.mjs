@@ -4,8 +4,8 @@ import categoryModel from "../../models/category.model.mjs";
 import productModel from "../../models/product.model.mjs";
 import tagModel from "../../models/tag.model.mjs";
 import deleteImage from "../../helper/deleteImage.mjs";
-import filterQuery from "../../utils/filterQuery.js";
-import pagination from "../../utils/pagination.js";
+import filterQuery from "../../utils/filterQuery.mjs";
+import pagination from "../../utils/pagination.mjs";
 import createError from "http-errors";
 
 // get all product service

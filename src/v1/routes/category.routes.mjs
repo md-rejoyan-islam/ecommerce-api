@@ -1,10 +1,10 @@
 import express from "express";
-import { categoryMulter } from "../../middlewares/multer.js";
+import { categoryMulter } from "../../middlewares/multer.mjs";
 import { isLoggedIn } from "../../middlewares/verify.mjs";
 import {
   categoryCreateValidator,
   categoryUpdateValidator,
-} from "../../middlewares/validators/file/category.validator.js";
+} from "../../middlewares/validators/file/category.validator.mjs";
 import runValidation from "../../middlewares/validators/validation.mjs";
 import {
   createCategory,

@@ -1,5 +1,5 @@
-import app from "./app/index.js";
-import mongoDBConnection from "./config/db.js";
+import app from "./app/index.mjs";
+import mongoDBConnection from "./config/db.mjs";
 import { hostname, port } from "./app/secret.mjs";
 import { errorLogger, logger } from "./helper/logger.mjs";
 

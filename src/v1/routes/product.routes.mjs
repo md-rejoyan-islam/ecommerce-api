@@ -1,6 +1,6 @@
 import express from "express";
 
-import { productMulter } from "../../middlewares/multer.js";
+import { productMulter } from "../../middlewares/multer.mjs";
 import {
   createProduct,
   deleteProductBySlug,
@@ -11,7 +11,7 @@ import {
 import {
   productCreateValidator,
   productUpdateValidator,
-} from "../../middlewares/validators/file/product.validator.js";
+} from "../../middlewares/validators/file/product.validator.mjs";
 import runValidation from "../../middlewares/validators/validation.mjs";
 
 //create router

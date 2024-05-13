@@ -7,8 +7,8 @@ import morgan from "morgan";
 
 //import routes
 import path from "path";
-import corsOptions from "../config/corsSetup.js";
-import { errorHandler } from "../middlewares/errorHandler.js";
+import corsOptions from "../config/corsSetup.mjs";
+import { errorHandler } from "../middlewares/errorHandler.mjs";
 import authRouter from "../v1/routes/auth.routes.mjs";
 import brandRouter from "../v1/routes/brand.routes.mjs";
 import categoryRouter from "../v1/routes/category.routes.mjs";
