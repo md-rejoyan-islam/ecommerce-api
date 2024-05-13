@@ -4,15 +4,54 @@ import categoryModel from "../../models/category.model.mjs";
 import productModel from "../../models/product.model.mjs";
 import tagModel from "../../models/tag.model.mjs";
 import deleteImage from "../../helper/deleteImage.mjs";
+import filterQuery from "../../utils/filterQuery.js";
+import pagination from "../../utils/pagination.js";
+import createError from "http-errors";
 
 // get all product service
-export const getAllProductService = async () => {
-  const result = await productModel.find().lean();
+export const getAllProductService = async (req, searchFields) => {
+  // query filter
+  const {
+    queries: { skip, limit, fields, sortBy },
+    filters,
+  } = filterQuery(req, searchFields);
+
+  const result = await productModel
+    .find(filters)
+    .skip(skip)
+    .limit(limit)
+    .select(fields)
+    .sort(sortBy)
+    .populate("brand category tags")
+    .lean()
+    .then((products) => {
+      return products.map((product) => {
+        return {
+          ...product,
+          links: {
+            self: `/api/v1/products/${product.slug}`,
+            "add-to-card": `/api/v1/products/add-to-card/${product.slug}`,
+          },
+        };
+      });
+    });
 
   // product data not found
   if (!result.length) throw createError(404, "Couldn't find any product data.");
 
-  return result;
+  // pagination object
+  const paginationObject = await pagination({
+    limit,
+    page: req.query.page,
+    skip,
+    model: productModel,
+    filters,
+  });
+
+  return {
+    result,
+    pagination: paginationObject,
+  };
 };
 
 // create product service
@@ -21,13 +60,13 @@ export const createProductService = async (req, images) => {
 
   // brand id check &  data is exist or not
   if (!isValidObjectId(brand)) throw createError(400, "Brand id is not valid.");
-  const brandData = await brandModel.findById(brand);
+  const brandData = await brandModel.findById(brand).lean();
   if (!brandData) throw createError(404, "Brand data not found.");
 
   // categories id check &  data is exist or not
   if (!isValidObjectId(category))
     throw createError(400, "Category id is not valid.");
-  const categoryData = await categoryModel.findById(category);
+  const categoryData = await categoryModel.findById(category).lean();
   if (!categoryData) throw createError(404, "Category data not found.");
 
   // tags id check &  data is exist or not
@@ -57,9 +96,9 @@ export const getProductBySlugService = async (slug) => {
 };
 
 // delete product service
-export const deleteProductService = async (id) => {
+export const deleteProductService = async (slug) => {
   // find by id and delete
-  const result = await productModel.findByIdAndDelete(id).lean();
+  const result = await productModel.findOneAndDelete({ slug }).lean();
   if (!result) throw createError(404, "Couldn't find any product data.");
 
   // delete images

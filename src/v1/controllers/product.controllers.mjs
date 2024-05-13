@@ -34,14 +34,23 @@ import {
  * @apiError          ( Not Found 404 )   No Brand data found
  *
  */
-export const getAllProduct = asyncHandler(async (_, res) => {
-  const result = await getAllProductService();
+export const getAllProduct = asyncHandler(async (req, res) => {
+  // search query fields
+  const searchFields = ["name", "slug", "title", "brand", "category", "tags"];
+
+  // default page and limit value
+  req.query.page = Number(req.query.page) || 1;
+  req.query.limit = Number(req.query.limit) || 10;
+
+  // find product data
+  const { result, pagination } = await getAllProductService(req, searchFields);
 
   // response send with data
   successResponse(res, {
     statusCode: 200,
     message: "Product data fetched successfully",
     payload: {
+      pagination,
       data: result,
     },
   });
@@ -146,14 +155,9 @@ export const getProductBySlug = asyncHandler(async (req, res) => {
  * @apiError          ( Not Found 404 )       Category Data not found
  *
  */
-export const deleteProductById = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-
-  // id validation
-  checkMongoID(id);
-
+export const deleteProductBySlug = asyncHandler(async (req, res, next) => {
   // find by id and delete
-  const result = await deleteProductService(id);
+  const result = await deleteProductService(req.params.slug);
 
   successResponse(res, {
     statusCode: 200,

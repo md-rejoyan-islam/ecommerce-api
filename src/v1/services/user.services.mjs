@@ -13,7 +13,7 @@ import jwt from "jsonwebtoken";
 /**
  * @description get all users service
  */
-export const getAllUsersService = asyncHandler(async (req, searchFields) => {
+export const getAllUsersService = async (req, searchFields) => {
   // query filter
   const {
     queries: { skip, limit, fields, sortBy },
@@ -59,7 +59,7 @@ export const getAllUsersService = asyncHandler(async (req, searchFields) => {
     users,
     pagination: paginationObject,
   };
-});
+};
 
 /**
  * @description create user service
