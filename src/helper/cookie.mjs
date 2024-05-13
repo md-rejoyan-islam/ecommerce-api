@@ -2,7 +2,7 @@ import { node_env } from "../app/secret.mjs";
 
 // clear cookie
 export const clearCookie = (res, cookieName) => {
-  res.clearCookie("accessToken", {
+  res.clearCookie(cookieName, {
     secure: node_env == "development" ? false : true,
     sameSite: "strict",
     httpOnly: true,
@@ -13,7 +13,7 @@ export const clearCookie = (res, cookieName) => {
 export const setCookie = ({ res, cookieName, cookieValue, maxAge }) => {
   res.cookie(cookieName, cookieValue, {
     httpOnly: true,
-    maxAge, // 7 days
+    maxAge,
     secure: node_env === "development" ? false : true, // only https
     sameSite: "none", // when use cross site
   });

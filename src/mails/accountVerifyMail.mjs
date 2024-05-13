@@ -7,6 +7,7 @@ import {
   smtpHost,
   smtpPort,
 } from "../app/secret.mjs";
+import { errorLogger, logger } from "../helper/logger.mjs";
 
 const transport = nodemailer.createTransport({
   host: smtpHost, // host name
@@ -31,9 +32,10 @@ const sendAccountVerifyMail = async (emailData) => {
     };
 
     const info = await transport.sendMail(mailInfo);
-    console.log("Message sent: %s", info.messageId);
+    logger.info("Message sent: %s", info.messageId);
   } catch (error) {
-    console.log("Message sent failed!");
+    // console.log("Message sent failed!");
+    errorLogger.error(error);
     throw createError(500, "Failed to send email");
   }
 };

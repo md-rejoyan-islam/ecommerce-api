@@ -9,3 +9,5 @@ export const tagCreateValidator = [
     .withMessage("Name must be at least 3-30 characters long."),
   body("slug").optional(),
 ];
+
+export const tagUpdateValidator = [];

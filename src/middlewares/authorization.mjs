@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import { errorResponse } from "../v1/services/responseHandler.mjs";
 
 export const authorization = (...role) => {
@@ -10,8 +9,7 @@ export const authorization = (...role) => {
       });
     }
 
-    // make sure the user is authorized
-
+    // make sure the user is authorized to perform the action
     const id = req?.params?.id;
 
     if (id) {

@@ -24,6 +24,7 @@ import {
  *
  */
 export const userRegister = asyncHandler(async (req, res) => {
+  return res.send("ok");
   const { email } = req.body;
   // register service
   const verifyToken = await userRegisterService(req.body);

@@ -9,14 +9,10 @@ import morgan from "morgan";
 import path from "path";
 import corsOptions from "../config/corsSetup.mjs";
 import { errorHandler } from "../middlewares/errorHandler.mjs";
-import authRouter from "../v1/routes/auth.routes.mjs";
-import brandRouter from "../v1/routes/brand.routes.mjs";
-import categoryRouter from "../v1/routes/category.routes.mjs";
 import seedRouter from "../v1/routes/seeds.routes.mjs";
-import userRouter from "../v1/routes/users.routes.mjs";
 import { successResponse } from "../v1/services/responseHandler.mjs";
-import tagRouter from "../v1/routes/tag.routes.mjs";
-import productRouter from "../v1/routes/product.routes.mjs";
+import v1 from "./v1.mjs";
+import v2 from "./v2.mjs";
 
 // express app
 const app = express();
@@ -30,36 +26,21 @@ app.use(morgan("dev"));
 // cookie parser
 app.use(cookieParser());
 
-// static
+// static folder
 app.use("/public", express.static(path.resolve("public")));
 
-/**
- * @description: for version 1
- */
 // seeds routes
 app.use("/api/v1/seeds", seedRouter);
 
-// // product  route
-app.use("/api/v1/products", productRouter);
+// version 1 routes
+v1.forEach((router) => {
+  app.use(router.path, router.route);
+});
 
-// product category route
-app.use("/api/v1/categories", categoryRouter);
-
-// // product brand route
-app.use("/api/v1/brands", brandRouter);
-
-// // product tag route
-app.use("/api/v1/tags", tagRouter);
-
-// auth route
-app.use("/api/v1/auth", authRouter);
-
-// user route
-app.use("/api/v1/users", userRouter);
-
-/**
- * @description: for version 2
- */
+// version 2 routes
+v2.forEach((router) => {
+  app.use(router.path, router.route);
+});
 
 /**
  * @description   : Home route
@@ -69,7 +50,7 @@ app.use("/api/v1/users", userRouter);
 
 app.get(
   "/",
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (_, res) => {
     successResponse(res, {
       statusCode: 200,
       message: "Api is running successfully.",
@@ -79,7 +60,7 @@ app.get(
 
 // client error handling
 app.use(
-  asyncHandler(async (req, res) => {
+  asyncHandler(async () => {
     throw createError.NotFound("Could not find this route.");
   })
 );

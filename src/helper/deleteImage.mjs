@@ -1,20 +1,21 @@
 import fs from "fs/promises";
 import asyncHandler from "express-async-handler";
 import { defaultImagePath } from "../app/secret.mjs";
+import { errorLogger, logger } from "./logger.mjs";
 
 const deleteImage = asyncHandler(async (imagePath) => {
   try {
     // default image can't be deleted
-    if (imagePath.includes(defaultImagePath)) {
-      console.log("default image can't be deleted.");
+    if (imagePath.includes("/default/default_")) {
+      errorLogger.error("default image can't be deleted.");
       return;
     }
     await fs.access(imagePath);
     await fs.unlink(imagePath);
-    console.log("image was deleted.");
+
+    logger.info("image was deleted.");
   } catch (error) {
-    console.log(error);
-    console.log("failed to delete  image.");
+    errorLogger.error(error);
   }
 });
 

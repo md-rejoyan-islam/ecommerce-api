@@ -1,14 +1,13 @@
+import bcrypt from "bcryptjs";
 import asyncHandler from "express-async-handler";
 import createError from "http-errors";
-import bcrypt from "bcryptjs";
-import userModel from "../../models/user.model.mjs";
-import deleteImage from "../../helper/deleteImage.mjs";
-import filterQuery from "../../utils/filterQuery.mjs";
-import pagination from "../../utils/pagination.mjs";
+import jwt from "jsonwebtoken";
+import { passwordResetKey, passwordResetKeyExpire } from "../../app/secret.mjs";
 import createJWT from "../../helper/createJWT.mjs";
 import sendPasswordResetMail from "../../mails/passwordResetMail.mjs";
-import { passwordResetKey, passwordResetKeyExpire } from "../../app/secret.mjs";
-import jwt from "jsonwebtoken";
+import userModel from "../../models/user.model.mjs";
+import filterQuery from "../../utils/filterQuery.mjs";
+import pagination from "../../utils/pagination.mjs";
 
 /**
  * @description get all users service

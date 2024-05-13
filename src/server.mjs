@@ -11,11 +11,12 @@ app.listen(port, () => {
   );
 });
 
+// error handling for unhandledRejection
 process.on("unhandledRejection", (error) => {
   errorLogger.error(error);
   process.exit(1);
 });
-
+// error handling for uncaughtException
 process.on("uncaughtException", (error) => {
   errorLogger.error(error);
   process.exit(1);

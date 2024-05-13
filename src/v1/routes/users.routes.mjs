@@ -5,7 +5,7 @@ import {
   userPasswordUpdateValidator,
   userRegisterValidator,
   userResetPasswordValidator,
-} from "../../middlewares/validators/file/user.validator.js";
+} from "../../middlewares/validators/file/user.validator.mjs";
 import runValidation from "../../middlewares/validators/validation.mjs";
 import { isLoggedIn } from "../../middlewares/verify.mjs";
 import {

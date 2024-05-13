@@ -27,14 +27,17 @@ export const emailUser = process.env.EMAIL_HOST_USER;
 export const emailPass = process.env.EMAIL_HOST_PASSWORD;
 
 export const clientURL = process.env.CLIENT_URL;
+export const clinetWhiteList = process.env.CLIENT_WHITE_LIST.split(",");
 
 export const allowedImageTypes = ["jpg", "jpeg", "png", "webp"];
+
 export const userImageUploadDir = "public/images/users";
 export const userMaxImageSize = 400000;
-export const defaultImagePath = "public/images/default/default_user.png";
+export const defaultImagePath = "public/images/default/default_user.webp";
 export const categoryImageUploadDir = "public/images/categories";
-export const defaultCatImagePath = "public/images/default/default_category.png";
-export const defaultBrandImagePath = "public/images/default/default_brand.png";
+export const defaultCatImagePath =
+  "public/images/default/default_category.webp";
+export const defaultBrandImagePath = "public/images/default/default_brand.webp";
 export const brandImageUploadDir = "public/images/brands";
 export const productImageUploadDir = "public/images/products";
 

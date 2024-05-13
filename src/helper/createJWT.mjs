@@ -1,5 +1,6 @@
 import createError from "http-errors";
 import jwt from "jsonwebtoken";
+import { errorLogger } from "./logger.mjs";
 
 const createJWT = async (payload, secretKey, expiresIn) => {
   try {
@@ -18,8 +19,7 @@ const createJWT = async (payload, secretKey, expiresIn) => {
       expiresIn,
     });
   } catch (error) {
-    console.log(error);
-    console.log("Failed to create JWT");
+    errorLogger.error(error);
   }
 };
 

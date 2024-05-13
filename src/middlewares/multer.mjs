@@ -1,6 +1,9 @@
 import multer from "multer";
 import {
   allowedImageTypes,
+  brandImageUploadDir,
+  categoryImageUploadDir,
+  productImageUploadDir,
   userImageUploadDir,
   userMaxImageSize,
 } from "../app/secret.mjs";
@@ -11,28 +14,30 @@ const storage = multer.diskStorage({
     // image file size
     const fileSize = parseInt(req.headers["content-length"]);
 
+    // user photo
     if (file.fieldname == "user_photo") {
       if (fileSize > userMaxImageSize) {
         return cb(new Error("Maximum image size is 400KB"));
       }
-
-      // image location
       cb(null, userImageUploadDir);
     }
-    if (file.fieldname == "category_image") {
+    // category image
+    else if (file.fieldname == "category_image") {
       if (fileSize > 400000) {
         return cb(new Error("Maximum image size is 400KB"));
       }
-      cb(null, "public/images/categories");
+      cb(null, categoryImageUploadDir);
     }
-    if (file.fieldname == "brand_image") {
+    // brand image
+    else if (file.fieldname == "brand_image") {
       if (fileSize > 400000) {
         return cb(new Error("Maximum image size is 400KB"));
       }
-      cb(null, "public/images/brands");
+      cb(null, brandImageUploadDir);
     }
-    if (file.fieldname == "product_images") {
-      cb(null, "public/images/products");
+    // product images
+    else if (file.fieldname == "product_images") {
+      cb(null, productImageUploadDir);
     }
   },
   filename: (req, file, cb) => {
@@ -55,25 +60,25 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// user
+// user photo
 export const userMulter = multer({
   storage,
   fileFilter,
 }).single("user_photo");
 
-// brand
+// brand photo
 export const brandMulter = multer({
   storage,
   fileFilter,
 }).single("brand_image");
 
-// product
+// product photo
 export const productMulter = multer({
   storage,
   fileFilter,
 }).array("product_images", 10);
 
-// product category middleware
+// category photo
 export const categoryMulter = multer({
   storage,
   fileFilter,

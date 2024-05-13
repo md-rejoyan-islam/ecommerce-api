@@ -1,7 +1,8 @@
 import createError from "http-errors";
+import { clinetWhiteList } from "../app/secret.mjs";
 
 // whitelist is an array of url's that are allowed to access the api
-var whitelist = ["http://localhost:3000", "http://localhost:3001"];
+var whitelist = clinetWhiteList;
 
 // corsOptions is an object with a function that checks if the origin is in the whitelist
 var corsOptions = {

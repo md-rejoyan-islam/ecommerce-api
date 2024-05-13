@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import { errorResponse } from "../v1/services/responseHandler.mjs";
-import e from "express";
 
 //error handle middlewares
 export const errorHandler = (err, req, res, next) => {

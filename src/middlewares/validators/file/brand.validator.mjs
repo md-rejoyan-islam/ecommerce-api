@@ -22,14 +22,4 @@ export const brandCreateValidator = [
     }),
 ];
 
-export const categoryUpdateValidator = [
-  body("name")
-    .trim()
-    .optional()
-    .isLength({ min: 3, max: 30 })
-    .withMessage("Name must be at least 3-30 characters long."),
-  body("slug").trim().optional(),
-  body("description").optional(),
-  body("category_image").optional(),
-  body("parent").optional(),
-];
+export const brandUpdateValidator = [];

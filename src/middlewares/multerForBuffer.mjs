@@ -1,9 +1,5 @@
 import multer from "multer";
-import {
-  allowedImageTypes,
-  userImageUploadDir,
-  userMaxImageSize,
-} from "../app/secret.mjs";
+import { allowedImageTypes, userMaxImageSize } from "../app/secret.mjs";
 
 // create disk storage
 const storage = multer.memoryStorage();
@@ -27,8 +23,26 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// user
+// user photo
 export const userMulterForBuffer = multer({
   storage: storage,
   fileFilter,
 }).single("user_photo");
+
+// brand photo
+export const brandMulterForBuffer = multer({
+  storage,
+  fileFilter,
+}).single("brand_image");
+
+// product photo
+export const productMulterForBuffer = multer({
+  storage,
+  fileFilter,
+}).array("product_images", 10);
+
+// category photo
+export const categoryMulterForBuffer = multer({
+  storage,
+  fileFilter,
+}).single("category_image");
