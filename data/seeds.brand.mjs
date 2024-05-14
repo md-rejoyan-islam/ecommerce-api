@@ -6,6 +6,7 @@ const seedBrands = [
     description:
       "Samsung is a South Korean multinational conglomerate headquartered in Samsung Town, Seoul. It comprises numerous affiliated businesses, most of them united under the Samsung brand, and is the largest South Korean chaebol.",
     status: "active",
+    creator: "6643ac283233bd867ff1e434",
     image: "",
   },
   {
@@ -15,6 +16,7 @@ const seedBrands = [
     description:
       "Nike, Inc. is an American multinational corporation that is engaged in the design, development, manufacturing, and worldwide marketing and sales of footwear, apparel, equipment, accessories, and services.",
     status: "active",
+    creator: "6643ac283233bd867ff1e433",
     image: "",
   },
   {
@@ -24,6 +26,7 @@ const seedBrands = [
     description:
       "Adidas AG is a multinational corporation, founded and headquartered in Herzogenaurach, Germany, that designs and manufactures shoes, clothing and accessories. It is the largest sportswear manufacturer in Europe, and the second largest in the world, after Nike.",
     status: "active",
+    creator: "6643ac283233bd867ff1e434",
     image: "",
   },
   {
@@ -33,6 +36,7 @@ const seedBrands = [
     description:
       "Ray-Ban is an American-founded Italian brand of luxury sunglasses and eyeglasses created in 1936 by the American company Bausch & Lomb. The brand is known for its Wayfarer and Aviator lines of sunglasses.",
     status: "active",
+    creator: "6643ac283233bd867ff1e433",
     image: "",
   },
   {
@@ -42,6 +46,7 @@ const seedBrands = [
     description:
       "Herschel Supply Co. is a Canadian manufacturer of hipster retro backpacks and accessories. The company was founded by Lyndon and Jamie Cormack in 2009 and is based in Vancouver, British Columbia.",
     status: "active",
+    creator: "6643ac283233bd867ff1e433",
     image: "",
   },
   {
@@ -51,6 +56,7 @@ const seedBrands = [
     description:
       "Fossil Group, Inc. is an American fashion designer and manufacturer founded in 1984 by Tom Kartsotis and based in Richardson, Texas. Their brands include Fossil, Relic, BMW, Michele Watch, Skagen Denmark, Misfit, WSI, and Zodiac Watches.",
     status: "active",
+    creator: "6643ac283233bd867ff1e434",
     image: "",
   },
   {
@@ -60,6 +66,7 @@ const seedBrands = [
     description:
       "The Hewlett-Packard Company, commonly shortened to Hewlett-Packard or HP, was an American multinational information technology company headquartered in Palo Alto, California.",
     status: "active",
+    creator: "6643ac283233bd867ff1e431",
     image: "",
   },
   {
@@ -69,6 +76,7 @@ const seedBrands = [
     description:
       "Apple Inc. is an American multinational technology company headquartered in Cupertino, California, that designs, develops, and sells consumer electronics, computer software, and online services.",
     status: "active",
+    creator: "6643ac283233bd867ff1e431",
     image: "",
   },
 ];

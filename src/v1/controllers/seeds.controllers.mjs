@@ -23,8 +23,6 @@ export const seedsUsers = asyncHandler(async (req, res, next) => {
       delete user._doc.__v;
       delete user._doc.createdAt;
       delete user._doc.updatedAt;
-      delete user._doc.isAdmin;
-      delete user._doc.role;
       return user._doc;
     });
   });
@@ -80,13 +78,25 @@ export const seedsCategories = asyncHandler(async (req, res, next) => {
     })
   );
 
+  const result = await categoryModel
+    .find({})
+    .populate({
+      path: "parent",
+      select: "name",
+      populate: {
+        path: "parent",
+        select: "name",
+      },
+    })
+    .lean();
+
   // // response with success message
   successResponse(res, {
     statusCode: 200,
     message: "Seeds data added successfully.",
     payload: {
-      // totalCategories: categories.length,
-      // data: categories,
+      totalCategories: result.length,
+      data: result,
     },
   });
 });

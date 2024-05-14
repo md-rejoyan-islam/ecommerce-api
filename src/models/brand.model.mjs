@@ -27,6 +27,11 @@ const brandSchema = mongoose.Schema(
       trim: true,
       required: [true, "Brand description is required."],
     },
+    creator: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: [true, "Creator id is required."],
+    },
     status: {
       type: String,
       default: "active",

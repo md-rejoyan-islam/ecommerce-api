@@ -13,6 +13,8 @@ import {
   productUpdateValidator,
 } from "../../middlewares/validators/file/product.validator.mjs";
 import runValidation from "../../middlewares/validators/validation.mjs";
+import { isLoggedIn } from "../../middlewares/verify.mjs";
+import { authorization } from "../../middlewares/authorization.mjs";
 
 //create router
 const productRouter = express.Router();
@@ -20,13 +22,22 @@ const productRouter = express.Router();
 productRouter
   .route("/")
   .get(getAllProduct)
-  .post(productMulter, productCreateValidator, runValidation, createProduct);
+  .post(
+    isLoggedIn,
+    authorization("admin", "seller"),
+    productMulter,
+    productCreateValidator,
+    runValidation,
+    createProduct
+  );
 
 productRouter
   .route("/:slug")
   .get(getProductBySlug)
-  .delete(deleteProductBySlug)
+  .delete(isLoggedIn, authorization("admin", "seller"), deleteProductBySlug)
   .patch(
+    isLoggedIn,
+    authorization("admin", "seller"),
     productMulter,
     productUpdateValidator,
     runValidation,

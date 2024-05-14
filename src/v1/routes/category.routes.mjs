@@ -29,7 +29,9 @@ categoryRouter
     createCategory
   );
 
-categoryRouter.route("/:slug").get(getCategoryById);
+categoryRouter
+  .route("/:slug")
+  .get(isLoggedIn, authorization("admin"), getCategoryById);
 categoryRouter
   .route("/:id([0-9a-fA-F]{24})")
   .delete(isLoggedIn, authorization("admin"), deleteCategoryById)

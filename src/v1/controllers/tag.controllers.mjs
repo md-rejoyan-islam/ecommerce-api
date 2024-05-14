@@ -1,4 +1,5 @@
 import asyncHandler from "express-async-handler";
+import createError from "http-errors";
 import { isValidObjectId } from "mongoose";
 import checkMongoID from "../services/checkMongoId.mjs";
 import { successResponse } from "../services/responseHandler.mjs";
@@ -10,8 +11,6 @@ import {
   getTagBySlugService,
   updateTagServiceById,
 } from "../services/tag.service.mjs";
-import createError from "http-errors";
-import tagModel from "../../models/tag.model.mjs";
 
 /**
  *

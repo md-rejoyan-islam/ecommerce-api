@@ -8,6 +8,8 @@ import {
 } from "../controllers/tag.controllers.mjs";
 import { tagCreateValidator } from "../../middlewares/validators/file/tag.validator.mjs";
 import runValidation from "../../middlewares/validators/validation.mjs";
+import { isLoggedIn } from "../../middlewares/verify.mjs";
+import { authorization } from "../../middlewares/authorization.mjs";
 
 //create router
 const tagRouter = express.Router();
@@ -15,13 +17,21 @@ const tagRouter = express.Router();
 tagRouter
   .route("/")
   .get(getAllTag)
-  .post(tagCreateValidator, runValidation, createTag);
+  .post(
+    isLoggedIn,
+    authorization("admin", "seller"),
+    tagCreateValidator,
+    runValidation,
+    createTag
+  );
 
-tagRouter.route("/:slug").get(getTagBySlug);
+tagRouter
+  .route("/:slug")
+  .get(isLoggedIn, authorization("admin", "seller"), getTagBySlug);
 tagRouter
   .route("/:id([0-9a-fA-F]{24})")
-  .delete(deleteTagById)
-  .patch(updateTagById);
+  .delete(isLoggedIn, authorization("admin", "seller"), deleteTagById)
+  .patch(isLoggedIn, authorization("admin", "seller"), updateTagById);
 
 //export
 export default tagRouter;

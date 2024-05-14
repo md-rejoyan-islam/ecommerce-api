@@ -17,6 +17,11 @@ const tagSchema = mongoose.Schema(
       trim: true,
       unique: [true, "Tag slug can be unique."],
     },
+    creator: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: [true, "Creator id is required."],
+    },
     status: {
       type: Boolean,
       default: true,

@@ -37,7 +37,7 @@ export const getAllTagService = async (req, searchFields) => {
     limit,
     page: req.query.page,
     skip,
-    model: productModel,
+    model: tagModel,
     filters,
   });
 
