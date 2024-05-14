@@ -10,9 +10,9 @@ import path from "path";
 import corsOptions from "../config/corsSetup.mjs";
 import { errorHandler } from "../middlewares/errorHandler.mjs";
 import seedRouter from "../v1/routes/seeds.routes.mjs";
-import { successResponse } from "../v1/services/responseHandler.mjs";
 import v1 from "./v1.mjs";
 import v2 from "./v2.mjs";
+import { successResponse } from "../helper/responseHandler.mjs";
 
 // express app
 const app = express();

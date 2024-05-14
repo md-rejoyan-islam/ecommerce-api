@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler";
 
 import seedsUsersData from "../../../data/seeds.users.js";
-import { successResponse } from "../services/responseHandler.mjs";
+import { successResponse } from "../../helper/responseHandler.mjs";
 import userModel from "../../models/user.model.mjs";
 import tagModel from "../../models/tag.model.mjs";
 import seedTagsData from "../../../data/seeds.tags.mjs";

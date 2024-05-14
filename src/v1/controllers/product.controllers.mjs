@@ -10,7 +10,7 @@ import {
   getAllProductService,
   getProductBySlugService,
 } from "../services/product.service.mjs";
-import { successResponse } from "../services/responseHandler.mjs";
+import { successResponse } from "../../helper/responseHandler.mjs";
 
 /**
  *

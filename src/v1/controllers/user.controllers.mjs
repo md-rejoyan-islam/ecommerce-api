@@ -1,8 +1,8 @@
 import asyncHandler from "express-async-handler";
 import fs from "fs";
 fs.promises;
-import checkMongoID from "../services/checkMongoId.mjs";
-import { successResponse } from "../services/responseHandler.mjs";
+import checkMongoID from "../../helper/checkMongoId.mjs";
+import { successResponse } from "../../helper/responseHandler.mjs";
 import deleteImage from "../../helper/deleteImage.mjs";
 import {
   banUserByIdService,
@@ -15,7 +15,7 @@ import {
   unbanUserByIdService,
   updateUserByIdService,
   updateUserPasswordByIdService,
-} from "../services/user.services.mjs";
+} from "../services/user.service.mjs";
 
 /**
  *

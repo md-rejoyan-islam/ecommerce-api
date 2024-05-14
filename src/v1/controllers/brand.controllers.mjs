@@ -9,8 +9,8 @@ import {
   getBrandServiceBySlug,
   updateBrandServiceById,
 } from "../services/brand.service.mjs";
-import checkMongoID from "../services/checkMongoId.mjs";
-import { successResponse } from "../services/responseHandler.mjs";
+import checkMongoID from "../../helper/checkMongoId.mjs";
+import { successResponse } from "../../helper/responseHandler.mjs";
 
 /**
  *

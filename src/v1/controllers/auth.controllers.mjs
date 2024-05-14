@@ -3,13 +3,13 @@ import createError from "http-errors";
 import jwt from "jsonwebtoken";
 import { jwtRegisterSecretKey, refreshTokenSecret } from "../../app/secret.mjs";
 import { clearCookie } from "../../helper/cookie.mjs";
-import { successResponse } from "../services/responseHandler.mjs";
 import {
   activeUserAccountService,
   refreshTokenService,
   userLoginService,
   userRegisterService,
-} from "../services/auth.services.mjs";
+} from "../services/auth.service.mjs";
+import { successResponse } from "../../helper/responseHandler.mjs";
 
 /**
  *

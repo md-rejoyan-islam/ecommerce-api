@@ -1,4 +1,4 @@
-import { errorResponse } from "../v1/services/responseHandler.mjs";
+import { errorResponse } from "../helper/responseHandler.mjs";
 
 export const authorization = (...role) => {
   return async (req, res, next) => {

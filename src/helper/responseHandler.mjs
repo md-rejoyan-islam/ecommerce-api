@@ -1,4 +1,4 @@
-import { errorLogger } from "../../helper/logger.mjs";
+import { errorLogger } from "./logger.mjs";
 
 export const errorResponse = (
   res,
