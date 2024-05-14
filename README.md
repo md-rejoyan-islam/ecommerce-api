@@ -1,10 +1,8 @@
-## E-commerce MERN stack Project
+## ECOMMERCE API
 
-### Course plan
+### DESCRIPTION
 
-### Environment setup
-
-### Express server setup
+### PACKAGES
 
 ### POSTMAN URL
 
