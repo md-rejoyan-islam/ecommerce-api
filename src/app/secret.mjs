@@ -1,16 +1,16 @@
 export const port = process.env.SERVER_PORT || 5050;
 
-export const hostname = process.env.HOST_NAME || "127.0.0.1";
+export const hostname = "127.0.0.1";
 
 export const node_env = process.env.NODE_ENV || "development";
 
-export const mongoURL = process.env.LIVE_MONGO_URL || process.env.MONGO_URL;
+export const mongoURL = process.env.MONGO_URL;
 
 export const jwtRegisterSecretKey = process.env.JWT_REGISTER_KEY;
-export const jwtRegisterKeyExpire = process.env.JWT_REGISTER_KEY_EXPIRE;
+export const jwtRegisterKeyExpire = "1d";
 
 export const passwordResetKey = process.env.PASSWORD_RESET_KEY;
-export const passwordResetKeyExpire = process.env.PASSWORD_RESET_KEY_EXPIRE;
+export const passwordResetKeyExpire = "10m";
 
 export const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
 export const accessTokenExpire = "15d";
