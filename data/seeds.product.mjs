@@ -3,6 +3,7 @@ const seedProducts = [
     name: "T-shirt",
     title: "Nice T-shirt",
     slug: "t-shirt",
+    creator: "6643ac283233bd867ff1e434",
     description: {
       short: "Comfortable T-shirt",
       long: "Comfortable T-shirt made of cotton fabric with a round neck and short sleeves. Perfect for summer days.",
@@ -32,6 +33,7 @@ const seedProducts = [
     name: "Shorts",
     title: "Nice Shorts",
     slug: "shorts",
+    creator: "6643ac283233bd867ff1e433",
     description: {
       short: "Comfortable Shorts",
       long: "Comfortable shorts made of cotton fabric with an elastic waistband and side pockets. Perfect for summer days.",
@@ -61,6 +63,7 @@ const seedProducts = [
     name: "Sneakers",
     title: "Nice Sneakers",
     slug: "sneakers",
+    creator: "6643ac283233bd867ff1e434",
     description: {
       short: "Comfortable Sneakers",
       long: "Comfortable sneakers made of leather with a lace-up fastening and a rubber sole. Perfect for casual wear.",
@@ -89,6 +92,7 @@ const seedProducts = [
   {
     name: "Sunglasses",
     title: "Nice Sunglasses",
+    creator: "6643ac283233bd867ff1e433",
     slug: "sunglasses",
     description: {
       short: "Stylish Sunglasses",
@@ -119,6 +123,7 @@ const seedProducts = [
     name: "Backpack",
     title: "Nice Backpack",
     slug: "backpack",
+    creator: "6643ac283233bd867ff1e433",
     description: {
       short: "Stylish Backpack",
       long: "Stylish backpack made of canvas with adjustable shoulder straps and multiple compartments. Perfect for everyday use.",
@@ -148,6 +153,7 @@ const seedProducts = [
     name: "Watch",
     title: "Nice Watch",
     slug: "watch",
+    creator: "6643ac283233bd867ff1e431",
     description: {
       short: "Stylish Watch",
       long: "Stylish watch with a stainless steel case and a leather strap. Perfect for everyday wear.",
@@ -177,6 +183,7 @@ const seedProducts = [
     name: "HP Laptop",
     title: "HP Laptop",
     slug: "hp-laptop",
+    creator: "6643ac283233bd867ff1e431",
     description: {
       short: "HP Laptop",
       long: "HP Laptop with 8GB RAM, 256GB SSD, and Intel Core i5 processor. Perfect for work and entertainment.",
@@ -206,6 +213,7 @@ const seedProducts = [
     name: "Apple iPhone",
     title: "Apple iPhone",
     slug: "apple-iphone",
+    creator: "6643ac283233bd867ff1e434",
     description: {
       short: "Apple iPhone",
       long: "Apple iPhone with 128GB storage, 6.1-inch display, and A14 Bionic chip. Perfect for communication and entertainment.",
@@ -235,6 +243,7 @@ const seedProducts = [
     name: "Samsung TV",
     title: "Samsung TV",
     slug: "samsung-tv",
+    creator: "6643ac283233bd867ff1e433",
     description: {
       short: "Samsung TV",
       long: "Samsung TV with 55-inch 4K UHD display, HDR, and smart features. Perfect for watching movies and TV shows.",

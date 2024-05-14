@@ -65,6 +65,7 @@ export const createCategoryService = async (req) => {
   const category = await categoryModel.create({
     ...body,
     image: req?.file?.filename,
+    creator: req.me._id,
   });
 
   return category;

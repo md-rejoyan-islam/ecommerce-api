@@ -60,13 +60,13 @@ export const createProductService = async (req, images) => {
 
   // brand id check &  data is exist or not
   if (!isValidObjectId(brand)) throw createError(400, "Brand id is not valid.");
-  const brandData = await brandModel.findById(brand).lean();
+  const brandData = await brandModel.exists({ _id: brand });
   if (!brandData) throw createError(404, "Brand data not found.");
 
   // categories id check &  data is exist or not
   if (!isValidObjectId(category))
     throw createError(400, "Category id is not valid.");
-  const categoryData = await categoryModel.findById(category).lean();
+  const categoryData = await categoryModel.exists({ _id: category });
   if (!categoryData) throw createError(404, "Category data not found.");
 
   // tags id check &  data is exist or not
@@ -75,7 +75,7 @@ export const createProductService = async (req, images) => {
       throw createError(400, "Tag id is not valid.");
     }
     // data is exist or not
-    const result = await tagModel.findById(tag).lean();
+    const result = await tagModel.exists({ _id: tag });
     if (!result) throw createError(404, "Tag data not found.");
   }
 
@@ -83,6 +83,7 @@ export const createProductService = async (req, images) => {
   const result = await productModel.create({
     images,
     ...req.body,
+    creator: req.me._id,
   });
 
   return result;

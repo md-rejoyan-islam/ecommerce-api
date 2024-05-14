@@ -70,7 +70,7 @@ export const createTag = asyncHandler(async (req, res) => {
   const { name, slug } = req.body;
 
   // create new tag
-  const result = await createTagService(name, slug);
+  const result = await createTagService(name, slug, req.me._id);
 
   // response with result
   successResponse(res, {

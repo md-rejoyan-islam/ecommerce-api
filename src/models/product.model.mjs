@@ -72,6 +72,11 @@ const productSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
+    creator: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: [true, "Creator id is required."],
+    },
     shipping: {
       type: {
         type: String,

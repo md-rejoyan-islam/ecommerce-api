@@ -48,7 +48,7 @@ export const getAllTagService = async (req, searchFields) => {
 };
 
 // create tag service
-export const createTagService = async (name, slug) => {
+export const createTagService = async (name, slug, creator) => {
   // name validation
   const beforeData = await tagModel.findOne({ name }).lean();
 
@@ -62,6 +62,7 @@ export const createTagService = async (name, slug) => {
     slug: slug
       ? slug.toLowerCase().split(" ").join("-")
       : name.toLowerCase().split(" ").join("-"),
+    creator,
   });
 
   return result;
