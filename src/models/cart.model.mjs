@@ -76,9 +76,4 @@ const cartSchema = mongoose.Schema(
   }
 );
 
-// tagSchema.pre("validate", function (next) {
-//   this.slug = this.name.split(" ").join("-").toLowerCase().trim();
-//   next();
-// });
-
 export default mongoose.model("Cart", cartSchema);
