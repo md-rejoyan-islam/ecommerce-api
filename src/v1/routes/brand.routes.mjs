@@ -2,6 +2,7 @@ import express from "express";
 
 import { brandMulter } from "../../middlewares/multer.mjs";
 import {
+  bulkDeleteBrandByIds,
   createBrand,
   deleteBrandById,
   getAllBrand,
@@ -18,6 +19,9 @@ brandRouter
   .route("/")
   .get(getAllBrand)
   .post(brandMulter, brandCreateValidator, runValidation, createBrand);
+
+// bulk delete
+brandRouter.route("/bulk-delete").delete(bulkDeleteBrandByIds);
 
 brandRouter.route("/:slug").get(getBrandBySlug);
 brandRouter

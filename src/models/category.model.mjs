@@ -8,15 +8,15 @@ const categorySchema = mongoose.Schema(
       type: String,
       trim: true,
       required: true,
-      unique: [true, "Category already exist."],
+      unique: [true, "Category name already exist."],
       minLength: [1, "Name must be at least 3 characters"],
-      maxLength: [30, "Name is too large"],
+      maxLength: [50, "Name is too large"],
     },
     slug: {
       type: String,
-      required: true,
+      required: [true, "Slug is required"],
       trim: true,
-      unique: true,
+      unique: [true, "Slug must be unique"],
       lowercase: true,
     },
     image: {
@@ -27,7 +27,7 @@ const categorySchema = mongoose.Schema(
     description: {
       type: String,
       trim: true,
-      required: true,
+      required: [true, "Category description is required."],
     },
     parent: {
       type: mongoose.Schema.Types.ObjectId,
@@ -35,7 +35,7 @@ const categorySchema = mongoose.Schema(
     },
     status: {
       type: Boolean,
-      default: null,
+      default: true,
     },
   },
   {

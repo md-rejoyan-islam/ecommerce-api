@@ -1,18 +1,16 @@
-import brandModel from "../../models/brand.model.mjs";
 import createError from "http-errors";
-
 import { isValidObjectId } from "mongoose";
-
 import asyncHandler from "express-async-handler";
-import { successResponse } from "../services/responseHandler.mjs";
-import deleteImage from "../../helper/deleteImage.mjs";
-import checkMongoID from "../services/checkMongoId.mjs";
 import {
+  bulkDeleteBrandService,
+  createBrandService,
   deleteBrandServiceById,
   getAllBrandService,
   getBrandServiceBySlug,
   updateBrandServiceById,
 } from "../services/brand.service.mjs";
+import checkMongoID from "../services/checkMongoId.mjs";
+import { successResponse } from "../services/responseHandler.mjs";
 
 /**
  *
@@ -30,14 +28,22 @@ import {
  * @apiError          ( Not Found 404 )   No Brand data found
  *
  */
-export const getAllBrand = asyncHandler(async (_, res) => {
-  const result = await getAllBrandService();
+export const getAllBrand = asyncHandler(async (req, res) => {
+  // search query fields
+  const searchFields = ["name", "slug", "description", "_id"];
+
+  // default page and limit value
+  req.query.page = Number(req.query.page) || 1;
+  req.query.limit = Number(req.query.limit) || 10;
+
+  const { result, pagination } = await getAllBrandService(req, searchFields);
 
   // response send
   successResponse(res, {
     statusCode: 200,
     message: "All brands data fetch successfully.",
     payload: {
+      pagination,
       data: result,
     },
   });
@@ -62,25 +68,8 @@ export const getAllBrand = asyncHandler(async (_, res) => {
  */
 
 export const createBrand = asyncHandler(async (req, res) => {
-  const { file } = req;
-
-  const { name, description, slug } = req.body;
-
-  // name validation
-  const beforeData = await brandModel.findOne({ name });
-
-  if (beforeData) {
-    deleteImage(`/public/images/brands/${file.filename}`);
-    throw createError(400, "Brand name already exists.");
-  }
-
   // create new brand
-  const result = await brandModel.create({
-    name,
-    description,
-    slug,
-    image: req?.file?.filename,
-  });
+  const result = await createBrandService(req);
 
   // response with result
   successResponse(res, {
@@ -232,85 +221,27 @@ export const updateBrandById = asyncHandler(async (req, res) => {
  *
  */
 
-export const bulkDeleteBrand = asyncHandler(async (req, res) => {
+export const bulkDeleteBrandByIds = asyncHandler(async (req, res) => {
+  // ids validation
+  if (!req.body.ids) throw createError(404, "Please Provide ids.");
+
   // has ids or not
-  if (req.body.ids.length === 0) throw customError(404, "Please Provide ids.");
+  if (req.body.ids.length === 0) throw createError(404, "Please Provide ids.");
 
   //   id validation
   req.body.ids.forEach((id) => {
     if (!isValidObjectId(id))
-      throw customError(400, `${id} is not a valid id.`);
+      throw createError(400, `${id} is not a valid id.`);
   });
-
-  // check data is present or not
-  await Promise.all(
-    req.body.ids.map(async (id) => {
-      const result = await Brand.findById(id);
-      if (!result)
-        throw customError(404, `Couldn't find Brand Data with id = ${id}`);
-    })
-  );
 
   const result = await bulkDeleteBrandService(req.body.ids);
 
   //  respond send with data
-  res.status(200).json({
-    Status: "Success",
-    Message: "Successfully Deleted Data.",
-    Data: result,
-  });
-});
-
-/**
- *
- * @apiDescription    Update multiple Brand  Data by ids
- * @apiMethod         PUT / PATCH
- *
- * @apiAccess         Admin
- *
- * @apiHeaders        { string } Authorization   User's access token
- *
- * @apiBody           { brands :[ {id:"id1",data:{ data } }, { id:"id2",data:{ data} } ]  }
- *
- * @apiSuccess        { Status ,Message, Data:[] }
- * @apiFailed         { StatusCode, Message, Stack }
- *
- * @apiError          ( Bad Request 400 )    Invalid syntax / parameters
- * @apiError          ( unauthorized 401 )    Unauthorized Only authenticated users can access the data
- * @apiError          ( Forbidden 403 )       Forbidden Only admins can access the data
- * @apiError          ( Not Found 404 )       Brand Data not found
- *
- */
-
-export const bulkUpdateBrand = asyncHandler(async (req, res) => {
-  // has ids or not
-  if (req.body.brands.length === 0)
-    throw customError(400, "Please Provide brands");
-
-  //   id validation
-  req.body.brands.forEach((brand) => {
-    if (!isValidObjectId(brand.id))
-      throw customError(400, `${brand.id} is not a valid id.`);
-  });
-
-  // check data is present or not
-  await Promise.all(
-    req.body.brands.map(async (brand) => {
-      const result = await Brand.findById(brand.id);
-      if (!result)
-        throw customError(
-          404,
-          `Couldn't find Brand Data with id = ${brand.id}`
-        );
-    })
-  );
-
-  const result = await bulkUpdateBrandService(req.body.brands);
-
-  //  respond send with data
-  res.status(200).json({
-    Status: "Success",
-    Message: "Successfully Updated Data.",
-    Data: result,
+  successResponse(res, {
+    statusCode: 200,
+    message: "Successfully Deleted Data.",
+    payload: {
+      data: result,
+    },
   });
 });

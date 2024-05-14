@@ -108,3 +108,26 @@ export const deleteProductService = async (slug) => {
 
   return result;
 };
+
+// bulk delete product service
+export const bulkDeleteProductService = async (ids) => {
+  // check data is present or not
+  await Promise.all(
+    ids.map(async (id) => {
+      const result = await productModel.findById(id);
+      if (!result)
+        throw createError(404, `Couldn't find Product Data with id = ${id}`);
+    })
+  );
+
+  const result = await productModel.deleteMany({ _id: { $in: ids } });
+
+  // delete image
+  result.forEach((product) => {
+    product.images.forEach((filename) => {
+      deleteImage(`/public/images/products/${filename}`);
+    });
+  });
+
+  return result;
+};

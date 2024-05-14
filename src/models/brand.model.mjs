@@ -10,7 +10,7 @@ const brandSchema = mongoose.Schema(
       required: true,
       unique: [true, " Brand name must be unique"],
       minLength: [1, "Brand name must be at least 3 characters"],
-      maxLength: [30, "Brand name is too large"],
+      maxLength: [50, "Brand name is too large "],
     },
     slug: {
       type: String,
@@ -25,14 +25,14 @@ const brandSchema = mongoose.Schema(
     description: {
       type: String,
       trim: true,
-      required: [true, "Description is required."],
+      required: [true, "Brand description is required."],
     },
     status: {
       type: String,
       default: "active",
       enum: {
         values: ["active", "inactive"],
-        message: "{VALUE} is invalid for status",
+        message: "{VALUE} is invalid for brand status",
       },
     },
   },

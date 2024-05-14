@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler";
 
-import seedsUsers from "../../../data/seeds.users.js";
+import seedsUsersData from "../../../data/seeds.users.js";
 import { successResponse } from "../services/responseHandler.mjs";
 import userModel from "../../models/user.model.mjs";
 import tagModel from "../../models/tag.model.mjs";
@@ -12,12 +12,12 @@ import categoryModel from "../../models/category.model.mjs";
 import brandModel from "../../models/brand.model.mjs";
 import productModel from "../../models/product.model.mjs";
 
-export const seedsUser = asyncHandler(async (req, res, next) => {
+export const seedsUsers = asyncHandler(async (req, res, next) => {
   // delete all existing users
   await userModel.deleteMany({});
 
   // insert seeds data
-  const users = await userModel.create(seedsUsers).then((data) => {
+  const users = await userModel.create(seedsUsersData).then((data) => {
     return data.map((user) => {
       delete user._doc.password;
       delete user._doc.__v;

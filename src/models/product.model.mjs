@@ -7,15 +7,15 @@ const productSchema = mongoose.Schema(
       type: String,
       trim: true,
       required: true,
-      minLength: [1, "Name must be at least 3 characters"],
-      maxLength: [30, "Name is too large"],
+      minLength: [1, "Product name must be at least 3 characters"],
+      maxLength: [30, "Product name is too large"],
     },
     title: {
       type: String,
       trim: true,
       required: true,
       minLength: [1, "Title must be at least 3 characters"],
-      maxLength: [30, "Title is too large"],
+      maxLength: [50, "Title is too large"],
     },
     slug: {
       type: String,
@@ -26,7 +26,7 @@ const productSchema = mongoose.Schema(
     brand: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Brand",
-      required: [true, "Brand is required"],
+      required: [true, "Brand id is required"],
     },
     description: {
       short: {
@@ -47,7 +47,7 @@ const productSchema = mongoose.Schema(
         validate: {
           validator: (value) => value > 0,
           message: (props) =>
-            `${props.value} is not a valid price! Price must be greater than 0`, // props.value is the value of the field
+            `${props.value} is not a valid price! Price must be greater than 0`,
         },
       },
       sale: {
@@ -55,7 +55,7 @@ const productSchema = mongoose.Schema(
         validate: {
           validator: (value) => value > 0,
           message: (props) =>
-            `${props.value} is not a valid price! Price must be greater than 0`, // props.value is the value of the field
+            `${props.value} is not a valid price! Price must be greater than 0`,
         },
       },
     },
@@ -65,7 +65,7 @@ const productSchema = mongoose.Schema(
       validate: {
         validator: (value) => value > 0,
         message: (props) =>
-          `${props.value} is not a valid quantity! Quantity must be greater than 0`, // props.value is the value of the field
+          `${props.value} is not a valid quantity! Quantity must be greater than 0`,
       },
     },
     sold: {

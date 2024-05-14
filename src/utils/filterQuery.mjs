@@ -33,10 +33,16 @@ const filterQuery = (req, searchFields) => {
   if (req.query.search && searchFields.length) {
     const search = req.query.search;
 
+    // _id remove from search fields with sortcut
+    const index = searchFields.indexOf("_id");
+    if (index > -1) {
+      searchFields.splice(index, 1);
+    }
+
     const regularExpression = { $regex: search, $options: "i" };
+
     filters = {
       ...filters,
-
       $or: [...searchFields.map((field) => ({ [field]: regularExpression }))],
     };
   }

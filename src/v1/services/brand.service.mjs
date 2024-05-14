@@ -1,15 +1,51 @@
 import brandModel from "../../models/brand.model.mjs";
 import deleteImage from "../../helper/deleteImage.mjs";
 import createError from "http-errors";
+import filterQuery from "../../utils/filterQuery.mjs";
+import pagination from "../../utils/pagination.mjs";
 
 // get all brand service
-export const getAllBrandService = async () => {
-  const result = await brandModel.find().lean();
+export const getAllBrandService = async (req, searchFields) => {
+  // query filter
+  const {
+    queries: { skip, limit, fields, sortBy },
+    filters,
+  } = filterQuery(req, searchFields);
+
+  const result = await brandModel
+    .find(filters)
+    .skip(skip)
+    .limit(limit)
+    .select(fields)
+    .sort(sortBy)
+    .lean()
+    .then((brands) => {
+      return brands.map((brand) => {
+        return {
+          ...brand,
+          links: {
+            self: `/api/v1/brands/${brand.slug}`,
+          },
+        };
+      });
+    });
 
   // if result is empty
   if (!result.length) throw createError(404, "Couldn't find any brand data.");
 
-  return result;
+  // pagination object
+  const paginationObject = await pagination({
+    limit,
+    page: req.query.page,
+    skip,
+    model: brandModel,
+    filters,
+  });
+
+  return {
+    result,
+    pagination: paginationObject,
+  };
 };
 
 // create brand service
@@ -53,7 +89,7 @@ export const deleteBrandServiceById = async (id) => {
   if (!result) throw createError(404, "Couldn't find any brand data.");
 
   // delete image
-  deleteImage(`/public/images/brands/${result?.brand_photo}`);
+  result.image && deleteImage(`/public/images/brands/${result?.image}`);
 
   return result;
 };
@@ -71,6 +107,27 @@ export const updateBrandServiceById = async (file, id, options) => {
 
   // before image delete
   file && deleteImage(`/public/images/brands/${result?.image}`);
+
+  return result;
+};
+
+// multiple brand delete service
+export const bulkDeleteBrandService = async (ids) => {
+  // check data is present or not
+  await Promise.all(
+    ids.map(async (id) => {
+      const result = await brandModel.findById(id);
+      if (!result)
+        throw createError(404, `Couldn't find Brand Data with id = ${id}`);
+    })
+  );
+
+  const result = await brandModel.deleteMany({ _id: { $in: req.body.ids } });
+
+  // delete image
+  result.forEach((brand) => {
+    brand.image && deleteImage(`/public/images/brands/${brand?.image}`);
+  });
 
   return result;
 };

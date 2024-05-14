@@ -24,7 +24,6 @@ import {
  *
  */
 export const userRegister = asyncHandler(async (req, res) => {
-  return res.send("ok");
   const { email } = req.body;
   // register service
   const verifyToken = await userRegisterService(req.body);
@@ -32,7 +31,7 @@ export const userRegister = asyncHandler(async (req, res) => {
   // response send
   successResponse(res, {
     statusCode: 201,
-    message: `A verification email sent to ${email}, To create account please verify. `,
+    message: `A verification email sent to ${email}, To create account please verify.`,
     payload: {
       verifyToken,
     },

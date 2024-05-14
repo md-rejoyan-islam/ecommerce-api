@@ -1,17 +1,16 @@
 import asyncHandler from "express-async-handler";
-
-import { unlinkSync } from "fs";
+import createError from "http-errors";
 import { isValidObjectId } from "mongoose";
 import {
+  bulkDeleteCategoryService,
   createCategoryService,
   deleteCategoryByIdService,
   getAllCategoryService,
   getCategoryByIdService,
   updateCategoryByIdService,
 } from "../services/category.service.mjs";
-import { successResponse } from "../services/responseHandler.mjs";
-import { log } from "console";
 import checkMongoID from "../services/checkMongoId.mjs";
+import { successResponse } from "../services/responseHandler.mjs";
 
 /**
  *
@@ -30,15 +29,23 @@ import checkMongoID from "../services/checkMongoId.mjs";
  *
  */
 
-export const getAllCategories = asyncHandler(async (_, res) => {
-  const categories = await getAllCategoryService();
+export const getAllCategories = asyncHandler(async (req, res) => {
+  // search query fields
+  const searchFields = ["name", "slug", "description", "_id"];
+
+  // default page and limit value
+  req.query.page = Number(req.query.page) || 1;
+  req.query.limit = Number(req.query.limit) || 10;
+
+  const { result, pagination } = await getAllCategoryService(req, searchFields);
 
   // respond send with data
   successResponse(res, {
     statusCode: 200,
     message: "Category data fetched successfully",
     payload: {
-      data: categories,
+      pagination,
+      data: result,
     },
   });
 });
@@ -166,28 +173,34 @@ export const deleteCategoryById = asyncHandler(async (req, res) => {
  *
  */
 export const updateCategoryById = asyncHandler(async (req, res, next) => {
-  // id validation
-  checkMongoID(req.params.id);
+  try {
+    // id validation
+    checkMongoID(req.params.id);
 
-  const options = {
-    $set: {
-      name: req.body.name,
-      description: req.body.description,
-      parent: req.body.parent,
-      image: req?.file?.filename,
-      slug: req.body.name && req.body.name.toLowerCase().split(" ").join("-"),
-    },
-  };
-  const result = await updateCategoryByIdService(req.params.id, options);
+    const options = {
+      $set: {
+        name: req.body.name,
+        description: req.body.description,
+        parent: req.body.parent,
+        image: req?.file?.filename,
+        slug: req.body.name && req.body.name.toLowerCase().split(" ").join("-"),
+      },
+    };
+    const result = await updateCategoryByIdService(req.params.id, options);
 
-  // response send with data
-  successResponse(res, {
-    statusCode: 200,
-    message: "Category data updated successfully",
-    payload: {
-      data: result,
-    },
-  });
+    // response send with data
+    successResponse(res, {
+      statusCode: 200,
+      message: "Category data updated successfully",
+      payload: {
+        data: result,
+      },
+    });
+  } catch (error) {
+    // delete image
+    req.file && deleteImage(req.file.path);
+    next(error);
+  }
 });
 
 /**
@@ -212,87 +225,36 @@ export const updateCategoryById = asyncHandler(async (req, res, next) => {
  *
  */
 
-export const bulkDeleteCategory = asyncHandler(async (req, res, next) => {
+export const bulkDeleteCategoryByIds = asyncHandler(async (req, res, next) => {
+  // ids validation
+  if (!req.body.ids) throw createError(404, "Please Provide ids.");
+
   // has ids or not
-  if (req.body.ids.length === 0) throw customError(400, "Please Provide ids.");
+  if (!req.body.ids.length) throw createError(400, "Please Provide ids.");
 
   //   id validation
-  req.body.ids.forEach((id) => {
+  req.body.ids.forEach((brand) => {
     if (!isValidObjectId(brand.id))
-      throw customError(400, `${brand.id} is not a valid id.`);
+      throw createError(400, `${brand.id} is not a valid id.`);
   });
 
   // check data is present or not
+
   await Promise.all(
     req.body.ids.map(async (id) => {
-      const result = await Brand.findById(id);
+      const result = await Brand.findById(id).lean();
+
       if (!result)
-        throw customError(404, `Couldn't find Brand Data with id = ${id}`);
+        throw createError(404, `Couldn't find Brand Data with id = ${id}`);
     })
   );
 
-  const result = await bulkDeleteBrandService(req.body.ids);
+  const result = await bulkDeleteCategoryService(req.body.ids);
 
   //  respond send with data
   successResponse(res, {
     statusCode: 200,
     message: "Category data deleted successfully",
-    payload: {
-      data: result,
-    },
-  });
-});
-
-/**
- *
- * @apiDescription    Update multiple Brand  Data by ids
- * @apiMethod         PUT / PATCH
- *
- * @apiAccess         Admin
- *
- * @apiHeaders        { string } Authorization   User's access token
- *
- * @apiBody           { brands :[ {id:"id1",data:{ data } }, { id:"id2",data:{ data} } ]  }
- *
- * @apiSuccess        { Status ,Message, Data:[] }
- * @apiFailed         { StatusCode, Message, Stack }
- *
- * @apiError          ( Bad Request 400 )    Invalid syntax / parameters
- * @apiError          ( unauthorized 401 )    Unauthorized Only authenticated users can access the data
- * @apiError          ( Forbidden 403 )       Forbidden Only admins can access the data
- * @apiError          ( Not Found 404 )       Brand Data not found
- *
- */
-
-export const bulkUpdateCategory = asyncHandler(async (req, res, next) => {
-  // has ids or not
-  if (req.body.brands.length === 0)
-    throw customError(400, "Please Provide brands");
-
-  //   id validation
-  req.body.brands.forEach((brand) => {
-    if (!isValidObjectId(brand.id))
-      throw customError(400, `${brand.id} is not a valid id.`);
-  });
-
-  // check data is present or not
-  await Promise.all(
-    req.body.brands.map(async (brand) => {
-      const result = await Brand.findById(brand.id);
-      if (!result)
-        throw customError(
-          404,
-          `Couldn't find Brand Data with id = ${brand.id}`
-        );
-    })
-  );
-
-  const result = await bulkUpdateBrandService(req.body.brands);
-
-  //  respond send with data
-  successResponse(res, {
-    statusCode: 200,
-    message: "Category data updated successfully",
     payload: {
       data: result,
     },

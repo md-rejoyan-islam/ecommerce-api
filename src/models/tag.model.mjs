@@ -9,13 +9,17 @@ const tagSchema = mongoose.Schema(
       required: [true, "Tag name is required."],
       unique: [true, "Tag name must be unique"],
       minLength: [1, "Tag Name must be at least 3 characters"],
-      maxLength: [30, "Tag Name is too large"],
+      maxLength: [50, "Tag Name is too large"],
     },
     slug: {
       type: String,
       required: [true, "Slug is required."],
       trim: true,
       unique: [true, "Tag slug can be unique."],
+    },
+    status: {
+      type: Boolean,
+      default: true,
     },
   },
   {

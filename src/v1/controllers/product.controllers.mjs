@@ -1,22 +1,16 @@
-import mongoose, { isValidObjectId } from "mongoose";
-import productModel from "../../models/product.model.mjs";
 import createError from "http-errors";
+import productModel from "../../models/product.model.mjs";
 
-import { unlinkSync } from "fs";
 import asyncHandler from "express-async-handler";
-import { successResponse } from "../services/responseHandler.mjs";
-import checkMongoID from "../services/checkMongoId.mjs";
 import deleteImage from "../../helper/deleteImage.mjs";
-import { log } from "console";
-import brandModel from "../../models/brand.model.mjs";
-import categoryModel from "../../models/category.model.mjs";
-import tagModel from "../../models/tag.model.mjs";
 import {
+  bulkDeleteProductService,
   createProductService,
   deleteProductService,
   getAllProductService,
   getProductBySlugService,
 } from "../services/product.service.mjs";
+import { successResponse } from "../services/responseHandler.mjs";
 
 /**
  *
@@ -236,6 +230,26 @@ export const updateProductBySlug = asyncHandler(async (req, res) => {
   successResponse(res, {
     statusCode: 200,
     message: "Product data updated successfully.",
+    payload: {
+      data: result,
+    },
+  });
+});
+
+// bulk delete product by ids
+export const bulkDeleteProductByIds = asyncHandler(async (req, res) => {
+  // ids validation
+  if (!req.body.ids) throw createError(404, "Please Provide ids.");
+
+  // has ids or not
+  if (!req.body.ids.length) throw createError(404, "Please Provide ids.");
+
+  //   id validation
+  const result = await bulkDeleteProductService(req.body.ids);
+
+  successResponse(res, {
+    statusCode: 200,
+    message: "Product data deleted successfully.",
     payload: {
       data: result,
     },

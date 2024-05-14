@@ -6,9 +6,6 @@ export const node_env = process.env.NODE_ENV || "development";
 
 export const mongoURL = process.env.LIVE_MONGO_URL || process.env.MONGO_URL;
 
-export const jwtVerifyKeySecret = process.env.JWT_VERIFY_KEY;
-export const jwtVerifyKeyExpire = process.env.JWT_VERIFY_KEY_EXPIRE;
-
 export const jwtRegisterSecretKey = process.env.JWT_REGISTER_KEY;
 export const jwtRegisterKeyExpire = process.env.JWT_REGISTER_KEY_EXPIRE;
 
@@ -16,10 +13,12 @@ export const passwordResetKey = process.env.PASSWORD_RESET_KEY;
 export const passwordResetKeyExpire = process.env.PASSWORD_RESET_KEY_EXPIRE;
 
 export const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
-export const accessTokenExpire = process.env.ACCESS_TOKEN_EXPIRE;
+export const accessTokenExpire = "15d";
+export const accessCookiemaxAge = 1000 * 60 * 60 * 24 * 15; // 15 days
 
 export const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
-export const refreshTokenExpire = process.env.REFRESH_TOKEN_EXPIRE;
+export const refreshTokenExpire = "365d";
+export const refreshCookiemaxAge = 1000 * 60 * 60 * 24 * 70; // 70 daysys
 
 export const smtpHost = process.env.SMTP_HOST;
 export const smtpPort = process.env.SMTP_PORT;
@@ -33,7 +32,7 @@ export const allowedImageTypes = ["jpg", "jpeg", "png", "webp"];
 
 export const userImageUploadDir = "public/images/users";
 export const userMaxImageSize = 400000;
-export const defaultImagePath = "public/images/default/default_user.webp";
+export const defaultUserImagePath = "public/images/default/default_user.webp";
 export const categoryImageUploadDir = "public/images/categories";
 export const defaultCatImagePath =
   "public/images/default/default_category.webp";

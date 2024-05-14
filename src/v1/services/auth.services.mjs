@@ -4,10 +4,12 @@ import bcrypt from "bcryptjs";
 import userModel from "../../models/user.model.mjs";
 import createJWT from "../../helper/createJWT.mjs";
 import {
+  accessCookiemaxAge,
   accessTokenExpire,
   accessTokenSecret,
   jwtRegisterKeyExpire,
   jwtRegisterSecretKey,
+  refreshCookiemaxAge,
   refreshTokenExpire,
   refreshTokenSecret,
 } from "../../app/secret.mjs";
@@ -19,7 +21,7 @@ import { setCookie } from "../../helper/cookie.mjs";
  * @param {Object} req
  * @returns {Promise}
  */
-export const userRegisterService = asyncHandler(async (data) => {
+export const userRegisterService = async (data) => {
   // check if user exist
   const user = await userModel.exists({ email: data.email });
 
@@ -37,7 +39,7 @@ export const userRegisterService = asyncHandler(async (data) => {
   // prepare email data
   const emailData = {
     email: data.email,
-    subject: "Account Activation Link",
+    subject: "Account Activation Link.",
     verifyToken,
   };
 
@@ -45,14 +47,17 @@ export const userRegisterService = asyncHandler(async (data) => {
   await sendAccountVerifyMail(emailData);
 
   return verifyToken;
-});
+};
 
 // user login service
-export const userLoginService = asyncHandler(async (res, data) => {
+export const userLoginService = async (res, data) => {
   const { email, password } = data;
 
   // find user
-  const loginUser = await userModel.findOne({ email }).select("+password");
+  const loginUser = await userModel
+    .findOne({ email })
+    .select("+password")
+    .lean();
 
   if (!loginUser) {
     throw createError(400, "User not found.Please register.");
@@ -92,7 +97,7 @@ export const userLoginService = asyncHandler(async (res, data) => {
     res,
     cookieName: "accessToken",
     cookieValue: accessToken,
-    maxAge: 1000 * 60 * 60 * 24 * 15, // 15 days
+    maxAge: accessCookiemaxAge,
   });
 
   // refresh token set to cookie
@@ -100,17 +105,17 @@ export const userLoginService = asyncHandler(async (res, data) => {
     res,
     cookieName: "refreshToken",
     cookieValue: refreshToken,
-    maxAge: 1000 * 60 * 60 * 24 * 70, // 70 days
+    maxAge: refreshCookiemaxAge,
   });
 
   // password field remove
-  delete loginUser._doc.password;
+  delete loginUser.password;
 
   return loginUser;
-});
+};
 
 // refresh token service
-export const refreshTokenService = asyncHandler(async (res, email) => {
+export const refreshTokenService = async (res, email) => {
   // find user
   const user = await userModel.findOne({ email });
 
@@ -130,14 +135,14 @@ export const refreshTokenService = asyncHandler(async (res, email) => {
     res,
     cookieName: "accessToken",
     cookieValue: accessToken,
-    maxAge: 1000 * 60 * 1, // 1 min
+    maxAge: accessCookiemaxAge,
   });
 
   return accessToken;
-});
+};
 
 // active user account service
-export const activeUserAccountService = asyncHandler(async (data) => {
+export const activeUserAccountService = async (data) => {
   // check if user is already verified
   const user = await userModel.findOne({ email: data.email });
 
@@ -149,4 +154,4 @@ export const activeUserAccountService = asyncHandler(async (data) => {
   const result = await userModel.create(data);
 
   return result;
-});
+};

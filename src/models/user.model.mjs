@@ -1,10 +1,9 @@
 import mongoose from "mongoose";
-import { defaultImagePath } from "../app/secret.mjs";
+import { defaultUserImagePath } from "../app/secret.mjs";
 import hashPassword from "../utils/hashPassword.mjs";
 import { isEmail } from "../helper/helper.mjs";
 
 // user schema
-
 const userSchema = mongoose.Schema(
   {
     name: {
@@ -18,7 +17,7 @@ const userSchema = mongoose.Schema(
       type: String,
       required: [true, "Please provide your email"],
       trim: true,
-      unique: [true, "Email already exist"],
+      unique: [true, "Email already exist."],
       lowercase: true,
       validate: {
         validator: (value) => {
@@ -50,10 +49,6 @@ const userSchema = mongoose.Schema(
       },
       required: [true, "Please provide your gender"],
     },
-    isAdmin: {
-      type: Boolean,
-      default: false,
-    },
     isBanned: {
       type: Boolean,
       default: false,
@@ -63,7 +58,7 @@ const userSchema = mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["user", "admin", "editor"],
+      enum: ["user", "admin", "seller"],
       default: "user",
       lowercase: true,
     },
@@ -82,7 +77,7 @@ const userSchema = mongoose.Schema(
     // },
     photo: {
       type: String,
-      default: defaultImagePath,
+      default: defaultUserImagePath,
     },
   },
   { timestamps: true }
