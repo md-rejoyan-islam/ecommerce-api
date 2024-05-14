@@ -30,10 +30,50 @@ export const userRegister = asyncHandler(async (req, res) => {
 
   // response send
   successResponse(res, {
-    statusCode: 201,
+    statusCode: 200,
     message: `A verification email sent to ${email}, To create account please verify.`,
     payload: {
       verifyToken,
+    },
+  });
+});
+
+/**
+ *
+ * @apiDescription    Verify Register Email
+ * @apiMethod         GET
+ *
+ * @apiRoute          /api/v1/auth/verify
+ * @apiAccess         Public (register user)
+ *
+ * @apiSuccess        { success : true , message, date }
+ * @apiFailed         { success : false, error : { status : code , message} }
+ *
+ * @apiError          ( Bad Request 400 )  Token not Found
+ *
+ */
+
+export const activateUserAccount = asyncHandler(async (req, res) => {
+  const { token } = req.body;
+  // check token
+  if (!token) throw createError(404, "token is required.");
+
+  // verify token
+  const decoded = jwt.verify(token, jwtRegisterSecretKey);
+
+  if (!decoded) {
+    throw createError(401, "Invalid token");
+  }
+
+  // find user
+  const result = await activeUserAccountService(decoded);
+
+  // response send
+  successResponse(res, {
+    statusCode: 201,
+    message: "User account created successfully.",
+    payload: {
+      data: result,
     },
   });
 });
@@ -92,46 +132,6 @@ export const logout = (_, res) => {
     message: "Successfully Logout.",
   });
 };
-
-/**
- *
- * @apiDescription    Verify Register Email
- * @apiMethod         GET
- *
- * @apiRoute          /api/v1/auth/verify
- * @apiAccess         Public (register user)
- *
- * @apiSuccess        { success : true , message, date }
- * @apiFailed         { success : false, error : { status : code , message} }
- *
- * @apiError          ( Bad Request 400 )  Token not Found
- *
- */
-
-export const activateUserAccount = asyncHandler(async (req, res) => {
-  const { token } = req.body;
-  // check token
-  if (!token) throw createError(404, "token is required.");
-
-  // verify token
-  const decoded = jwt.verify(token, jwtRegisterSecretKey);
-
-  if (!decoded) {
-    throw createError(401, "Invalid token");
-  }
-
-  // find user
-  const result = await activeUserAccountService(decoded);
-
-  // response send
-  successResponse(res, {
-    statusCode: 201,
-    message: "User account created successfully.",
-    payload: {
-      data: result,
-    },
-  });
-});
 
 /**
  * @apiDescription    Refresh Token

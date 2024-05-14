@@ -22,7 +22,7 @@ const sendAccountVerifyMail = async (emailData) => {
   try {
     const { verifyToken } = emailData;
     const mailInfo = {
-      from: ` "Ecommerce App" <${emailUser}>`, // sender address
+      from: `"Ecommerce App" <${emailUser}>`, // sender address
       to: emailData.email, // list of receivers
       subject: emailData.subject, // Subject line
       html: `

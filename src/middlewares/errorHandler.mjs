@@ -25,6 +25,11 @@ export const errorHandler = (err, req, res, next) => {
     err.message = ` ${Object.keys(err.keyValue)} must be unique`;
   }
 
+  // jwt token error
+  if (err.name === "JsonWebTokenError") {
+    err.status = 400;
+  }
+
   const errorMessage = err.message || "UnKnown Error";
   const errorStatus = err.status || 500;
 
