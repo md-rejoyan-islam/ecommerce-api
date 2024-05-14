@@ -1,5 +1,4 @@
 import bcrypt from "bcryptjs";
-import asyncHandler from "express-async-handler";
 import createError from "http-errors";
 import jwt from "jsonwebtoken";
 import { passwordResetKey, passwordResetKeyExpire } from "../../app/secret.mjs";
@@ -63,17 +62,17 @@ export const getAllUsersService = async (req, searchFields) => {
 /**
  * @description create user service
  */
-export const createUserService = asyncHandler(async (data) => {
+export const createUserService = async (data) => {
   // create user
   const user = await userModel.create(data);
 
   return user;
-});
+};
 
 /**
  * @description user find by id service
  */
-export const findUserByIdService = asyncHandler(async (id) => {
+export const findUserByIdService = async (id) => {
   // find user
   const user = await userModel.findById(id).select("-password -__v -role");
 
@@ -81,13 +80,13 @@ export const findUserByIdService = asyncHandler(async (id) => {
   if (!user) throw createError(404, "Couldn't find any user data.");
 
   return user;
-});
+};
 
 /**
  * @description delete user by id service
  */
 
-export const deleteUserByIdService = asyncHandler(async (id) => {
+export const deleteUserByIdService = async (id) => {
   // find user
   const user = await userModel.findById(id);
 
@@ -104,13 +103,13 @@ export const deleteUserByIdService = asyncHandler(async (id) => {
   }
 
   return deletedUser;
-});
+};
 
 /**
  * @description ban user by id service
  */
 
-export const banUserByIdService = asyncHandler(async (id) => {
+export const banUserByIdService = async (id) => {
   // find user
   const user = await userModel.findById(id);
 
@@ -146,13 +145,13 @@ export const banUserByIdService = asyncHandler(async (id) => {
   );
 
   return updatedUser;
-});
+};
 
 /**
  * @description unban user by id service
  */
 
-export const unbanUserByIdService = asyncHandler(async (id) => {
+export const unbanUserByIdService = async (id) => {
   // find user
   const user = await userModel.findById(id);
 
@@ -178,12 +177,12 @@ export const unbanUserByIdService = asyncHandler(async (id) => {
   );
 
   return updatedUser;
-});
+};
 
 /**
  * @description update user by id service
  */
-export const updateUserByIdService = asyncHandler(async (id, options) => {
+export const updateUserByIdService = async (id, options) => {
   // update user
   const updatedUser = await userModel.findByIdAndUpdate(id, options, {
     new: true,
@@ -197,44 +196,42 @@ export const updateUserByIdService = asyncHandler(async (id, options) => {
   }
 
   return updatedUser;
-});
+};
 
 /**
  * @description update user password by id service
  */
-export const updateUserPasswordByIdService = asyncHandler(
-  async (id, options) => {
-    // find user
-    const user = await userModel.findById(id).select("+password");
+export const updateUserPasswordByIdService = async (id, options) => {
+  // find user
+  const user = await userModel.findById(id).select("+password");
 
-    // if user not found
-    if (!user) {
-      throw createError(404, "Couldn't find any user data.");
-    }
-
-    // password match
-    const isMatch = bcrypt.compareSync(options.oldPassword, user.password);
-
-    // if not match
-    if (!isMatch) {
-      throw createError(400, "Old password is wrong. ");
-    }
-
-    // update user
-    const updatedUser = await userModel.findByIdAndUpdate(id, options, {
-      new: true,
-      runValidators: true,
-      context: "query",
-    });
-
-    return updatedUser;
+  // if user not found
+  if (!user) {
+    throw createError(404, "Couldn't find any user data.");
   }
-);
+
+  // password match
+  const isMatch = bcrypt.compareSync(options.oldPassword, user.password);
+
+  // if not match
+  if (!isMatch) {
+    throw createError(400, "Old password is wrong. ");
+  }
+
+  // update user
+  const updatedUser = await userModel.findByIdAndUpdate(id, options, {
+    new: true,
+    runValidators: true,
+    context: "query",
+  });
+
+  return updatedUser;
+};
 
 /**
  * @description forgot password by email service
  */
-export const forgotPasswordByEmailService = asyncHandler(async (email) => {
+export const forgotPasswordByEmailService = async (email) => {
   const user = await userModel.findOne({ email });
 
   if (!user) throw createError.NotFound("Couldn't find any user.");
@@ -257,13 +254,13 @@ export const forgotPasswordByEmailService = asyncHandler(async (email) => {
   await sendPasswordResetMail(emailData);
 
   return resetToken;
-});
+};
 
 /**
  * @description reset password service
  */
 
-export const resetPasswordService = asyncHandler(async (resetToken, data) => {
+export const resetPasswordService = async (resetToken, data) => {
   // check reset token
   const { email } = jwt.verify(resetToken, passwordResetKey);
 
@@ -287,4 +284,4 @@ export const resetPasswordService = asyncHandler(async (resetToken, data) => {
   delete user._doc.password;
 
   return user;
-});
+};

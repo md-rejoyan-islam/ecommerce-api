@@ -225,7 +225,7 @@ export const updateTagById = asyncHandler(async (req, res, next) => {
  *
  */
 
-export const bulkDeleteTag = asyncHandler(async (req, res, next) => {
+export const bulkDeleteTag = async (req, res, next) => {
   // id validation
   if (!req.body.ids) throw createError(404, "Please Provide ids.");
 
@@ -248,4 +248,4 @@ export const bulkDeleteTag = asyncHandler(async (req, res, next) => {
       result,
     },
   });
-});
+};
