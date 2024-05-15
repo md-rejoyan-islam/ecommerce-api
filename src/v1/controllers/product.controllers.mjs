@@ -4,11 +4,13 @@ import productModel from "../../models/product.model.mjs";
 import asyncHandler from "express-async-handler";
 import deleteImage from "../../helper/deleteImage.mjs";
 import {
+  addProductToWishListService,
   bulkDeleteProductService,
   createProductService,
   deleteProductService,
   getAllProductService,
   getProductBySlugService,
+  removeProductFromWishListService,
 } from "../services/product.service.mjs";
 import { successResponse } from "../../helper/responseHandler.mjs";
 
@@ -252,6 +254,33 @@ export const bulkDeleteProductByIds = asyncHandler(async (req, res) => {
     message: "Product data deleted successfully.",
     payload: {
       data: result,
+    },
+  });
+});
+
+// product add to wishlist
+export const addProductToWishList = asyncHandler(async (req, res) => {
+  // prdocut add to wishlist
+  await addProductToWishListService(req);
+
+  successResponse(res, {
+    statusCode: 200,
+    message: "Product added to wishlist successfully.",
+    payload: {
+      data: req.me.wishList,
+    },
+  });
+});
+
+// product remove from wishlist
+export const removeProductFromWishList = asyncHandler(async (req, res) => {
+  await removeProductFromWishListService(req);
+
+  successResponse(res, {
+    statusCode: 200,
+    message: "Product removed from wishlist successfully.",
+    payload: {
+      data: req.user.wishList,
     },
   });
 });

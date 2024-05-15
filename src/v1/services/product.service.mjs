@@ -7,6 +7,7 @@ import deleteImage from "../../helper/deleteImage.mjs";
 import filterQuery from "../../utils/filterQuery.mjs";
 import pagination from "../../utils/pagination.mjs";
 import createError from "http-errors";
+import e from "express";
 
 // get all product service
 export const getAllProductService = async (req, searchFields) => {
@@ -131,4 +132,38 @@ export const bulkDeleteProductService = async (ids) => {
   });
 
   return result;
+};
+
+// product add to wishlist service
+export const addProductToWishListService = async (req) => {
+  // find product by id
+  const product = await productModel.exists({ _id: req.params.id });
+  if (!product) throw createError(404, "Couldn't find any product data.");
+
+  // check product is already in wishlist or not
+  if (req.me.wishList.includes(req.params.id)) {
+    throw createError(400, "Product is already in your wishlist.");
+  }
+
+  // add product to wishlist
+  product.wishList.push(req.params.id);
+  await req.me.save();
+};
+
+// product remove from wishlist servic
+export const removeProductFromWishListService = async (req) => {
+  // product exists or not
+  const product = await productModel.exists({ _id: req.params.id });
+  if (!product) throw createError(404, "Couldn't find any product data.");
+
+  // check product is already in wishlist or not
+  if (!req.me.wishList.includes(req.params.id)) {
+    throw createError(400, "Product is not in your wishlist.");
+  }
+
+  // remove product from wishlist
+  product.wishList = product.wishList.filter(
+    (id) => id.toString() !== req.params.id
+  );
+  await req.user.save();
 };
