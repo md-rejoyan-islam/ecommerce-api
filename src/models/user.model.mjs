@@ -39,6 +39,12 @@ const userSchema = mongoose.Schema(
         return hashPassword(value);
       },
     },
+    wishList: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+      },
+    ],
     gender: {
       type: String,
       lowercase: true,

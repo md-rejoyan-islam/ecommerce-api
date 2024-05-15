@@ -8,6 +8,7 @@ const seedsUsers = [
     phone: "01723423423",
     gender: "male",
     role: "admin",
+    wishList: ["664116c00a215cbc829c28b1", "664116c00a215cbc829c28b2"],
   },
   {
     _id: "6643ac283233bd867ff1e481",
@@ -18,6 +19,7 @@ const seedsUsers = [
     phone: "01723423003",
     gender: "male",
     role: "admin",
+    wishList: ["664116c00a215cbc829c28b1", "664116c00a215cbc829c28b3"],
   },
   {
     _id: "6643ac283233bd867ff1e477",
@@ -28,6 +30,7 @@ const seedsUsers = [
     phone: "01703423003",
     gender: "male",
     role: "user",
+    wishList: ["664116c00a215cbc829c28b4", "664116c00a215cbc829c28b8"],
   },
   {
     _id: "6643ac283233bd867ff1e432",
@@ -38,6 +41,7 @@ const seedsUsers = [
     phone: "0172323421",
     gender: "female",
     role: "user",
+    wishList: ["664116c00a215cbc829c28b4", "664116c00a215cbc829c28b5"],
   },
   {
     _id: "6643ac283233bd867ff1e433",
@@ -48,6 +52,7 @@ const seedsUsers = [
     phone: "0172323433",
     gender: "male",
     role: "seller",
+    wishList: ["664116c00a215cbc829c28b8", "664116c00a215cbc829c28b9"],
   },
   {
     _id: "6643ac283233bd867ff1e434",
@@ -58,6 +63,7 @@ const seedsUsers = [
     phone: "01723233223",
     gender: "male",
     role: "seller",
+    wishList: ["664116c00a215cbc829c28b1", "664116c00a215cbc829c28b4"],
   },
 ];
 
