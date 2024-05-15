@@ -267,7 +267,7 @@ export const addProductToWishList = asyncHandler(async (req, res) => {
     statusCode: 200,
     message: "Product added to wishlist successfully.",
     payload: {
-      data: req.me.wishList,
+      data: req.me,
     },
   });
 });
@@ -280,7 +280,7 @@ export const removeProductFromWishList = asyncHandler(async (req, res) => {
     statusCode: 200,
     message: "Product removed from wishlist successfully.",
     payload: {
-      data: req.user.wishList,
+      data: req.me,
     },
   });
 });

@@ -146,7 +146,7 @@ export const addProductToWishListService = async (req) => {
   }
 
   // add product to wishlist
-  product.wishList.push(req.params.id);
+  req.me.wishList.push(req.params.id);
   await req.me.save();
 };
 
@@ -162,8 +162,8 @@ export const removeProductFromWishListService = async (req) => {
   }
 
   // remove product from wishlist
-  product.wishList = product.wishList.filter(
+  req.me.wishList = req.me.wishList.filter(
     (id) => id.toString() !== req.params.id
   );
-  await req.user.save();
+  await req.me.save();
 };

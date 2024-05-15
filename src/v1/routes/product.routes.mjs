@@ -2,10 +2,12 @@ import express from "express";
 
 import { productMulter } from "../../middlewares/multer.mjs";
 import {
+  addProductToWishList,
   createProduct,
   deleteProductBySlug,
   getAllProduct,
   getProductBySlug,
+  removeProductFromWishList,
   updateProductBySlug,
 } from "../controllers/product.controllers.mjs";
 import {
@@ -30,6 +32,13 @@ productRouter
     runValidation,
     createProduct
   );
+
+productRouter
+  .route("/add-to-wishlist/:id([0-9a-fA-F]{24})")
+  .patch(isLoggedIn, authorization("user"), addProductToWishList);
+productRouter
+  .route("/remove-from-wishlist/:id([0-9a-fA-F]{24})")
+  .patch(isLoggedIn, authorization("user"), removeProductFromWishList);
 
 productRouter
   .route("/:slug")
