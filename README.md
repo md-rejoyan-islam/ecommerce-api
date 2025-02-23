@@ -30,4 +30,12 @@ The Multi-Vendor Ecommerce API is designed to support a marketplace where multip
 
 ### POSTMAN URL
 
-[Postman Documentation](https://documenter.getpostman.com/view/22735243/2sA3JQ5f6C)
+[Postman Documentation](https://documenter.getpostman.com/view/22735243/2sAYdcsCXT)
+
+### Contact
+
+For questions or suggestions, feel free to reach out:
+
+- **Name**: Md Rejoyan Islam
+- **Email**: [rejoyanislam0014@gmail.com]
+- **LinkedIn**: [https://www.linkedin.com/in/md-rejoyan-islam/]
