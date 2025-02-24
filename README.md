@@ -99,9 +99,10 @@ The Multi-Vendor Ecommerce API is designed to support a marketplace where multip
 | DELETE | /api/v1/products/:slug                    | Deletes a product by its slug.              | Authenticated |
 | PATCH  | /api/v1/products/:slug                    | Updates a product by its slug.              | Authenticated |
 
-### POSTMAN URL
+### LINKS
 
-[Postman Documentation](https://documenter.getpostman.com/view/22735243/2sAYdcsCXT)
+[API Documentation with Postman](https://documenter.getpostman.com/view/22735243/2sAYdcsCXT) <br/>
+[API URL](https://tinyurl.com/k7tssj6c)
 
 ### Contact
 
@@ -110,3 +111,4 @@ For questions or suggestions, feel free to reach out:
 - **Name**: Md Rejoyan Islam
 - **Email**: [rejoyanislam0014@gmail.com]
 - **LinkedIn**: [https://www.linkedin.com/in/md-rejoyan-islam/]
+- **Portfolio**: [https://md-rejoyan-islam.github.io/]

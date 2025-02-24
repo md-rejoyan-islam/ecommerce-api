@@ -2,7 +2,7 @@
   "name": "api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/server.mjs",
   "type": "module",
   "keywords": [
     "api",
@@ -12,8 +12,8 @@
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --env-file=.env src/server.mjs ",
-    "start": "node --env-file=.env src/server.mjs"
+    "dev": "nodemon  src/server.mjs ",
+    "start": "node src/server.mjs"
   },
   "author": "Md. Rejoyan Islam",
   "license": "ISC",
@@ -24,8 +24,9 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.2.0",
-    "cookie-parser": "^1.4.6",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
     "express": "^4.19.2",
     "express-async-handler": "^1.2.0",
     "express-rate-limit": "^7.2.0",
