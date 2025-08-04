@@ -1,16 +1,16 @@
 import asyncHandler from "express-async-handler";
 
+import seedBrandsData from "../../../data/seeds.brand.mjs";
+import seedCategoriesData from "../../../data/seeds.category.mjs";
+import productBrandsData from "../../../data/seeds.product.mjs";
+import seedTagsData from "../../../data/seeds.tags.mjs";
 import seedsUsersData from "../../../data/seeds.users.js";
 import { successResponse } from "../../helper/responseHandler.mjs";
-import userModel from "../../models/user.model.mjs";
-import tagModel from "../../models/tag.model.mjs";
-import seedTagsData from "../../../data/seeds.tags.mjs";
-import seedCategoriesData from "../../../data/seeds.category.mjs";
-import seedBrandsData from "../../../data/seeds.brand.mjs";
-import productBrandsData from "../../../data/seeds.product.mjs";
-import categoryModel from "../../models/category.model.mjs";
 import brandModel from "../../models/brand.model.mjs";
+import categoryModel from "../../models/category.model.mjs";
 import productModel from "../../models/product.model.mjs";
+import tagModel from "../../models/tag.model.mjs";
+import userModel from "../../models/user.model.mjs";
 
 export const seedsUsers = asyncHandler(async (req, res, next) => {
   // delete all existing users
@@ -68,7 +68,7 @@ export const seedsCategories = asyncHandler(async (req, res, next) => {
 
       // childrens data insert
       if (cat?.children?.length > 0) {
-        cat.children.map(async (child) => {
+        cat.children.forEach(async (child) => {
           await categoryModel.create({
             ...child,
             parent: result._id,

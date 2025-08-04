@@ -1,9 +1,7 @@
 import asyncHandler from "express-async-handler";
-import fs from "fs";
-fs.promises;
 import checkMongoID from "../../helper/checkMongoId.mjs";
-import { successResponse } from "../../helper/responseHandler.mjs";
 import deleteImage from "../../helper/deleteImage.mjs";
+import { successResponse } from "../../helper/responseHandler.mjs";
 import {
   banUserByIdService,
   createUserService,
